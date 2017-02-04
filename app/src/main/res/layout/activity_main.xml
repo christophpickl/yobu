@@ -21,7 +21,7 @@
             android:id="@+id/txtOutput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!" />
+            android:text="Ready for some rumble?!" />
 
         <ListView
             android:id="@+id/answersList"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/btnNextQuestion"
+            android:id="@+id/btnStartRiddle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start the riddle" />

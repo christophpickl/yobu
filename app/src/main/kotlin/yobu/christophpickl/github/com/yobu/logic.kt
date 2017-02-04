@@ -12,8 +12,8 @@ class QuestionRepo {
     private var index = 0
 
     private val questions = listOf(
-            Question("Is it good?", listOf(Answer("Yes", true), Answer("No"))),
-            Question("Are you happy?", listOf(Answer("Yes", true), Answer("No")))
+            Question("Gut fuer Grippevorbegugng?", listOf(Answer("Di4", true), Answer("He1"), Answer("Lu7"))),
+            Question("Bo punkt fuer He?", listOf(Answer("Gb1", true), Answer("KG13")))
     )
 
     fun nextQuestion(): Question {

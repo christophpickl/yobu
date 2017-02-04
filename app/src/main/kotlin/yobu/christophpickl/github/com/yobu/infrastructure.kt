@@ -13,4 +13,13 @@ class Log2(javaClass: Class<Any>) {
     fun i(message: String) {
         Log.i(tag, message)
     }
+
+    fun w(message: String) {
+        Log.w(tag, message)
+    }
+
+    fun e(message: String) {
+        Log.e(tag, message)
+    }
+
 }
