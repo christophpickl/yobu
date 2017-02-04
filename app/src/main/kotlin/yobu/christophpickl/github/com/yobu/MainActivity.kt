@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import com.pawegio.kandroid.find
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,14 +14,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val txtOutput = findViewById(R.id.txtOutput) as TextView
-        val btnNextQuestion = findViewById(R.id.btnNextQuestion) as Button
+        val txtOutput = find<TextView>(R.id.txtOutput)
+        val btnNextQuestion = find<Button>(R.id.btnNextQuestion)
         btnNextQuestion.setOnClickListener {
             println("btnNextQuestion clicked")
             val question = questions.nextQuestion()
             txtOutput.text = question.text
         }
     }
-
 
 }

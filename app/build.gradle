@@ -30,8 +30,13 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // https://github.com/pawegio/KAndroid
+    compile 'com.pawegio.kandroid:kandroid:0.6.15@aar'
+
     testCompile 'junit:junit:4.12'
 }
 repositories {
     mavenCentral()
+    jcenter()
 }
