@@ -23,11 +23,16 @@
             android:layout_height="wrap_content"
             android:text="Hello World!" />
 
+        <ListView
+            android:id="@+id/answersList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/btnNextQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Next Question" />
+            android:text="Start the riddle" />
 
     </LinearLayout>
 </RelativeLayout>
