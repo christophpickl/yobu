@@ -1,11 +1,20 @@
 # yobu
 Simple Shiatsu quiz app for checking your knowledge of bo and yu points
 
+* spielprinzip: KO prinzip, soviele fragen solang richtig, dann geht counter hoch, und max counter ist highscore
 
-## notes
+# TODOs
 
-* DE und EN
+## High
+* answers shufflen
+* persistenz layer (highscore, fuer advanced question algorithm)
+
+## Med
 * fragenkatalog in JSON/XML (oder evtl codegen? oder evtl from web, damit nicht neue app version deployen muss)
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random)
+* display artifact version in app
+
+## Low
+* DE und EN
 * fragengruppen machen: anatomie, meridian, punkte (leicht/mittel/schwer)
-* spielprinzip: KO prinzip, soviele fragen solang richtig, dann geht counter hoch, und max counter ist highscore
+* auto-release script (set version, tag on github, create apk and deploy somewhere (github release?!), increment version)

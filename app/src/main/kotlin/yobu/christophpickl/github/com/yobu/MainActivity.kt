@@ -10,6 +10,7 @@ import android.widget.*
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.runOnUiThread
+import com.pawegio.kandroid.toast
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,8 +22,18 @@ class MainActivity : AppCompatActivity() {
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
     private val btnStartRiddle by lazy { find<Button>(R.id.btnStartRiddle) }
     private val answersList by lazy { find<ListView>(R.id.answersList) }
+    private val txtCountCorrect by lazy { find<TextView>(R.id.txtCountCorrect) }
 
     private val questions = QuestionRepo()
+
+    private var countCorrect: Int = 0
+        get() = field
+        set(value) {
+            if (field != value) {
+                txtCountCorrect.text = value.toString()
+            }
+            field = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         LOG.i("onCreate(..)")
@@ -51,21 +62,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun onAnswerClicked(answer: Answer, answerLabel: TextView) {
         answerLabel.setBackgroundColor(if (answer.isCorrect) Color.GREEN else Color.RED)
-        runLaterOnUiThread(500) {
-            onNextQuestion()
+
+        if (answer.isCorrect) {
+            countCorrect++
+        } else {
+            toast("Wrong answer!")
         }
+
+        runLaterOnUiThread(500) {
+            if (answer.isCorrect) {
+                onNextQuestion()
+            } else {
+                onRestartRiddle()
+            }
+        }
+    }
+
+    private fun onRestartRiddle() {
+        countCorrect = 0
+        onNextQuestion()
     }
 
 }
 
-fun runLaterOnUiThread(delayInMs: Long, delayedAction: () -> Unit) {
-    Timer().schedule(object : TimerTask() {
-        override fun run() {
-            runOnUiThread { delayedAction() }
-        }
-
-    }, delayInMs)
-}
 
 class AnswersListAdapter(
         context: Context,

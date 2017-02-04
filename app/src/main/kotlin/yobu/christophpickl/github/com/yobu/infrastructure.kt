@@ -1,6 +1,8 @@
 package yobu.christophpickl.github.com.yobu
 
 import android.util.Log
+import com.pawegio.kandroid.runOnUiThread
+import java.util.*
 
 fun LOG(javaClass: Class<Any>) = Log2(javaClass)
 
@@ -22,4 +24,13 @@ class Log2(javaClass: Class<Any>) {
         Log.e(tag, message)
     }
 
+}
+
+fun runLaterOnUiThread(delayInMs: Long, delayedAction: () -> Unit) {
+    Timer().schedule(object : TimerTask() {
+        override fun run() {
+            runOnUiThread { delayedAction() }
+        }
+
+    }, delayInMs)
 }
