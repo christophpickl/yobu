@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.inflateLayout
+import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
 
 class MainActivity : AppCompatActivity() {
@@ -65,10 +66,10 @@ class MainActivity : AppCompatActivity() {
         if (answer.isCorrect) {
             countCorrect++
         } else {
-            toast("Wrong answer!")
+            toast("Flasche Antwort!")
         }
 
-        runLaterOnUiThread(500) {
+        runDelayed(500) {
             answersList.isEnabled = true
             if (answer.isCorrect) {
                 onNextQuestion()

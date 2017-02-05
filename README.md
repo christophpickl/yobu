@@ -3,7 +3,11 @@ Simple Shiatsu quiz app for checking your knowledge of bo and yu points
 
 * spielprinzip: KO prinzip, soviele fragen solang richtig, dann geht counter hoch, und max counter ist highscore
 
+
 # TODOs
+
+## NOW
+* app auf handy zum laufen bekommen
 
 ## High
 * answers shufflen

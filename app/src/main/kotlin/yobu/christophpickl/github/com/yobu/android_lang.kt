@@ -1,6 +1,7 @@
 package yobu.christophpickl.github.com.yobu
 
 import android.util.Log
+import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.runOnUiThread
 import java.util.*
 import java.io.BufferedReader
@@ -36,15 +37,6 @@ class Log2(javaClass: Class<out Any>) {
         Log.e(tag, message)
     }
 
-}
-
-fun runLaterOnUiThread(delayInMs: Long, delayedAction: () -> Unit) {
-    Timer().schedule(object : TimerTask() {
-        override fun run() {
-            runOnUiThread { delayedAction() }
-        }
-
-    }, delayInMs)
 }
 
 fun InputStream.readString(): String {
