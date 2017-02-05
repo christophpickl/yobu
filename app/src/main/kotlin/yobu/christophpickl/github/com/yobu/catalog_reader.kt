@@ -37,7 +37,6 @@ class JsonQuestionReader {
     }
 
     private fun toJsonQuestion(json: JSONObject): JsonQuestion {
-        val answers = emptyList<JsonAnswer>()
         return JsonQuestion(
                 json.getString("text"),
                 json.getJSONArray("answers").map { toJsonAnswer(it) }

@@ -1,18 +1,24 @@
 package yobu.christophpickl.github.com.yobu
 
+import java.util.*
+
 class QuestionRepo(private val questions: List<Question>) {
 
     private var index = 0
 
     fun nextQuestion(): Question {
-        // randomize elements
-
         val question = questions[index]
         index++
         if (index >= questions.size) {
             index = 0
         }
-        return question
+        return question.copy(answers = question.answers.randomizeElements())
     }
 
+}
+
+fun <T> List<T>.randomizeElements(): List<T> {
+    return toMutableList().apply {
+        Collections.shuffle(this)
+    }
 }
