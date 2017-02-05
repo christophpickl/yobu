@@ -1,6 +1,8 @@
 package yobu.christophpickl.github.com.yobu.activity
 
+import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,15 +14,21 @@ import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.Answer
+import yobu.christophpickl.github.com.yobu.Question
+import yobu.christophpickl.github.com.yobu.R
 import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
 import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
-import yobu.christophpickl.github.com.yobu.R
+import yobu.christophpickl.github.com.yobu.logic.createPreferences
+import yobu.christophpickl.github.com.yobu.misc.LOG
+
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private val LOG = yobu.christophpickl.github.com.yobu.misc.LOG(MainActivity::class.java)
+        private val LOG = LOG(MainActivity::class.java)
     }
+
+    private val prefs by lazy { createPreferences() }
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
     private val btnStartRiddle by lazy { find<Button>(R.id.btnStartRiddle) }
@@ -31,20 +39,24 @@ class MainActivity : AppCompatActivity() {
         QuestionRepo(CatalogsRepository().load(resources.openRawResource(R.raw.questions_catalog)))
     }
 
+    private var currentHighScore = 0
+
     private var countCorrect: Int = 0
         get() = field
         set(value) {
-            if (field != value) {
-                txtCountCorrect.text = value.toString()
-            }
+            txtCountCorrect.text = "$value / $currentHighScore"
             field = value
         }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         LOG.i("onCreate(..)")
         // TODO properly recreate state
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        currentHighScore = prefs.highscore
+        countCorrect = 0 // force highscore number update
 
         btnStartRiddle.setOnClickListener {
             (btnStartRiddle.parent as LinearLayout).removeView(btnStartRiddle)
@@ -62,23 +74,29 @@ class MainActivity : AppCompatActivity() {
         answersList.setOnItemClickListener { parent, view, position, id ->
             LOG.d("onItemClickListener on position: $position")
             val answerLabel = view.find<TextView>(R.id.answerLabel)
-            onAnswerClicked(question.answers[position], answerLabel)
+            onAnswerClicked(question, question.answers[position], answerLabel)
         }
     }
 
-    private fun onAnswerClicked(answer: Answer, answerLabel: TextView) {
+    private fun onAnswerClicked(question: Question, selectedAnswer: Answer, answerLabel: TextView) {
         answersList.isEnabled = false
-        answerLabel.setBackgroundColor(if (answer.isCorrect) Color.GREEN else Color.RED)
+        answerLabel.setBackgroundColor(if (selectedAnswer.isCorrect) Color.GREEN else Color.RED)
 
-        if (answer.isCorrect) {
+        if (selectedAnswer.isCorrect) {
             countCorrect++
+            if (countCorrect - 1 == currentHighScore) {
+                toast("Highscore gebrochen!")
+            }
         } else {
-            toast("Falsche Antwort!")
+            val correctAnswerView = answersList.getChildAt(question.indexOfCorrectAnswer).find<TextView>(R.id.answerLabel)
+            correctAnswerView.setBackgroundColor(Color.GREEN)
+
+            toast("Falsche Antwort! (${question.correctAnswer.text})")
         }
 
-        runDelayed(500) {
+        runDelayed(if(selectedAnswer.isCorrect) 500 else 2000) {
             answersList.isEnabled = true
-            if (answer.isCorrect) {
+            if (selectedAnswer.isCorrect) {
                 onNextQuestion()
             } else {
                 onRestartRiddle()
@@ -87,6 +105,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onRestartRiddle() {
+        val oldHighscore = prefs.highscore
+        val newHighscore = countCorrect
+        if (newHighscore > oldHighscore) {
+            toast("Juchu, neue Highscore: $newHighscore!")
+            prefs.highscore = newHighscore
+            currentHighScore = newHighscore
+        }
+
         countCorrect = 0
         onNextQuestion()
     }
@@ -96,7 +122,8 @@ class MainActivity : AppCompatActivity() {
 
 class AnswersListAdapter(
         context: Context,
-        private val answers: List<Answer>)
+        private val answers: List<Answer>
+)
     : ArrayAdapter<Answer>(context, R.layout.list_answer, answers.toTypedArray()) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
