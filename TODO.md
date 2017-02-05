@@ -2,9 +2,10 @@
 # TODOs
 
 ## NOW
-* app auf handy zum laufen bekommen
+* question catalog lage fuer alle punkte
 
 ## High
+* mehr als 3 falsche antwort ermoeglichen aber nur 3 random nehmen/limitten
 * persistenz layer (highscore, fuer advanced question algorithm)
 * add progress bar for highscore indicator at bottom of screen
 * answers jedesmal beim question aufruf shufflen
