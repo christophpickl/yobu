@@ -10,28 +10,101 @@
       ]
     },
     {
-      "text": "Lage vom Bo Punkt von Lunge?",
-      "answers": [
-        {
-          "text": "Unter dem Schlüsselbein"
-        },
-        {
-          "text": "Ende 12. Rippe"
-        },
-        {
-          "text": "4C oberhalb Nabel"
-        },
-        {
-          "text": "3C unterhalb Nabel"
-        }
-      ]
-    },
-    {
       "text": "Der Bo Punkt von Dickdarm?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
         {
           "text": "Ma25"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Magen?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "KG12"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Milz?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "Le13"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Herz?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "KG14"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Dünndarm?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "KG4"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Blase?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "KG3"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Niere?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "Gb25"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Perikard?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "KG17"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von 3E?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "KG5"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Gallenblase?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "Gb24"
+        }
+      ]
+    },
+    {
+      "text": "Der Bo Punkt von Leber?",
+      "flags": [ "RANDOM_BO_PUNCT" ],
+      "answers": [
+        {
+          "text": "Le14"
         }
       ]
     }
