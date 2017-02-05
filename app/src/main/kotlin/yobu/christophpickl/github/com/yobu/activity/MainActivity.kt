@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         if (answer.isCorrect) {
             countCorrect++
         } else {
-            toast("Flasche Antwort!")
+            toast("Falsche Antwort!")
         }
 
         runDelayed(500) {
