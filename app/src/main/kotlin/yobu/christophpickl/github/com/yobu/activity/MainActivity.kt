@@ -1,8 +1,6 @@
 package yobu.christophpickl.github.com.yobu.activity
 
-import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -31,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     private val prefs by lazy { createPreferences() }
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
-    private val btnStartRiddle by lazy { find<Button>(R.id.btnStartRiddle) }
     private val answersList by lazy { find<ListView>(R.id.answersList) }
     private val txtCountCorrect by lazy { find<TextView>(R.id.txtCountCorrect) }
 
@@ -51,17 +48,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         LOG.i("onCreate(..)")
-        // TODO properly recreate state
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         currentHighScore = prefs.highscore
         countCorrect = 0 // force highscore number update
 
-        btnStartRiddle.setOnClickListener {
-            (btnStartRiddle.parent as LinearLayout).removeView(btnStartRiddle)
-            onNextQuestion()
-        }
+        onNextQuestion()
     }
 
     private fun onNextQuestion() {
@@ -90,8 +83,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val correctAnswerView = answersList.getChildAt(question.indexOfCorrectAnswer).find<TextView>(R.id.answerLabel)
             correctAnswerView.setBackgroundColor(Color.GREEN)
-
-            toast("Falsche Antwort! (${question.correctAnswer.text})")
+            toast("Falsche Antwort!")
         }
 
         runDelayed(if(selectedAnswer.isCorrect) 500 else 2000) {

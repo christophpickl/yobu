@@ -27,19 +27,12 @@
             android:id="@+id/txtOutput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="Ready for some rumble?!" />
+            android:textSize="20sp" />
 
         <ListView
             android:id="@+id/answersList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btnStartRiddle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start the riddle" />
 
     </LinearLayout>
 </RelativeLayout>
