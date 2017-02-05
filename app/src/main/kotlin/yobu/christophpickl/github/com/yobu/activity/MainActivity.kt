@@ -83,7 +83,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             val correctAnswerView = answersList.getChildAt(question.indexOfCorrectAnswer).find<TextView>(R.id.answerLabel)
             correctAnswerView.setBackgroundColor(Color.GREEN)
-            toast("Falsche Antwort!")
         }
 
         runDelayed(if(selectedAnswer.isCorrect) 500 else 2000) {
