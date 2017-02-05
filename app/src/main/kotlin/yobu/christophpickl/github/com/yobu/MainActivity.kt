@@ -23,7 +23,9 @@ class MainActivity : AppCompatActivity() {
     private val answersList by lazy { find<ListView>(R.id.answersList) }
     private val txtCountCorrect by lazy { find<TextView>(R.id.txtCountCorrect) }
 
-    private val questions = QuestionRepo()
+    private val questions by lazy {
+        QuestionRepo(CatalogsRepository().load(resources.openRawResource(R.raw.questions_catalog)))
+    }
 
     private var countCorrect: Int = 0
         get() = field

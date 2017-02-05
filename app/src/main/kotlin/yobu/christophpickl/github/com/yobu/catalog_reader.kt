@@ -1,10 +1,21 @@
 package yobu.christophpickl.github.com.yobu
 
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
 
+class CatalogsRepository {
+    fun load(questionsStream: InputStream): List<Question> {
+        return JsonQuestionReader().read(questionsStream).questions.map { question ->
+            Question(question.text, question.answers.mapIndexed { i, answer ->
+                Answer(answer.text, isCorrect = i == 0)
+            })
+        }
+    }
+}
 
-data class JsonQuestion(val text: String)
+data class JsonAnswer(val text: String)
+data class JsonQuestion(val text: String, val answers: List<JsonAnswer>)
 
 data class JsonCatalog(val questions: List<JsonQuestion>)
 
@@ -18,18 +29,28 @@ class JsonQuestionReader {
     fun read(questionsStream: InputStream): JsonCatalog {
         val rawJson = questionsStream.readString()
         val json = JSONObject(rawJson)
-        val questions = json.getJSONArray("questions_catalog")
         LOG.d { "Read JSON: $json" }
 
-        return JsonCatalog(
-                1.rangeTo(questions.length()).map {
-                    toJsonQuestion(questions.getJSONObject(it - 1))
-                })
+        return JsonCatalog(json.getJSONArray("questions").map {
+            toJsonQuestion(it)
+        })
     }
 
     private fun toJsonQuestion(json: JSONObject): JsonQuestion {
+        val answers = emptyList<JsonAnswer>()
         return JsonQuestion(
-                json.getString("text")
+                json.getString("text"),
+                json.getJSONArray("answers").map { toJsonAnswer(it) }
         )
+    }
+
+    private fun toJsonAnswer(json: JSONObject): JsonAnswer {
+        return JsonAnswer(json.getString("text"))
+    }
+}
+
+fun <T> JSONArray.map(transform: (JSONObject) -> T): List<T> {
+    return 1.rangeTo(this.length()).map {
+        transform(getJSONObject(it - 1))
     }
 }

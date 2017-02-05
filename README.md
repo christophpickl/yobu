@@ -20,6 +20,7 @@ Simple Shiatsu quiz app for checking your knowledge of bo and yu points
 * fragenkatalog in JSON/XML (oder evtl codegen? oder evtl from web, damit nicht neue app version deployen muss)
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random)
 * display artifact version in app
+* dynamic answers containing He1-coordinate (specifying "except punct")
 
 ## Low
 * DE und EN
