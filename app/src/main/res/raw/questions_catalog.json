@@ -2,7 +2,7 @@
   "questions": [
     {
       "text": "Bo Punkt von Lunge?",
-      "flags": [ "RANDOM_PUNCT" ],
+      "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
         {
           "text": "Lu1"
@@ -28,7 +28,7 @@
     },
     {
       "text": "Der Bo Punkt von Dickdarm?",
-      "flags": [ "RANDOM_PUNCT" ],
+      "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
         {
           "text": "Ma25"

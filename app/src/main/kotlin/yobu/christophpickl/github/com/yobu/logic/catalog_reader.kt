@@ -59,9 +59,9 @@ class CatalogsRepository {
     }
 
     private fun transformAnswers(question: JsonQuestion): List<Answer> {
-        if (question.flags.contains(QuestionFlag.RANDOM_PUNCT)) {
+        if (question.flags.contains(QuestionFlag.RANDOM_BO_PUNCT)) {
             if (question.answers.size != 1) {
-                throw RuntimeException("Expected only 1 answer if RANDOM_PUNCT is set, but was: ${question.answers.size}!")
+                throw RuntimeException("Expected only 1 answer if RANDOM_BO_PUNCT is set, but was: ${question.answers.size}!")
             }
             val answer = question.answers[0]
             val list = mutableListOf(Answer(answer.text, isCorrect = true))
@@ -82,7 +82,7 @@ class CatalogsRepository {
 }
 
 enum class QuestionFlag {
-    RANDOM_PUNCT
+    RANDOM_BO_PUNCT
 }
 
 data class JsonAnswer(val text: String)

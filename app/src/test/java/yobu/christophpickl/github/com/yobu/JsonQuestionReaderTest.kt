@@ -17,7 +17,7 @@ class JsonQuestionReaderTest : RobolectricTest() {
                   "questions": [
                     {
                       "text": "Der Bo Punkt von Lunge?",
-                      "flags": [ "RANDOM_PUNCT" ],
+                      "flags": [ "RANDOM_BO_PUNCT" ],
                       "answers": [
                         {
                           "text": "Lu1"
@@ -29,7 +29,7 @@ class JsonQuestionReaderTest : RobolectricTest() {
             """))
             assertThat(catalog.questions, hasSize(1))
             assertThat(catalog.questions[0].text, equalTo("Der Bo Punkt von Lunge?"))
-            assertThat(catalog.questions[0].flags, contains(QuestionFlag.RANDOM_PUNCT))
+            assertThat(catalog.questions[0].flags, contains(QuestionFlag.RANDOM_BO_PUNCT))
             assertThat(catalog.questions[0].answers, hasSize(1))
             assertThat(catalog.questions[0].answers[0].text, equalTo("Lu1"))
         }
