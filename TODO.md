@@ -2,8 +2,8 @@
 # TODOs
 
 ## NOW
+* gleich main screen anzeigen (zwischenstep raus)
 * question catalog lage fuer alle punkte
-* recreate state properly
 * persistenz layer (highscore, fuer advanced question algorithm)
 * add progress bar for highscore indicator at bottom of screen
 
@@ -11,10 +11,12 @@
 * mehr als 3 falsche antwort ermoeglichen aber nur 3 random nehmen/limitten
 * answers jedesmal beim question aufruf shufflen
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random)
+* recreate state properly
 
 ## Med
 * display artifact version in app (global menu thingy)
 * travis build
+* check for DI framework in kotlin+android => testability of rand stuff
 
 ## Low
 * load questions catalog from web

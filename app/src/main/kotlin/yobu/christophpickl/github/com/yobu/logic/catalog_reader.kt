@@ -38,19 +38,32 @@ data class PunctCoordinate(val meridian: Meridian, val point: Int) {
     fun toNiceString() = meridian.text + point
 }
 
-object BoPunctRandomGenerator {
+private enum class BoDistributionItem(val percent: Int, val meridian: Meridian) {
+    KG(60, Meridian.KG),
+    Lu(10, Meridian.Lu),
+    Ma(10, Meridian.Ma),
+    Le(10, Meridian.Le),
+    Gb(10, Meridian.Gb)
+    // TODO special type: use same meridian as "except" instance but different point
+}
+class BoPunctGenerator(private val randX: RandX = RandXImpl) {
+
+    private val distribution = Distribution(BoDistributionItem.values().map { DistributionItem<Meridian>(it.percent, it.meridian) })
+
     fun generate(except: PunctCoordinate): PunctCoordinate {
-        // TODO change likelyhoods of Bo punct generator
-        // * KG=70%
-        // * Lu/Ma/Le/Gb restlichen 30%
-        // MINOR waere cool wenn zb nach Perikard bo punkt fragt, auch evtl ein rand Pk punkt dabei ist
-        val randMeridian = Random.randomOf(Meridian.values(), except.meridian)
-        val randPoint = Random.randomBetween(1, randMeridian.points, except.point)
+        val randMeridian = randX.distributed(distribution)
+
+        val exceptPoint = if(randMeridian == except.meridian) except.point else null
+        val randPoint = randX.randomBetween(1, randMeridian.points, exceptPoint)
+
         return PunctCoordinate(randMeridian, randPoint)
     }
 }
 
 class CatalogsRepository {
+
+    private val boGenerator = BoPunctGenerator()
+
     fun load(questionsStream: InputStream): List<Question> {
         return JsonQuestionReader().read(questionsStream).questions.map { question ->
             Question(question.text, transformAnswers(question))
@@ -75,7 +88,7 @@ class CatalogsRepository {
 
     private fun generateRandomAnswers(except: PunctCoordinate): List<Answer> {
         return 1.rangeTo(3).map {
-            Answer(BoPunctRandomGenerator.generate(except).toNiceString())
+            Answer(boGenerator.generate(except).toNiceString())
         }
     }
 }
