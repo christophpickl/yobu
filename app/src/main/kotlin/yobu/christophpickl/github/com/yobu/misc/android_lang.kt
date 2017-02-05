@@ -6,17 +6,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 
-object Random {
-//    private val randomizer = SecureRandom()
-//    fun next() = randomizer.nextInt()
-    fun <T> randomOf(list: List<T>) = list[randomBetween(0, list.size - 1)]
-    fun randomBetween(from: Int, to: Int): Int {
-        val diff = to - from
-        return Math.round(Math.random() * diff).toInt()
-    }
-}
-
-
 fun LOG(javaClass: Class<out Any>) = Log2(javaClass)
 
 class Log2(javaClass: Class<out Any>) {
