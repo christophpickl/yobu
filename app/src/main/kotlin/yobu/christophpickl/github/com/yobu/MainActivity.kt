@@ -14,7 +14,7 @@ import com.pawegio.kandroid.toast
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private val LOG = LOG(javaClass)
+        private val LOG = LOG(MainActivity::class.java)
     }
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onAnswerClicked(answer: Answer, answerLabel: TextView) {
+        answersList.isEnabled = false
         answerLabel.setBackgroundColor(if (answer.isCorrect) Color.GREEN else Color.RED)
 
         if (answer.isCorrect) {
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         runLaterOnUiThread(500) {
+            answersList.isEnabled = true
             if (answer.isCorrect) {
                 onNextQuestion()
             } else {

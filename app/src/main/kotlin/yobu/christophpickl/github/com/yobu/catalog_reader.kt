@@ -11,7 +11,7 @@ data class JsonCatalog(val questions: List<JsonQuestion>)
 class JsonQuestionReader {
 
     companion object {
-        private val LOG = LOG(javaClass)
+        private val LOG = LOG(JsonQuestionReader::class.java)
     }
     // val questionsInputStream = resources.openRawResource(R.raw.questions_catalog)
     // val rawJson = Resources.getSystem().getString(R.raw.questions_catalog)

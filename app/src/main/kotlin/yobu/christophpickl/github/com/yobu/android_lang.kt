@@ -9,9 +9,9 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 
-fun LOG(javaClass: Class<Any>) = Log2(javaClass)
+fun LOG(javaClass: Class<out Any>) = Log2(javaClass)
 
-class Log2(javaClass: Class<Any>) {
+class Log2(javaClass: Class<out Any>) {
     private val tag = javaClass.simpleName
 
     fun d(lazyMessage: () -> String) {
