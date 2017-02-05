@@ -8,6 +8,7 @@ Simple Shiatsu quiz app for checking your knowledge of bo and yu points
 ## High
 * answers shufflen
 * persistenz layer (highscore, fuer advanced question algorithm)
+* travis build
 
 ## Med
 * fragenkatalog in JSON/XML (oder evtl codegen? oder evtl from web, damit nicht neue app version deployen muss)

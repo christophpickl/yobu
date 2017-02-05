@@ -2,16 +2,14 @@ package yobu.christophpickl.github.com.yobu
 
 import android.content.Context
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.inflateLayout
-import com.pawegio.kandroid.runOnUiThread
 import com.pawegio.kandroid.toast
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
