@@ -43,7 +43,7 @@ object BoPunctRandomGenerator {
         // TODO change likelyhoods of Bo punct generator
         // * KG=70%
         // * Lu/Ma/Le/Gb restlichen 30%
-        // waere cool, wenn zb nach Perikard bo punkt fragt, auch evtl ein rand Pk punkt dabei ist
+        // MINOR waere cool wenn zb nach Perikard bo punkt fragt, auch evtl ein rand Pk punkt dabei ist
         val randMeridian = Random.randomOf(Meridian.values(), except.meridian)
         val randPoint = Random.randomBetween(1, randMeridian.points, except.point)
         return PunctCoordinate(randMeridian, randPoint)

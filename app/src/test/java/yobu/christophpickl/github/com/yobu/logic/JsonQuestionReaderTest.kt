@@ -1,9 +1,10 @@
-package yobu.christophpickl.github.com.yobu
+package yobu.christophpickl.github.com.yobu.logic
 
 import org.apache.tools.ant.filters.StringInputStream
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
 import yobu.christophpickl.github.com.yobu.logic.JsonQuestionReader
 import yobu.christophpickl.github.com.yobu.logic.QuestionFlag
 

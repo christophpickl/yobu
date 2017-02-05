@@ -1,4 +1,4 @@
-package yobu.christophpickl.github.com.yobu
+package yobu.christophpickl.github.com.yobu.testinfra
 
 import android.support.v7.app.AppCompatActivity
 import org.junit.runner.RunWith
