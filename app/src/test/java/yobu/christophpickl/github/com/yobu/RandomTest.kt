@@ -3,6 +3,7 @@ package yobu.christophpickl.github.com.yobu
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.misc.Random
 
 class RandomTest {
     @Test

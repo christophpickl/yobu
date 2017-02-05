@@ -1,6 +1,6 @@
 package yobu_main
 
-import yobu.christophpickl.github.com.yobu.JsonQuestionReader
+import yobu.christophpickl.github.com.yobu.logic.JsonQuestionReader
 import java.io.File
 import java.io.FileInputStream
 

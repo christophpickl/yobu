@@ -1,7 +1,10 @@
-package yobu.christophpickl.github.com.yobu
+package yobu.christophpickl.github.com.yobu.logic
 
 import org.json.JSONArray
 import org.json.JSONObject
+import yobu.christophpickl.github.com.yobu.Answer
+import yobu.christophpickl.github.com.yobu.Question
+import yobu.christophpickl.github.com.yobu.misc.readString
 import java.io.InputStream
 
 class CatalogsRepository {
@@ -22,7 +25,7 @@ data class JsonCatalog(val questions: List<JsonQuestion>)
 class JsonQuestionReader {
 
     companion object {
-        private val LOG = LOG(JsonQuestionReader::class.java)
+        private val LOG = yobu.christophpickl.github.com.yobu.misc.LOG(JsonQuestionReader::class.java)
     }
     // val questionsInputStream = resources.openRawResource(R.raw.questions_catalog)
     // val rawJson = Resources.getSystem().getString(R.raw.questions_catalog)

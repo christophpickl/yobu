@@ -1,4 +1,4 @@
-package yobu.christophpickl.github.com.yobu
+package yobu.christophpickl.github.com.yobu.activity
 
 import android.content.Context
 import android.graphics.Color
@@ -11,11 +11,15 @@ import com.pawegio.kandroid.find
 import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
+import yobu.christophpickl.github.com.yobu.Answer
+import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
+import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
+import yobu.christophpickl.github.com.yobu.R
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private val LOG = LOG(MainActivity::class.java)
+        private val LOG = yobu.christophpickl.github.com.yobu.misc.LOG(MainActivity::class.java)
     }
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }

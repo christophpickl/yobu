@@ -1,14 +1,10 @@
-package yobu.christophpickl.github.com.yobu
+package yobu.christophpickl.github.com.yobu.misc
 
 import android.util.Log
-import com.pawegio.kandroid.runDelayed
-import com.pawegio.kandroid.runOnUiThread
-import java.util.*
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.security.SecureRandom
 
 object Random {
 //    private val randomizer = SecureRandom()
@@ -61,13 +57,12 @@ fun InputStream.readString(): String {
             line = reader.readLine()
         }
     } catch (e: IOException) {
-        // TODO fix exception handling
-        e.printStackTrace()
+        throw RuntimeException("Failed to read from input stream!", e)
     } finally {
         try {
             this.close()
         } catch (e: IOException) {
-            e.printStackTrace()
+            throw RuntimeException("Failed to close input stream!", e)
         }
 
     }
