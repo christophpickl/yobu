@@ -15,10 +15,51 @@ import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
  */
 class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsRepository {
     companion object {
+
         private val LOG = LOG(QuestionStatisticsSqliteRepository::class.java)
     }
 
     private val sqlOpen = QuestionStatisticsOpenHelper(context)
+
+    override fun read(id: String): QuestionStatistic? {
+        LOG.d { "read($id)" }
+
+        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME WHERE ${Column.ID.key} = ?", arrayOf(id))
+
+        if (cursor.count == 0) {
+            return null
+        }
+        cursor.moveToFirst()
+        val statistic = cursor.readQuestionStatistic()
+        cursor.close()
+        return statistic
+    }
+
+    override fun readAll(): List<QuestionStatistic> {
+        LOG.d("readAll()")
+        // new String[] { "(SELECT max(column1) FROM table1) AS max" }
+        // http://stackoverflow.com/questions/10600670/sqlitedatabase-query-method
+
+        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY ${Column.ID.key}", null)
+
+        if (cursor.count == 0) {
+            return emptyList()
+        }
+
+        val statistics = mutableListOf<QuestionStatistic>()
+        cursor.moveToFirst()
+        do {
+            statistics += cursor.readQuestionStatistic()
+        } while (cursor.moveToNext())
+        cursor.close()
+        return statistics
+    }
+
+    private fun Cursor.readQuestionStatistic() = QuestionStatistic(
+            id = readString(Column.ID),
+            countCorrect = readInt(Column.COUNT_CORRECT)
+    )
+
 
     override fun insertOrUpdate(statistic: QuestionStatistic) {
         println("insert $statistic")
@@ -34,40 +75,13 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
         }
     }
 
-
-    override fun readAll(): List<QuestionStatistic> {
-        LOG.d("readAll()")
-        // new String[] { "(SELECT max(column1) FROM table1) AS max" }
-        // http://stackoverflow.com/questions/10600670/sqlitedatabase-query-method
-//        val whereClause = ""
-//        val whereArgs = emptyArray<String>()
-//        val cursor = sqlOpen.readableDatabase.query(TABLE_NAME, null, whereClause, whereArgs, null, null, null)
-
-        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY ${Column.ID.key}", null)
-
-        if (cursor.count == 0) {
-            return emptyList()
-        }
-
-        val statistics = mutableListOf<QuestionStatistic>()
-        cursor.moveToFirst()
-        do {
-            statistics += QuestionStatistic(
-                    id = cursor.readString(Column.ID),
-                    countCorrect = cursor.readInt(Column.COUNT_CORRECT)
-            )
-                    .apply { println("read: $this") }
-        } while(cursor.moveToNext())
-        cursor.close()
-        return statistics
-    }
-
 }
 
 private fun Cursor.readString(column: Column): String {
     val index = getColumnIndex(column.key)
     return getString(index)
 }
+
 private fun Cursor.readInt(column: Column): Int {
     val index = getColumnIndex(column.key)
     return getInt(index)
@@ -94,6 +108,7 @@ private enum class Column(val key: String, val type: String, val isPrimary: Bool
     abstract fun toSqlProp(statistic: QuestionStatistic): SqlProp
 
 }
+
 private val ALL_COLUMNS: Array<String> = Column.values().map { it.key }.toTypedArray()
 
 /**
@@ -174,6 +189,7 @@ private sealed class SqlProp(val column: Column) {
             values.put(column.key, value)
         }
     }
+
     class SqlPropInt(column: Column, val value: Int) : SqlProp(column) {
         override fun putYourselfTo(values: ContentValues) {
             values.put(column.key, value)

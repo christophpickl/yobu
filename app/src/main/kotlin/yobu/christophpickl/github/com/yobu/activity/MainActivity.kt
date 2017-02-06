@@ -14,8 +14,11 @@ import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.Answer
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.R
+import yobu.christophpickl.github.com.yobu.logic.CachedQuestionStatisticsRepository
 import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
 import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
+import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 import yobu.christophpickl.github.com.yobu.misc.LOG
 
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         private val LOG = LOG(MainActivity::class.java)
     }
 
+    private val stats by lazy { QuestionStatisticService(this) }
     private val prefs by lazy { createPreferences() }
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
@@ -33,7 +37,9 @@ class MainActivity : AppCompatActivity() {
     private val txtCountCorrect by lazy { find<TextView>(R.id.txtCountCorrect) }
 
     private val questions by lazy {
-        QuestionRepo(CatalogsRepository().load(resources.openRawResource(R.raw.questions_catalog)))
+        QuestionRepo(
+                CatalogsRepository().load(resources.openRawResource(R.raw.questions_catalog)),
+                stats)
     }
 
     private var currentHighScore = 0
@@ -76,11 +82,13 @@ class MainActivity : AppCompatActivity() {
         answerLabel.setBackgroundColor(if (selectedAnswer.isCorrect) Color.GREEN else Color.RED)
 
         if (selectedAnswer.isCorrect) {
+            stats.correctAnswered(question)
             countCorrect++
             if (countCorrect - 1 == currentHighScore) {
                 toast("Highscore gebrochen!")
             }
         } else {
+            stats.wrongAnswered(question)
             val correctAnswerView = answersList.getChildAt(question.indexOfCorrectAnswer).find<TextView>(R.id.answerLabel)
             correctAnswerView.setBackgroundColor(Color.GREEN)
         }

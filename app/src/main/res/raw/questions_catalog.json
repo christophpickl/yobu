@@ -1,6 +1,7 @@
 {
   "questions": [
     {
+      "id": "BoPunktLu",
       "text": "Bo Punkt von Lunge?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -10,6 +11,7 @@
       ]
     },
     {
+      "id": "BoPunktDi",
       "text": "Der Bo Punkt von Dickdarm?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -19,6 +21,7 @@
       ]
     },
     {
+      "id": "BoPunktMa",
       "text": "Der Bo Punkt von Magen?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -28,6 +31,7 @@
       ]
     },
     {
+      "id": "BoPunktMP",
       "text": "Der Bo Punkt von Milz?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -37,6 +41,7 @@
       ]
     },
     {
+      "id": "BoPunktHe",
       "text": "Der Bo Punkt von Herz?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -46,6 +51,7 @@
       ]
     },
     {
+      "id": "BoPunktDue",
       "text": "Der Bo Punkt von Dünndarm?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -55,6 +61,7 @@
       ]
     },
     {
+      "id": "BoPunktBl",
       "text": "Der Bo Punkt von Blase?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -64,6 +71,7 @@
       ]
     },
     {
+      "id": "BoPunktNi",
       "text": "Der Bo Punkt von Niere?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -73,6 +81,7 @@
       ]
     },
     {
+      "id": "BoPunktPk",
       "text": "Der Bo Punkt von Perikard?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -82,6 +91,7 @@
       ]
     },
     {
+      "id": "BoPunkt3E",
       "text": "Der Bo Punkt von 3E?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -91,6 +101,7 @@
       ]
     },
     {
+      "id": "BoPunktGb",
       "text": "Der Bo Punkt von Gallenblase?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -100,6 +111,7 @@
       ]
     },
     {
+      "id": "BoPunktLe",
       "text": "Der Bo Punkt von Leber?",
       "flags": [ "RANDOM_BO_PUNCT" ],
       "answers": [
@@ -109,6 +121,7 @@
       ]
     },
     {
+      "id": "BoLageLu",
       "text": "Lage von Bo Punkt für Lunge?",
       "answers": [
         {

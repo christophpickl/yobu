@@ -66,7 +66,7 @@ class CatalogsRepository {
 
     fun load(questionsStream: InputStream): List<Question> {
         return JsonQuestionReader().read(questionsStream).questions.map { question ->
-            Question(question.text, transformAnswers(question))
+            Question(question.id, question.text, transformAnswers(question))
         }
     }
 
@@ -99,6 +99,7 @@ enum class QuestionFlag {
 
 data class JsonAnswer(val text: String)
 data class JsonQuestion(
+        val id: String,
         val text: String,
         val flags: List<QuestionFlag>,
         val answers: List<JsonAnswer>)
@@ -125,6 +126,7 @@ class JsonQuestionReader {
 
     private fun toJsonQuestion(json: JSONObject): JsonQuestion {
         return JsonQuestion(
+                json.getString("id"),
                 json.getString("text"),
                 json.optJSONArray("flags")?.let { toFlags(it) } ?: emptyList(),
                 json.getJSONArray("answers").map { toJsonAnswer(it) }
