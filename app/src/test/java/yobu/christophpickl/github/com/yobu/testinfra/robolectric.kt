@@ -1,6 +1,7 @@
 package yobu.christophpickl.github.com.yobu.testinfra
 
 import android.support.v7.app.AppCompatActivity
+import android.test.AndroidTestCase
 import org.junit.runner.RunWith
 import org.junit.runners.model.InitializationError
 import org.robolectric.Robolectric
@@ -9,7 +10,7 @@ import org.robolectric.annotation.Config
 
 
 @RunWith(CustomRobolectricTestRunner::class)
-abstract class RobolectricTest {
+abstract class RobolectricTest { // AndroidTestCase()
 
     fun withTestActivity(code: (AppCompatActivity) -> Unit) {
         val activity = Robolectric.setupActivity(TestActivity::class.java)

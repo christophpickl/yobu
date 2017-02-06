@@ -12,7 +12,8 @@ import android.database.Cursor
  * Model.
  */
 data class QuestionStatistic(
-        val id: String
+        val id: String,
+        val countCorrect: Int
 ) {
     companion object // needed for (test) extensions
 }
@@ -37,10 +38,17 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
     private val sqlOpen = QuestionStatisticsOpenHelper(context)
 
     override fun insertOrUpdate(statistic: QuestionStatistic) {
+        println("insert $statistic")
         LOG.d { "insertOrUpdate($statistic)" }
-        sqlOpen.transactionSaveInsert(
-                SqlProp.SqlPropString(Column.ID, statistic.id)
-        )
+        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT ${Column.ID.key} FROM $TABLE_NAME WHERE ${Column.ID.key} = ?", arrayOf(statistic.id))
+        val shouldInsert = cursor.count == 0
+        cursor.close()
+        val props = Column.mapAllToSqlProp(statistic)
+        if (shouldInsert) {
+            sqlOpen.transactionSaveInsert(props)
+        } else {
+            sqlOpen.update(statistic.id, props)
+        }
     }
 
 
@@ -52,7 +60,7 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
 //        val whereArgs = emptyArray<String>()
 //        val cursor = sqlOpen.readableDatabase.query(TABLE_NAME, null, whereClause, whereArgs, null, null, null)
 
-        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME", null)
+        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY ${Column.ID.key}", null)
 
         if (cursor.count == 0) {
             return emptyList()
@@ -62,8 +70,10 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
         cursor.moveToFirst()
         do {
             statistics += QuestionStatistic(
-                    id = cursor.readString(Column.ID)
+                    id = cursor.readString(Column.ID),
+                    countCorrect = cursor.readInt(Column.COUNT_CORRECT)
             )
+                    .apply { println("read: $this") }
         } while(cursor.moveToNext())
         cursor.close()
         return statistics
@@ -75,16 +85,30 @@ private fun Cursor.readString(column: Column): String {
     val index = getColumnIndex(column.key)
     return getString(index)
 }
+private fun Cursor.readInt(column: Column): Int {
+    val index = getColumnIndex(column.key)
+    return getInt(index)
+}
 
 
 private val TABLE_NAME = "tbl_question_statistics"
 
 private enum class Column(val key: String, val type: String, val isPrimary: Boolean = false) {
 
-    ID("id", "TEXT", isPrimary = true)
+    ID("id", "TEXT", isPrimary = true) {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropString(this, statistic.id)
+    },
+    COUNT_CORRECT("count_correct", "INTEGER") {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropInt(this, statistic.countCorrect)
+    }
     ;
 
-    fun toCreateSql() = "${key} ${type} ${if (isPrimary) " PRIMARY KEY" else ""}"
+    companion object {
+        fun mapAllToSqlProp(statistic: QuestionStatistic) = values().map { it.toSqlProp(statistic) }
+    }
+
+    fun toCreateSql() = "$key $type ${if (isPrimary) " PRIMARY KEY" else ""}"
+    abstract fun toSqlProp(statistic: QuestionStatistic): SqlProp
 
 }
 private val ALL_COLUMNS: Array<String> = Column.values().map { it.key }.toTypedArray()
@@ -108,27 +132,42 @@ private class QuestionStatisticsOpenHelper internal constructor(context: Context
                 """ // countX INTEGER
     }
 
-    fun transactionSaveInsert(vararg props: SqlProp) {
+    fun transactionSaveInsert(props: List<SqlProp>) {
         val contentValues = SqlProp.build(props)
-        with(writableDatabase) {
-            beginTransaction()
-            try {
-                insert(TABLE_NAME, null, contentValues)
-                setTransactionSuccessful()
-            } finally {
-                endTransaction()
-            }
+
+        withTransaction {
+            insert(TABLE_NAME, null, contentValues)
+        }
+    }
+
+    fun update(id: String, props: List<SqlProp>) {
+        val contentValues = SqlProp.build(props)
+
+        withTransaction {
+            writableDatabase.update(TABLE_NAME, contentValues, "id = ?", arrayOf(id))
         }
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-//        println("create DB $SQL_TABLE_CREATE")
+        println("create DB $SQL_TABLE_CREATE")
         LOG.i("onCreate(db=$db) SQL: SQL_TABLE_CREATE")
         db.execSQL(SQL_TABLE_CREATE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         LOG.i("onUpgrade(db=$db, oldVersion=$oldVersion, newVersion=$newVersion)")
+    }
+
+    private fun withTransaction(code: SQLiteDatabase.() -> Unit) {
+        with(writableDatabase) {
+            beginTransaction()
+            try {
+                code(this)
+                setTransactionSuccessful()
+            } finally {
+                endTransaction()
+            }
+        }
     }
 }
 
@@ -138,7 +177,7 @@ private class QuestionStatisticsOpenHelper internal constructor(context: Context
 private sealed class SqlProp(val column: Column) {
 
     companion object {
-        fun build(props: Array<out SqlProp>) = ContentValues().apply {
+        fun build(props: List<SqlProp>) = ContentValues().apply {
             props.forEach { prop ->
                 prop.putYourselfTo(this)
             }
@@ -148,6 +187,11 @@ private sealed class SqlProp(val column: Column) {
     protected abstract fun putYourselfTo(values: ContentValues)
 
     class SqlPropString(column: Column, val value: String) : SqlProp(column) {
+        override fun putYourselfTo(values: ContentValues) {
+            values.put(column.key, value)
+        }
+    }
+    class SqlPropInt(column: Column, val value: Int) : SqlProp(column) {
         override fun putYourselfTo(values: ContentValues) {
             values.put(column.key, value)
         }
