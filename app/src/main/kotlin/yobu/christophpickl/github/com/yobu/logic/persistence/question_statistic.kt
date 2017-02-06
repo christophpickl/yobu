@@ -6,26 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper
 import yobu.christophpickl.github.com.yobu.misc.LOG
 import android.content.ContentValues
 import android.database.Cursor
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
 
-
-/**
- * Model.
- */
-data class QuestionStatistic(
-        val id: String,
-        val countCorrect: Int
-) {
-    companion object // needed for (test) extensions
-}
-
-
-/**
- * Repository interface.
- */
-interface QuestionStatisticsRepository {
-    fun insertOrUpdate(statistic: QuestionStatistic)
-    fun readAll(): List<QuestionStatistic>
-}
 
 /**
  * Repository impl.

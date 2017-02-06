@@ -36,6 +36,8 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.2.2"
+//    testCompile 'org.mockito:mockito-core:2.7.4'
+    testCompile 'com.nhaarman:mockito-kotlin:1.2.0'
 }
 repositories {
     mavenCentral()

@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
 import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
 
 fun QuestionStatistic.Companion.testInstance() = QuestionStatistic(
