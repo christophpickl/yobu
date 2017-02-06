@@ -16,7 +16,7 @@ import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.R
 import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
 import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
-import yobu.christophpickl.github.com.yobu.logic.createPreferences
+import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 import yobu.christophpickl.github.com.yobu.misc.LOG
 
 

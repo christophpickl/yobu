@@ -1,4 +1,4 @@
-package yobu.christophpickl.github.com.yobu.logic
+package yobu.christophpickl.github.com.yobu.logic.persistence
 
 import android.app.Activity
 import android.content.Context
