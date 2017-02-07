@@ -9,47 +9,64 @@ import yobu.christophpickl.github.com.yobu.misc.RealClock
 import yobu.christophpickl.github.com.yobu.misc.associateMultiBy
 import java.util.*
 
+
 class QuestionStatisticService(
         private val repository: QuestionStatisticsRepository,
         private val clock: Clock = RealClock()
 ) {
     constructor(context: Context) : this(CachedQuestionStatisticsRepository(context, QuestionStatisticsSqliteRepository(context)))
 
-    companion object {
-        @VisibleForTesting fun calcPoints(statistic: QuestionStatistic): Double {
-            return statistic.countCorrect * -10.0
-        }
+    @VisibleForTesting fun calcPoints(statistic: QuestionStatistic): Double {
+        var datePoints = 0.0
+        datePoints += if (statistic.wasNotYetAnswered) 100.0 else 0.0
+        datePoints += statistic.lastAnswered?.calcPoints() ?: 0.0
+//        datePoints += statistic.lastRight?.calcPoints() ?: 0.0
+//        datePoints += statistic.lastWrong?.calcPoints() ?: 0.0
+
+        return statistic.countRight * -7.0 +
+                statistic.countWrong * 4.0 +
+                datePoints
     }
 
-    fun correctAnswered(question: Question) {
-        answered(question, correct = true)
+    private fun Date.calcPoints(): Double {
+        val daysOld = this.diffDaysToToday()
+        return daysOld * 2.0
+    }
+
+    private fun Date.diffDaysToToday(): Int {
+        val diffTime = clock.now().time - this.time
+        return (diffTime / (1000 * 60 * 60 * 24)).toInt()
+    }
+
+    fun rightAnswered(question: Question) {
+        answered(question, isRight = true)
     }
 
     fun wrongAnswered(question: Question) {
-        answered(question, correct = false)
+        answered(question, isRight = false)
     }
 
-    private fun answered(question: Question, correct: Boolean) {
+    private fun answered(question: Question, isRight: Boolean) {
         val maybeStat = repository.read(question.id)
 
         repository.insertOrUpdate(QuestionStatistic(
                 id = question.id,
-                countCorrect = if (correct) {
-                    maybeStat?.countCorrect?.inc() ?: 1
+                countRight = if (isRight) {
+                    maybeStat?.countRight?.inc() ?: 1
                 } else {
-                    maybeStat?.countCorrect ?: 0
+                    maybeStat?.countRight ?: 0
                 },
-                countWrong = if (correct) {
+                countWrong = if (isRight) {
                     maybeStat?.countWrong ?: 0
                 } else {
                     maybeStat?.countWrong?.inc() ?: 1
                 },
-                lastCorrect = if (correct) {
+                lastRight = if (isRight) {
                     clock.now()
                 } else {
-                    maybeStat?.lastCorrect
+                    maybeStat?.lastRight
                 },
-                lastWrong = if (correct) {
+                lastWrong = if (isRight) {
                     maybeStat?.lastWrong
                 } else {
                     clock.now()
@@ -83,15 +100,28 @@ class QuestionStatisticService(
  */
 data class QuestionStatistic(
         val id: String,
-        val countCorrect: Int,
+        val countRight: Int,
         val countWrong: Int,
-        val lastCorrect: Date?,
+        val lastRight: Date?,
         val lastWrong: Date?
 ) {
     companion object // needed for (test) extensions
 
-    val countTotal: Int get() = countCorrect + countWrong
+    val countTotal: Int get() = countRight + countWrong
+    val wasYetAnswered: Boolean = lastRight == null && lastWrong == null
+    val wasNotYetAnswered: Boolean = !wasYetAnswered
+
+    // TODO test this
     val lastAnswered: Date? get() {
+        if (lastRight != null && lastWrong != null) {
+            return if (lastRight.time > lastWrong.time) lastRight else lastWrong
+        }
+        if (lastRight != null) {
+            return lastRight
+        }
+        if (lastWrong != null) {
+            return lastWrong
+        }
         return null
     }
 }

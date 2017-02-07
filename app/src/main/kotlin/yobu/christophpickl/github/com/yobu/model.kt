@@ -1,7 +1,7 @@
 package yobu.christophpickl.github.com.yobu
 
 
-data class Answer(val text: String, val isCorrect: Boolean = false) {
+data class Answer(val text: String, val isRight: Boolean = false) {
     companion object // for (test) extensions
 }
 
@@ -10,8 +10,8 @@ data class Question(
         val text: String,
         val answers: List<Answer>
 ) {
-    val correctAnswer = answers.first { it.isCorrect }
-    val indexOfCorrectAnswer = answers.indexOfFirst { it.isCorrect }
+    val rightAnswer = answers.first { it.isRight }
+    val indexOfRightAnswer = answers.indexOfFirst { it.isRight }
 
     companion object // for (test) extensions
 }

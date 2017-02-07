@@ -13,6 +13,7 @@ import yobu.christophpickl.github.com.yobu.misc.Clock
 import yobu.christophpickl.github.com.yobu.misc.parseDateTime
 import yobu.christophpickl.github.com.yobu.testee
 import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
+import java.util.*
 
 
 private val question1 = Question.testee(id = "q1")
@@ -63,7 +64,7 @@ class QuestionRepoIT : RobolectricTest() {
 
             val firstQuestion = repo.nextQuestion()
 
-            stats.correctAnswered(firstQuestion)
+            stats.rightAnswered(firstQuestion)
 
             val secondQuestion = repo.nextQuestion()
             assertThat(secondQuestion, not(equalTo(firstQuestion)))
@@ -74,56 +75,59 @@ class QuestionRepoIT : RobolectricTest() {
 
 class QuestionStatisticServiceTest : RobolectricTest() {
 
-
+    companion object {
+        private val NOW_STRING = "2017-01-01 00:21:42"
+        private val NOW = NOW_STRING.parseDateTime()
+    }
 
     private val question = Question.testee()
     private val mockRepo = mock<QuestionStatisticsRepository>()
     private val mockClock = mock<Clock>()
     private val service = QuestionStatisticService(mockRepo, mockClock)
 
-    @Test fun correctAnswered_insertsNewQuestionStatistic() {
+    @Test fun rightAnswered_insertsNewQuestionStatistic() {
         setDefaultClock()
         withTestActivity { activity ->
-            service.correctAnswered(question)
+            service.rightAnswered(question)
         }
 
-        verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countCorrect = 1, lastCorrect = TEST_DATE))
+        verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = TEST_DATE))
     }
 
-    @Test fun correctAnswered_twice_insertsNewQuestionStatisticWithCount2() {
+    @Test fun rightAnswered_twice_insertsNewQuestionStatisticWithCount2() {
         setDefaultClock()
         whenever(mockRepo.read(question.id))
                 .thenReturn(null)
-                .thenReturn(QuestionStatistic.testee(id = question.id, countCorrect = 1)) // TODO set lastCorrect
+                .thenReturn(QuestionStatistic.testee(id = question.id, countRight = 1)) // TODO set lastRight
 
         withTestActivity { activity ->
-            service.correctAnswered(question)
-            service.correctAnswered(question)
+            service.rightAnswered(question)
+            service.rightAnswered(question)
         }
 
         val inOrder = inOrder(mockRepo)
-        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countCorrect = 1, lastCorrect = TEST_DATE))
-        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countCorrect = 2, lastCorrect = TEST_DATE))
+        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = TEST_DATE))
+        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 2, lastRight = TEST_DATE))
     }
 
-    @Test fun answerCorrectAndWrong() {
-        val statisticAfterCorrect = QuestionStatistic.testee(id = question.id, countCorrect = 1, lastCorrect = TEST_DATE1)
+    @Test fun answerRightAndWrong() {
+        val statisticAfterRight = QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = TEST_DATE1)
 
         whenever(mockClock.now())
                 .thenReturn(TEST_DATE1)
                 .thenReturn(TEST_DATE2)
         whenever(mockRepo.read(question.id))
                 .thenReturn(null)
-                .thenReturn(statisticAfterCorrect)
+                .thenReturn(statisticAfterRight)
 
         withTestActivity { activity ->
-            service.correctAnswered(question)
+            service.rightAnswered(question)
             service.wrongAnswered(question)
         }
 
         inOrder(mockRepo).apply {
-            verify(mockRepo).insertOrUpdate(statisticAfterCorrect)
-            verify(mockRepo).insertOrUpdate(statisticAfterCorrect.copy(countWrong = 1, lastWrong = TEST_DATE2))
+            verify(mockRepo).insertOrUpdate(statisticAfterRight)
+            verify(mockRepo).insertOrUpdate(statisticAfterRight.copy(countWrong = 1, lastWrong = TEST_DATE2))
         }
     }
 
@@ -140,49 +144,76 @@ class QuestionStatisticServiceTest : RobolectricTest() {
         service.nextQuestion(emptyMap())
     }
 
-    @Test fun nextQuestion_givenOneCorrectAnsweredAndOneUnanswered_returnsUnanswered() {
+    @Test fun nextQuestion_givenOneRightAnsweredAndOneUnanswered_returnsUnanswered() {
         whenMockRepoReadAllReturn(answered.toStatistic())
 
         assertThat(nextQuestion(answered, unanswered),
                 equalTo(unanswered))
     }
 
-    @Test fun nextQuestion_givenTwoCorrectAnsweredWithDifferentCountCorrect_returnsOneWithLessCountCorrect() {
+    @Test fun nextQuestion_givenTwoRightAnsweredWithDifferentCountRight_returnsOneWithLessCountRight() {
         whenMockRepoReadAllReturn(
-                answered1.toStatistic(countCorrect = 1),
-                answered2.toStatistic(countCorrect = 2))
+                answered1.toStatistic(countRight = 1),
+                answered2.toStatistic(countRight = 2))
 
         assertThat(nextQuestion(answered1, answered2),
                 equalTo(answered1))
     }
 
-    private val statCorrect0 = QuestionStatistic.testee(countCorrect = 0)
-    private val statCorrect1 = QuestionStatistic.testee(countCorrect = 1)
 
-    @Test fun calcPoints_countCorrect() {
-        assertBiggerPoints(statCorrect0, statCorrect1)
+    @Test fun calcPoints() {
+        setDefaultClockDate(NOW)
+
+        assertBiggerPoints("countRight",
+                QuestionStatistic.testee(countRight = 0),
+                QuestionStatistic.testee(countRight = 1))
+        assertBiggerPoints("countWrong",
+                QuestionStatistic.testee(countWrong = 1),
+                QuestionStatistic.testee(countWrong = 0))
+        assertBiggerPoints("lastRight bigger",
+                QuestionStatistic.testee(lastRight = NOW.minusDays(1)),
+                QuestionStatistic.testee(lastRight = NOW.minusDays(2)))
+        assertBiggerPoints("lastRight null",
+                QuestionStatistic.testee(lastRight = null),
+                QuestionStatistic.testee(lastRight = NOW))
+        assertBiggerPoints("lastWrong bigger",
+                QuestionStatistic.testee(lastWrong = NOW.minusDays(1)),
+                QuestionStatistic.testee(lastWrong = NOW.minusDays(2)))
+        assertBiggerPoints("lastWrong null",
+                QuestionStatistic.testee(lastWrong = null),
+                QuestionStatistic.testee(lastWrong = NOW))
     }
 
-    private fun assertBiggerPoints(bigger: QuestionStatistic, lower: QuestionStatistic) {
-        assertThat(QuestionStatisticService.calcPoints(bigger),
-                greaterThan(QuestionStatisticService.calcPoints(lower)))
+    private fun assertBiggerPoints(message: String, bigger: QuestionStatistic, lower: QuestionStatistic) {
+        val service = QuestionStatisticService(mockRepo, mockClock)
+        assertThat("$message => Expected $bigger > $lower", service.calcPoints(bigger),
+                greaterThan(service.calcPoints(lower)))
     }
 
     private fun nextQuestion(vararg questions: Question) =
-        service.nextQuestion(listOf(*questions).associateBy { it.id})
+            service.nextQuestion(listOf(*questions).associateBy { it.id })
 
     private fun whenMockRepoReadAllReturn(vararg questionStatistic: QuestionStatistic) {
         whenever(mockRepo.readAll())
                 .thenReturn(listOf(*questionStatistic))
     }
 
-    private fun setDefaultClock(date: String = TEST_DATE_STRING) {
+    private fun setDefaultClock(date: String = NOW_STRING) {
         whenever(mockClock.now()).thenReturn(date.parseDateTime())
+    }
+
+    private fun setDefaultClockDate(date: Date = NOW) {
+        whenever(mockClock.now()).thenReturn(date)
     }
 
 }
 
+fun Date.minusDays(days: Int): Date =
+        Calendar.getInstance().apply {
+            time = this@minusDays
+            add(Calendar.DAY_OF_MONTH, -days)
+        }.time
 
 
-private fun Question.toStatistic(countCorrect: Int = 1) =
-        QuestionStatistic(this.id, countCorrect, 0, null, null)
+private fun Question.toStatistic(countRight: Int = 1) =
+        QuestionStatistic(this.id, countRight, 0, null, null)

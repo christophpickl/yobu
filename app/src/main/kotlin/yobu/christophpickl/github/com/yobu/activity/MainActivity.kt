@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
     private val answersList by lazy { find<ListView>(R.id.answersList) }
-    private val txtCountCorrect by lazy { find<TextView>(R.id.txtCountCorrect) }
+    private val txtCountRight by lazy { find<TextView>(R.id.txtCountCorrect) }
 
     private val questions by lazy {
         QuestionRepo(
@@ -44,10 +44,10 @@ class MainActivity : AppCompatActivity() {
 
     private var currentHighScore = 0
 
-    private var countCorrect: Int = 0
+    private var countRight: Int = 0
         get() = field
         set(value) {
-            txtCountCorrect.text = "$value / $currentHighScore"
+            txtCountRight.text = "$value / $currentHighScore"
             field = value
         }
 
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         currentHighScore = prefs.highscore
-        countCorrect = 0 // force highscore number update
+        countRight = 0 // force highscore number update
 
         onNextQuestion()
     }
@@ -79,23 +79,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun onAnswerClicked(question: Question, selectedAnswer: Answer, answerLabel: TextView) {
         answersList.isEnabled = false
-        answerLabel.setBackgroundColor(if (selectedAnswer.isCorrect) Color.GREEN else Color.RED)
+        answerLabel.setBackgroundColor(if (selectedAnswer.isRight) Color.GREEN else Color.RED)
 
-        if (selectedAnswer.isCorrect) {
-            stats.correctAnswered(question)
-            countCorrect++
-            if (countCorrect - 1 == currentHighScore) {
+        if (selectedAnswer.isRight) {
+            stats.rightAnswered(question)
+            countRight++
+            if (countRight - 1 == currentHighScore) {
                 toast("Highscore gebrochen!")
             }
         } else {
             stats.wrongAnswered(question)
-            val correctAnswerView = answersList.getChildAt(question.indexOfCorrectAnswer).find<TextView>(R.id.answerLabel)
-            correctAnswerView.setBackgroundColor(Color.GREEN)
+            val rightAnswerView = answersList.getChildAt(question.indexOfRightAnswer).find<TextView>(R.id.answerLabel)
+            rightAnswerView.setBackgroundColor(Color.GREEN)
         }
 
-        runDelayed(if(selectedAnswer.isCorrect) 500 else 2000) {
+        runDelayed(if(selectedAnswer.isRight) 500 else 2000) {
             answersList.isEnabled = true
-            if (selectedAnswer.isCorrect) {
+            if (selectedAnswer.isRight) {
                 onNextQuestion()
             } else {
                 onRestartRiddle()
@@ -105,14 +105,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun onRestartRiddle() {
         val oldHighscore = prefs.highscore
-        val newHighscore = countCorrect
+        val newHighscore = countRight
         if (newHighscore > oldHighscore) {
             toast("Juchu, neue Highscore: $newHighscore!")
             prefs.highscore = newHighscore
             currentHighScore = newHighscore
         }
 
-        countCorrect = 0
+        countRight = 0
         onNextQuestion()
     }
 

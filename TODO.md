@@ -3,7 +3,7 @@
 
 ## NOW
 * question choose algorithm; store in DB, each question needs an ID, store in table:
-** question: id, count_correct, count_wrong, last_correct:Date?, last_wrong:Date? => create complex SQL query translating into points/weighting
+** question: id, count_right, count_wrong, last_right:Date?, last_wrong:Date? => create complex SQL query translating into points/weighting
 * recreate state properly
 * question catalog LAGE fuer alle punkte
 

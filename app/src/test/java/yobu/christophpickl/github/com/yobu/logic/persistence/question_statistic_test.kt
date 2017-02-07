@@ -10,11 +10,11 @@ import java.util.*
 
 fun QuestionStatistic.Companion.testee(
         id: String = "testId",
-        countCorrect: Int = 0,
+        countRight: Int = 0,
         countWrong: Int = 0,
-        lastCorrect: Date? = null,
+        lastRight: Date? = null,
         lastWrong: Date? = null
-) = QuestionStatistic(id, countCorrect, countWrong, lastCorrect, lastWrong)
+) = QuestionStatistic(id, countRight, countWrong, lastRight, lastWrong)
 
 class QuestionStatisticsSqliteRepositoryTest : RobolectricTest() {
 
@@ -45,13 +45,13 @@ class QuestionStatisticsSqliteRepositoryTest : RobolectricTest() {
     }
 
     @Test fun insertOrUpdate_twiceSameShouldUpdate() {
-        val correctStat = statistic.copy(countCorrect = 21)
+        val rightStat = statistic.copy(countRight = 21)
         withTestActivity { activity ->
             val repo = QuestionStatisticsSqliteRepository(activity)
 
-            repo.insertOrUpdate(correctStat)
+            repo.insertOrUpdate(rightStat)
 
-            val statisticChanged = correctStat.copy(countCorrect = 42)
+            val statisticChanged = rightStat.copy(countRight = 42)
             repo.insertOrUpdate(statisticChanged)
             assertThat(repo.readAll(), allOf(hasSize(1), contains(statisticChanged)))
         }

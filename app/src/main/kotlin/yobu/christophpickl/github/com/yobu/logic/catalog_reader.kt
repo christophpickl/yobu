@@ -76,13 +76,13 @@ class CatalogsRepository {
                 throw RuntimeException("Expected only 1 answer if RANDOM_BO_PUNCT is set, but was: ${question.answers.size}!")
             }
             val answer = question.answers[0]
-            val list = mutableListOf(Answer(answer.text, isCorrect = true))
+            val list = mutableListOf(Answer(answer.text, isRight = true))
             // TODO this has to be done on level higher up, each time we display the question
             list.addAll(generateRandomAnswers(PunctCoordinate.parse(answer.text)))
             return list
         }
         return question.answers.mapIndexed { i, answer ->
-            Answer(answer.text, isCorrect = i == 0)
+            Answer(answer.text, isRight = i == 0)
         }
     }
 

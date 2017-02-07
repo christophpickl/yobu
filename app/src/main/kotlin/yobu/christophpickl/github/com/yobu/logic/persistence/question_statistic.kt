@@ -60,9 +60,9 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
 
     private fun Cursor.readQuestionStatistic() = QuestionStatistic(
             id = readString(Column.ID),
-            countCorrect = readInt(Column.COUNT_CORRECT),
+            countRight = readInt(Column.COUNT_RIGHT),
             countWrong = readInt(Column.COUNT_WRONG),
-            lastCorrect = readDate(Column.LAST_CORRECT),
+            lastRight = readDate(Column.LAST_RIGHT),
             lastWrong = readDate(Column.LAST_WRONG)
     )
 
@@ -106,14 +106,14 @@ private enum class Column(val key: String, val type: String, val isPrimary: Bool
     ID("id", "TEXT", isPrimary = true) {
         override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropString(this, statistic.id)
     },
-    COUNT_CORRECT("count_correct", "INTEGER") {
-        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropInt(this, statistic.countCorrect)
+    COUNT_RIGHT("count_right", "INTEGER") {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropInt(this, statistic.countRight)
     },
     COUNT_WRONG("count_wrong", "INTEGER") {
         override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropInt(this, statistic.countWrong)
     },
-    LAST_CORRECT("last_correct", "TEXT") {
-        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropDate(this, statistic.lastCorrect)
+    LAST_RIGHT("last_right", "TEXT") {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropDate(this, statistic.lastRight)
     },
     LAST_WRONG("last_wrong", "TEXT") {
         override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropDate(this, statistic.lastWrong)

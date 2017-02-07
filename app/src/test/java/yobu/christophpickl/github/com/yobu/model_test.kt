@@ -1,6 +1,6 @@
 package yobu.christophpickl.github.com.yobu
 
-fun Answer.Companion.testee() = Answer("testText", isCorrect = true)
+fun Answer.Companion.testee() = Answer("testText", isRight = true)
 
 fun Question.Companion.testee(
         id: String = "testId",
