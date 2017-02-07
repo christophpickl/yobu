@@ -1,6 +1,7 @@
 package yobu.christophpickl.github.com.yobu.logic
 
 import android.content.Context
+import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 
@@ -8,6 +9,12 @@ class QuestionStatisticService(
         private val repository: QuestionStatisticsRepository
 ) {
     constructor(context: Context) : this(CachedQuestionStatisticsRepository(context, QuestionStatisticsSqliteRepository(context)))
+
+    companion object {
+        @VisibleForTesting fun calcPoints(statistic: QuestionStatistic): Double {
+            return statistic.countCorrect * -10.0
+        }
+    }
 
     fun correctAnswered(question: Question) {
         answered(question, correct = true)
@@ -30,10 +37,24 @@ class QuestionStatisticService(
         ))
     }
 
-    fun nextQuestionId(): String? {
-        // FIXME compute next question based on some algorithm
-        return null
+    fun nextQuestion(questionsById: Map<String, Question>): Question {
+        if (questionsById.isEmpty()) throw IllegalArgumentException("empty questions map is not allowed!")
+        val answeredStats: List<QuestionStatistic> = repository.readAll()
+
+        val unansweredQuestionIds = questionsById.keys.minus(answeredStats.map { it.id })
+        if (unansweredQuestionIds.isNotEmpty()) {
+            val nextQuestionId = unansweredQuestionIds.randomElement()
+            return questionsById.getOrThrow(nextQuestionId)
+        }
+        // all questions have been answered at least once
+        val statsByPoints = answeredStats.associateBy { calcPoints(it) }
+        val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
+        return questionsById.getOrThrow(highestPointsStats.id)
     }
+
+    private fun Map<String, Question>.getOrThrow(id: String) =
+            this[id] ?: throw RuntimeException("Could not question by ID: $id in questions map: $values")
+
 }
 
 /**

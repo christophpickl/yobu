@@ -14,6 +14,10 @@ fun <T> List<T>.randomElement(): T {
     return RandXImpl.randomOf(this)
 }
 
+fun <T> Set<T>.randomElement(): T {
+    return RandXImpl.randomOf(this.toList())
+}
+
 data class DistributionItem<T>(val percent: Int, val value: T)
 data class Distribution<T>(val items: List<DistributionItem<T>>) {
     init {

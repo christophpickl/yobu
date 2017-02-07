@@ -7,15 +7,15 @@ import org.junit.Test
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
 import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
 
-fun QuestionStatistic.Companion.testInstance() = QuestionStatistic(
-        id = "testId",
-        countCorrect = 0
-)
+fun QuestionStatistic.Companion.testee(
+        id: String = "testId",
+        countCorrect: Int = 0
+) = QuestionStatistic(id, countCorrect)
 
 class QuestionStatisticsSqliteRepositoryTest : RobolectricTest() {
 
     @Test fun sunshine() {
-        val statistic = QuestionStatistic.testInstance()
+        val statistic = QuestionStatistic.testee()
         withTestActivity { activity ->
             val repo = QuestionStatisticsSqliteRepository(activity)
 
@@ -27,8 +27,8 @@ class QuestionStatisticsSqliteRepositoryTest : RobolectricTest() {
     }
 
     @Test fun insertOrUpdate_twoDifferent() {
-        val statistic1 = QuestionStatistic.testInstance().copy(id = "id1")
-        val statistic2 = QuestionStatistic.testInstance().copy(id = "id2")
+        val statistic1 = QuestionStatistic.testee().copy(id = "id1")
+        val statistic2 = QuestionStatistic.testee().copy(id = "id2")
         withTestActivity { activity ->
             val repo = QuestionStatisticsSqliteRepository(activity)
 
@@ -39,7 +39,7 @@ class QuestionStatisticsSqliteRepositoryTest : RobolectricTest() {
     }
 
     @Test fun insertOrUpdate_twiceSameShouldUpdate() {
-        val statistic = QuestionStatistic.testInstance().copy(countCorrect = 21)
+        val statistic = QuestionStatistic.testee().copy(countCorrect = 21)
         withTestActivity { activity ->
             val repo = QuestionStatisticsSqliteRepository(activity)
 
