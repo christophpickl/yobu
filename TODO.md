@@ -2,9 +2,9 @@
 # TODOs
 
 ## NOW
-* recreate state properly
 * question choose algorithm; store in DB, each question needs an ID, store in table:
 ** question: id, count_correct, count_wrong, last_correct:Date?, last_wrong:Date? => create complex SQL query translating into points/weighting
+* recreate state properly
 * question catalog LAGE fuer alle punkte
 
 ## High
@@ -13,6 +13,7 @@
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random)
 
 ## Med
+* neuer frage typ: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
 * new activity: bo / yu punct table (info grafik)
 * display artifact version in app (global menu thingy)
 * travis build

@@ -58,3 +58,15 @@ fun InputStream.readString(): String {
     }
     return sb.toString()
 }
+
+fun <K, V> List<V>.associateMultiBy(transform: (V) -> K): Map<K, List<V>> {
+    val map = mutableMapOf<K, MutableList<V>>()
+    this.forEach { value ->
+        val key = transform(value)
+        if (!map.containsKey(key)) {
+            map.put(key, mutableListOf())
+        }
+        map[key]!! += value
+    }
+    return map
+}

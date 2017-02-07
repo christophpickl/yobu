@@ -4,6 +4,8 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
+import yobu.christophpickl.github.com.yobu.misc.associateMultiBy
+import java.util.*
 
 class QuestionStatisticService(
         private val repository: QuestionStatisticsRepository
@@ -46,10 +48,11 @@ class QuestionStatisticService(
             val nextQuestionId = unansweredQuestionIds.randomElement()
             return questionsById.getOrThrow(nextQuestionId)
         }
+
         // all questions have been answered at least once
-        val statsByPoints = answeredStats.associateBy { calcPoints(it) }
+        val statsByPoints = answeredStats.associateMultiBy { calcPoints(it) }
         val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
-        return questionsById.getOrThrow(highestPointsStats.id)
+        return questionsById.getOrThrow(highestPointsStats.randomElement().id)
     }
 
     private fun Map<String, Question>.getOrThrow(id: String) =
@@ -63,8 +66,16 @@ class QuestionStatisticService(
 data class QuestionStatistic(
         val id: String,
         val countCorrect: Int
+//        val countWrong: Int,
+//        val lastCorrect: Date?,
+//        val lastWrong: Date?
 ) {
     companion object // needed for (test) extensions
+
+//    val countTotal: Int get() = countCorrect + countWrong
+//    val lastAnswered: Date? get()  {
+//        return null
+//    }
 }
 
 
