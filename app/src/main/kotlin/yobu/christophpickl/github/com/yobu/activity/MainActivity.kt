@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
     private val answersList by lazy { find<ListView>(R.id.answersList) }
-    private val txtCountRight by lazy { find<TextView>(R.id.txtCountCorrect) }
+    private val txtCountRight by lazy { find<TextView>(R.id.txtCountRight) }
 
     private val questions by lazy {
         QuestionRepo(

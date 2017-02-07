@@ -19,18 +19,18 @@ class QuestionStatisticService(
     @VisibleForTesting fun calcPoints(statistic: QuestionStatistic): Double {
         var datePoints = 0.0
         datePoints += if (statistic.wasNotYetAnswered) 100.0 else 0.0
-        datePoints += statistic.lastAnswered?.calcPoints() ?: 0.0
-//        datePoints += statistic.lastRight?.calcPoints() ?: 0.0
-//        datePoints += statistic.lastWrong?.calcPoints() ?: 0.0
+//        datePoints += statistic.lastAnswered?.calcPoints() ?: 0.0
+        datePoints += statistic.lastRight?.calcPoints(2.0) ?: 0.0
+        datePoints += statistic.lastWrong?.calcPoints(4.0) ?: 0.0
 
-        return statistic.countRight * -7.0 +
-                statistic.countWrong * 4.0 +
+        return statistic.countRight * -5.0 +
+                statistic.countWrong * 10.0 +
                 datePoints
     }
 
-    private fun Date.calcPoints(): Double {
+    private fun Date.calcPoints(multiply: Double): Double {
         val daysOld = this.diffDaysToToday()
-        return daysOld * 2.0
+        return daysOld * multiply
     }
 
     private fun Date.diffDaysToToday(): Int {
@@ -108,7 +108,7 @@ data class QuestionStatistic(
     companion object // needed for (test) extensions
 
     val countTotal: Int get() = countRight + countWrong
-    val wasYetAnswered: Boolean = lastRight == null && lastWrong == null
+    val wasYetAnswered: Boolean = lastRight != null || lastWrong != null
     val wasNotYetAnswered: Boolean = !wasYetAnswered
 
     // TODO test this

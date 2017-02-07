@@ -8,6 +8,7 @@
 * question catalog LAGE fuer alle punkte
 
 ## High
+* context menu entries: reset, about (version)
 * mehr als 3 falsche antwort ermoeglichen aber nur 3 random nehmen/limitten
 * answers jedesmal beim question aufruf shufflen
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random)
