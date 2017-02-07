@@ -8,6 +8,9 @@ import android.content.ContentValues
 import android.database.Cursor
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
+import yobu.christophpickl.github.com.yobu.misc.formatDateTime
+import yobu.christophpickl.github.com.yobu.misc.parseDateTime
+import java.util.*
 
 
 /**
@@ -57,7 +60,10 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
 
     private fun Cursor.readQuestionStatistic() = QuestionStatistic(
             id = readString(Column.ID),
-            countCorrect = readInt(Column.COUNT_CORRECT)
+            countCorrect = readInt(Column.COUNT_CORRECT),
+            countWrong = readInt(Column.COUNT_WRONG),
+            lastCorrect = readDate(Column.LAST_CORRECT),
+            lastWrong = readDate(Column.LAST_WRONG)
     )
 
 
@@ -87,6 +93,11 @@ private fun Cursor.readInt(column: Column): Int {
     return getInt(index)
 }
 
+private fun Cursor.readDate(column: Column): Date? {
+    val index = getColumnIndex(column.key)
+    return getString(index)?.parseDateTime()
+}
+
 
 private val TABLE_NAME = "tbl_question_statistics"
 
@@ -97,7 +108,16 @@ private enum class Column(val key: String, val type: String, val isPrimary: Bool
     },
     COUNT_CORRECT("count_correct", "INTEGER") {
         override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropInt(this, statistic.countCorrect)
-    }
+    },
+    COUNT_WRONG("count_wrong", "INTEGER") {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropInt(this, statistic.countWrong)
+    },
+    LAST_CORRECT("last_correct", "TEXT") {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropDate(this, statistic.lastCorrect)
+    },
+    LAST_WRONG("last_wrong", "TEXT") {
+        override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropDate(this, statistic.lastWrong)
+    },
     ;
 
     companion object {
@@ -195,4 +215,15 @@ private sealed class SqlProp(val column: Column) {
             values.put(column.key, value)
         }
     }
+
+    class SqlPropDate(column: Column, val value: Date?) : SqlProp(column) {
+        override fun putYourselfTo(values: ContentValues) {
+            if (value != null) {
+                // ContentValues do not support any date type! so store as formatted string ;)
+                values.put(column.key, value.formatDateTime())
+            }
+        }
+    }
+
 }
+

@@ -5,6 +5,25 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
+import java.util.*
+
+interface Clock {
+    fun now(): Date
+}
+
+class RealClock : Clock {
+    override fun now() = Date()
+
+}
+
+
+
+// DATE
+private val FORMAT = "yyyy-MM-dd HH:mm:ss"
+private val FORMATTER = SimpleDateFormat(FORMAT)
+fun Date.formatDateTime() = FORMATTER.format(this)
+fun String.parseDateTime() = FORMATTER.parse(this)
 
 
 fun LOG(javaClass: Class<out Any>) = Log2(javaClass)

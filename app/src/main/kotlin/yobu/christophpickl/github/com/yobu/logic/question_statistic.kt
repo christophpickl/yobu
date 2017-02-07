@@ -4,11 +4,14 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
+import yobu.christophpickl.github.com.yobu.misc.Clock
+import yobu.christophpickl.github.com.yobu.misc.RealClock
 import yobu.christophpickl.github.com.yobu.misc.associateMultiBy
 import java.util.*
 
 class QuestionStatisticService(
-        private val repository: QuestionStatisticsRepository
+        private val repository: QuestionStatisticsRepository,
+        private val clock: Clock = RealClock()
 ) {
     constructor(context: Context) : this(CachedQuestionStatisticsRepository(context, QuestionStatisticsSqliteRepository(context)))
 
@@ -35,6 +38,21 @@ class QuestionStatisticService(
                     maybeStat?.countCorrect?.inc() ?: 1
                 } else {
                     maybeStat?.countCorrect ?: 0
+                },
+                countWrong = if (correct) {
+                    maybeStat?.countWrong ?: 0
+                } else {
+                    maybeStat?.countWrong?.inc() ?: 1
+                },
+                lastCorrect = if (correct) {
+                    clock.now()
+                } else {
+                    maybeStat?.lastCorrect
+                },
+                lastWrong = if (correct) {
+                    maybeStat?.lastWrong
+                } else {
+                    clock.now()
                 }
         ))
     }
@@ -65,17 +83,17 @@ class QuestionStatisticService(
  */
 data class QuestionStatistic(
         val id: String,
-        val countCorrect: Int
-//        val countWrong: Int,
-//        val lastCorrect: Date?,
-//        val lastWrong: Date?
+        val countCorrect: Int,
+        val countWrong: Int,
+        val lastCorrect: Date?,
+        val lastWrong: Date?
 ) {
     companion object // needed for (test) extensions
 
-//    val countTotal: Int get() = countCorrect + countWrong
-//    val lastAnswered: Date? get()  {
-//        return null
-//    }
+    val countTotal: Int get() = countCorrect + countWrong
+    val lastAnswered: Date? get() {
+        return null
+    }
 }
 
 
