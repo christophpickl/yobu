@@ -1,27 +1,22 @@
 package yobu.christophpickl.github.com.yobu.activity
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.*
+import android.widget.ListView
+import android.widget.TextView
 import com.pawegio.kandroid.find
-import com.pawegio.kandroid.inflateLayout
 import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.Answer
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.R
-import yobu.christophpickl.github.com.yobu.logic.CachedQuestionStatisticsRepository
+import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
 import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
 import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
-import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 import yobu.christophpickl.github.com.yobu.misc.LOG
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             rightAnswerView.setBackgroundColor(Color.GREEN)
         }
 
-        runDelayed(if(selectedAnswer.isRight) 500 else 2000) {
+        runDelayed(if (selectedAnswer.isRight) 500 else 2000) {
             answersList.isEnabled = true
             if (selectedAnswer.isRight) {
                 onNextQuestion()
@@ -114,23 +109,6 @@ class MainActivity : AppCompatActivity() {
 
         countRight = 0
         onNextQuestion()
-    }
-
-}
-
-
-class AnswersListAdapter(
-        context: Context,
-        private val answers: List<Answer>
-)
-    : ArrayAdapter<Answer>(context, R.layout.list_answer, answers.toTypedArray()) {
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val rawView = context.inflateLayout(R.layout.list_answer)
-        val label = rawView.find<TextView>(R.id.answerLabel)
-        val answer = answers[position]
-        label.text = answer.text
-        return rawView
     }
 
 }
