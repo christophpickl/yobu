@@ -21,7 +21,16 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
 
         private val LOG = LOG(QuestionStatisticsSqliteRepository::class.java)
     }
-
+/*
+A resource was acquired at attached stack trace but never released. See java.io.Closeable for information on avoiding resource leaks.
+                                                                  java.lang.Throwable: Explicit termination method 'close' not called
+                                                                      at dalvik.system.CloseGuard.open(CloseGuard.java:184)
+                                                                      at android.database.sqlite.SQLiteConnectionPool.open(SQLiteConnectionPool.java:190)
+                                                                      at android.database.sqlite.SQLiteConnectionPool.open(SQLiteConnectionPool.java:177)
+                                                                      at android.database.sqlite.SQLiteDatabase.openInner(SQLiteDatabase.java:804)
+                                                                      at android.database.sqlite.SQLiteDatabase.open(SQLiteDatabase.java:789)
+                                                                      at android.database.sqlite.SQLiteDatabase.openDatabase(SQLiteDatabase.java:694)
+ */
     private val sqlOpen = QuestionStatisticsOpenHelper(context)
 
     override fun read(id: String): QuestionStatistic? {
@@ -44,18 +53,20 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
         // http://stackoverflow.com/questions/10600670/sqlitedatabase-query-method
 
         val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY ${Column.ID.key}", null)
+        try {
+            if (cursor.count == 0) {
+                return emptyList()
+            }
 
-        if (cursor.count == 0) {
-            return emptyList()
+            val statistics = mutableListOf<QuestionStatistic>()
+            cursor.moveToFirst()
+            do {
+                statistics += cursor.readQuestionStatistic()
+            } while (cursor.moveToNext())
+            return statistics
+        } finally {
+            cursor.close()
         }
-
-        val statistics = mutableListOf<QuestionStatistic>()
-        cursor.moveToFirst()
-        do {
-            statistics += cursor.readQuestionStatistic()
-        } while (cursor.moveToNext())
-        cursor.close()
-        return statistics
     }
 
     private fun Cursor.readQuestionStatistic() = QuestionStatistic(
@@ -167,7 +178,6 @@ private class QuestionStatisticsOpenHelper internal constructor(context: Context
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        println("create DB $SQL_TABLE_CREATE")
         LOG.i("onCreate(db=$db) SQL: SQL_TABLE_CREATE")
         db.execSQL(SQL_TABLE_CREATE)
     }

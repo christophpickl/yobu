@@ -18,10 +18,9 @@ class RealClock : Clock {
 }
 
 
-
 // DATE
 private val FORMAT = "yyyy-MM-dd HH:mm:ss"
-private val FORMATTER = SimpleDateFormat(FORMAT)
+private val FORMATTER = SimpleDateFormat(FORMAT, Locale.GERMAN)
 fun Date.formatDateTime() = FORMATTER.format(this)
 fun String.parseDateTime() = FORMATTER.parse(this)
 
@@ -29,28 +28,62 @@ fun String.parseDateTime() = FORMATTER.parse(this)
 fun LOG(javaClass: Class<out Any>) = Log2(javaClass)
 
 class Log2(javaClass: Class<out Any>) {
-    private val tag = javaClass.simpleName
+
+    companion object {
+        private val TAG = "yobu" // android limits tag to 23 chars
+    }
+
+    private val classNamePrefix = javaClass.simpleName + " - "
+
+    fun v(lazyMessage: () -> String) {
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            Log.v(TAG, classNamePrefix + lazyMessage())
+        }
+    }
+
+    fun v(message: String) {
+        v { message }
+    }
 
     fun d(lazyMessage: () -> String) {
-        if (Log.isLoggable(tag, Log.DEBUG)) {
-            Log.d(tag, lazyMessage())
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            Log.d(TAG, classNamePrefix + lazyMessage())
         }
     }
 
     fun d(message: String) {
-        Log.d(tag, message)
+        d { message }
+    }
+
+    fun i(lazyMessage: () -> String) {
+        if (Log.isLoggable(TAG, Log.INFO)) {
+            Log.i(TAG, classNamePrefix + lazyMessage())
+        }
     }
 
     fun i(message: String) {
-        Log.i(tag, message)
+        i { message }
+    }
+
+    fun w(lazyMessage: () -> String) {
+        if (Log.isLoggable(TAG, Log.WARN)) {
+            Log.w(TAG, classNamePrefix + lazyMessage())
+        }
     }
 
     fun w(message: String) {
-        Log.w(tag, message)
+        w { message }
+    }
+
+
+    fun e(lazyMessage: () -> String) {
+        if (Log.isLoggable(TAG, Log.ERROR)) {
+            Log.e(TAG, classNamePrefix + lazyMessage())
+        }
     }
 
     fun e(message: String) {
-        Log.e(tag, message)
+        e { message }
     }
 
 }

@@ -2,7 +2,6 @@
 # TODOs
 
 ## NOW
-* recreate state properly
 * BoPunkt questions automatisch generieren (daten modell fuer jeden MainMeridian inklusive PunctCoordinate dafuer)
 * question catalog LAGE fuer alle punkte
 * context menu entries: reset, about (version)
