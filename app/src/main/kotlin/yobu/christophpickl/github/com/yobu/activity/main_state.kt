@@ -12,7 +12,7 @@ data class YobuState(
 
 object StateManager {
 
-    private val LOG = yobu.christophpickl.github.com.yobu.misc.LOG(StateManager::class.java)
+    private val LOG = yobu.christophpickl.github.com.yobu.common.LOG(StateManager::class.java)
     private val ANSWER_FIELD_SEPARATOR = "\t"
 
     private val KEY_COUNT_RIGHT = "countRight"

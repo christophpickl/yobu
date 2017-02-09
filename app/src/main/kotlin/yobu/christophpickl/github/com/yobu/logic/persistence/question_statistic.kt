@@ -3,13 +3,11 @@ package yobu.christophpickl.github.com.yobu.logic.persistence
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import yobu.christophpickl.github.com.yobu.misc.LOG
 import android.content.ContentValues
 import android.database.Cursor
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
-import yobu.christophpickl.github.com.yobu.misc.formatDateTime
-import yobu.christophpickl.github.com.yobu.misc.parseDateTime
+import yobu.christophpickl.github.com.yobu.common.*
 import java.util.*
 
 
@@ -78,15 +76,15 @@ A resource was acquired at attached stack trace but never released. See java.io.
     )
 
 
+
     override fun insertOrUpdate(statistic: QuestionStatistic) {
-        println("insert $statistic")
         LOG.d { "insertOrUpdate($statistic)" }
-        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT ${Column.ID.key} FROM $TABLE_NAME WHERE ${Column.ID.key} = ?", arrayOf(statistic.id))
-        val shouldInsert = cursor.count == 0
-        cursor.close()
+        val count = sqlOpen.readCount("SELECT ${Column.ID.key} FROM $TABLE_NAME WHERE ${Column.ID.key} = ?", arrayOf(statistic.id))
+        val shouldInsert = count == 0
+
         val props = Column.mapAllToSqlProp(statistic)
         if (shouldInsert) {
-            sqlOpen.transactionSaveInsert(props)
+            sqlOpen.insert(props)
         } else {
             sqlOpen.update(statistic.id, props)
         }
@@ -94,25 +92,14 @@ A resource was acquired at attached stack trace but never released. See java.io.
 
 }
 
-private fun Cursor.readString(column: Column): String {
-    val index = getColumnIndex(column.key)
-    return getString(index)
-}
-
-private fun Cursor.readInt(column: Column): Int {
-    val index = getColumnIndex(column.key)
-    return getInt(index)
-}
-
-private fun Cursor.readDate(column: Column): Date? {
-    val index = getColumnIndex(column.key)
-    return getString(index)?.parseDateTime()
-}
-
 
 private val TABLE_NAME = "tbl_question_statistics"
 
-private enum class Column(val key: String, val type: String, val isPrimary: Boolean = false) {
+private enum class Column(
+        val key: String,
+        val type: String,
+        val isPrimary: Boolean = false
+) {
 
     ID("id", "TEXT", isPrimary = true) {
         override fun toSqlProp(statistic: QuestionStatistic) = SqlProp.SqlPropString(this, statistic.id)
@@ -139,6 +126,9 @@ private enum class Column(val key: String, val type: String, val isPrimary: Bool
     abstract fun toSqlProp(statistic: QuestionStatistic): SqlProp
 
 }
+private fun Cursor.readString(column: Column) = readString(column.key)
+private fun Cursor.readInt(column: Column) = readInt(column.key)
+private fun Cursor.readDate(column: Column) = readNullableDate(column.key)
 
 private val ALL_COLUMNS: Array<String> = Column.values().map { it.key }.toTypedArray()
 
@@ -158,27 +148,23 @@ private class QuestionStatisticsOpenHelper internal constructor(context: Context
                 CREATE TABLE $TABLE_NAME (
                     ${Column.values().map(Column::toCreateSql).joinToString(", ")}
                 );
-                """ // countX INTEGER
+                """
     }
 
-    fun transactionSaveInsert(props: List<SqlProp>) {
-        val contentValues = SqlProp.build(props)
-
-        withTransaction {
-            insert(TABLE_NAME, null, contentValues)
+    fun insert(props: List<SqlProp>) {
+        transactional {
+            insert(TABLE_NAME, null, SqlProp.build(props))
         }
     }
 
     fun update(id: String, props: List<SqlProp>) {
-        val contentValues = SqlProp.build(props)
-
-        withTransaction {
-            writableDatabase.update(TABLE_NAME, contentValues, "id = ?", arrayOf(id))
+        transactional {
+            update(TABLE_NAME, SqlProp.build(props), "${Column.ID.key} = ?", arrayOf(id))
         }
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        LOG.i("onCreate(db=$db) SQL: SQL_TABLE_CREATE")
+        LOG.i("onCreate(db=$db)")
         db.execSQL(SQL_TABLE_CREATE)
     }
 
@@ -186,17 +172,6 @@ private class QuestionStatisticsOpenHelper internal constructor(context: Context
         LOG.i("onUpgrade(db=$db, oldVersion=$oldVersion, newVersion=$newVersion)")
     }
 
-    private fun withTransaction(code: SQLiteDatabase.() -> Unit) {
-        with(writableDatabase) {
-            beginTransaction()
-            try {
-                code(this)
-                setTransactionSuccessful()
-            } finally {
-                endTransaction()
-            }
-        }
-    }
 }
 
 /**

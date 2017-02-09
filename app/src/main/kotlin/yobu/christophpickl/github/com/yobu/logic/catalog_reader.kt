@@ -2,41 +2,10 @@ package yobu.christophpickl.github.com.yobu.logic
 
 import org.json.JSONArray
 import org.json.JSONObject
-import yobu.christophpickl.github.com.yobu.Answer
-import yobu.christophpickl.github.com.yobu.Question
-import yobu.christophpickl.github.com.yobu.misc.readString
+import yobu.christophpickl.github.com.yobu.*
+import yobu.christophpickl.github.com.yobu.common.readString
 import java.io.InputStream
 
-
-enum class Meridian(val text: String, val points: Int) {
-    Lu("Lu", 11),
-    Di("Di", 20),
-    Ma("Ma", 45),
-    MP("MP", 21),
-    He("He", 9),
-    Due("Due", 19),
-    Bl("Bl", 67),
-    Ni("Ni", 27),
-    Pk("Pk", 9),
-    EEE("3E", 23),
-    Gb("Gb", 44),
-    Le("Le", 14),
-//    LG("LG", 28),
-    KG("KG", 24)
-}
-
-data class PunctCoordinate(val meridian: Meridian, val point: Int) {
-    companion object {
-        fun parse(string: String): PunctCoordinate {
-            val meridian = Meridian.values().firstOrNull { string.startsWith(it.text) } ?: throw IllegalArgumentException("Invalid meridian name: [$string]")
-            val number = string.substring(meridian.text.length).toInt()
-            if (number < 1 || number > meridian.points) throw IllegalArgumentException("Invalid point number: $number for meridian $meridian")
-            return PunctCoordinate(meridian, number)
-        }
-    }
-
-    fun toNiceString() = meridian.text + point
-}
 
 private enum class BoDistributionItem(val percent: Int, val meridian: Meridian) {
     KG(60, Meridian.KG),
@@ -48,7 +17,7 @@ private enum class BoDistributionItem(val percent: Int, val meridian: Meridian) 
 }
 class BoPunctGenerator(private val randX: RandX = RandXImpl) {
 
-    private val distribution = Distribution(BoDistributionItem.values().map { DistributionItem<Meridian>(it.percent, it.meridian) })
+    private val distribution = Distribution(BoDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
 
     fun generate(except: PunctCoordinate): PunctCoordinate {
         val randMeridian = randX.distributed(distribution)
@@ -65,8 +34,21 @@ class CatalogsRepository {
     private val boGenerator = BoPunctGenerator()
 
     fun load(questionsStream: InputStream): List<Question> {
-        return JsonQuestionReader().read(questionsStream).questions.map { question ->
-            Question(question.id, question.text, transformAnswers(question))
+//        return JsonQuestionReader().read(questionsStream).questions.map { question ->
+//            Question(question.id, question.ext, transformAnswers(question))
+//        }
+//                .plus(generateDefaultQuestions())
+        return generateDefaultQuestions()
+    }
+
+    private fun generateDefaultQuestions(): List<Question> {
+        return BoRelevantMeridian.values().map { boMeridian ->
+            Question(
+                    id = "BoPunkt${boMeridian.labelShort}",
+                    text = "Bo Punkt von ${boMeridian.labelLong}?",
+                    answers = listOf(Answer(boMeridian.boPunct.label, isRight = true))
+                            .plus(generateRandomAnswers(boMeridian.boPunct))
+            )
         }
     }
 
@@ -88,7 +70,7 @@ class CatalogsRepository {
 
     private fun generateRandomAnswers(except: PunctCoordinate): List<Answer> {
         return 1.rangeTo(3).map {
-            Answer(boGenerator.generate(except).toNiceString())
+            Answer(boGenerator.generate(except).label)
         }
     }
 }
@@ -109,7 +91,7 @@ data class JsonCatalog(val questions: List<JsonQuestion>)
 class JsonQuestionReader {
 
     companion object {
-        private val LOG = yobu.christophpickl.github.com.yobu.misc.LOG(JsonQuestionReader::class.java)
+        private val LOG = yobu.christophpickl.github.com.yobu.common.LOG(JsonQuestionReader::class.java)
     }
 
     // val questionsInputStream = resources.openRawResource(R.raw.questions_catalog)

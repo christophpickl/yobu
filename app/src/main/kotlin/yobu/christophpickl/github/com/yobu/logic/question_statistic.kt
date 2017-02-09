@@ -4,9 +4,9 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
-import yobu.christophpickl.github.com.yobu.misc.Clock
-import yobu.christophpickl.github.com.yobu.misc.RealClock
-import yobu.christophpickl.github.com.yobu.misc.associateMultiBy
+import yobu.christophpickl.github.com.yobu.common.Clock
+import yobu.christophpickl.github.com.yobu.common.RealClock
+import yobu.christophpickl.github.com.yobu.common.associateMultiBy
 import java.util.*
 
 

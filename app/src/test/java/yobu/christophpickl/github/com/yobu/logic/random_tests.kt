@@ -3,6 +3,8 @@ package yobu.christophpickl.github.com.yobu.logic
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.Meridian
+import yobu.christophpickl.github.com.yobu.PunctCoordinate
 
 class BoPunctGeneratorTest {
 

@@ -17,7 +17,7 @@ import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
 import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
-import yobu.christophpickl.github.com.yobu.misc.LOG
+import yobu.christophpickl.github.com.yobu.common.LOG
 
 
 class MainActivity : AppCompatActivity() {
