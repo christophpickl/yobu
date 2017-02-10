@@ -9,7 +9,6 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
     private val boPunctDistribution = Distribution(BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
 
     fun generateDefaultQuestions(): List<Question> {
-//        // TODO generate the random answers each time question is displayed!
         // generate questions asking for Bo POINTS
         return BoRelevantMeridian.values().map({ boMeridian ->
             Question(
@@ -47,13 +46,11 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
     }
 
     private fun randomBoPunctAnswers(except: PunctCoordinate): List<Answer> {
-        // FIXME when generating 1..3, each time the except list should grow (see also down below)
         return 1.rangeTo(3).map {
             Answer(randomBoPunct(except).label)
         }
     }
 
-    // FIXME when generating 1..3, each time the except list should grow (see also down below)
     private fun randomYuPunctAnswers(except: YuRelevant): List<Answer> {
         return 1.rangeTo(3).map {
             Answer(randomYuPunct(except.yuPunct.point).label)
@@ -101,5 +98,4 @@ private enum class BoPunctDistributionItem(val percent: Int, val meridian: Merid
     Ma(10, Meridian.Ma),
     Le(10, Meridian.Le),
     Gb(10, Meridian.Gb)
-    // TODO special type: use same meridian as "except" instance but different point
 }

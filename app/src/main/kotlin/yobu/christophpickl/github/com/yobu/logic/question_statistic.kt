@@ -111,7 +111,6 @@ data class QuestionStatistic(
     val wasYetAnswered: Boolean = lastRight != null || lastWrong != null
     val wasNotYetAnswered: Boolean = !wasYetAnswered
 
-    // TODO test this
     val lastAnswered: Date? get() {
         if (lastRight != null && lastWrong != null) {
             return if (lastRight.time > lastWrong.time) lastRight else lastWrong

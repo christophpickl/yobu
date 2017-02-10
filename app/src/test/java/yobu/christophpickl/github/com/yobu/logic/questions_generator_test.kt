@@ -16,7 +16,7 @@ class BoPunctGeneratorTest : RobolectricTest() {
     fun generate() {
         val except = PunctCoordinate(Meridian.Lu, 1)
         doCoupleOfTimes {
-            // TODO inject mock
+            // could inject mock and test more precisely
             val randPunct = BoPunctGenerator().randomBoPunct(except)
             MatcherAssert.assertThat(randPunct, Matchers.not(Matchers.equalTo(except)))
         }

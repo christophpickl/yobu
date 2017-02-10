@@ -12,7 +12,6 @@ class QuestionsLoader {
     private val boGenerator = BoPunctGenerator()
 
 
-    // TODO mehr fragen
 //    * wer liegt nicht auf KG? => Lu, Di, Mi, Ni, Gb, Le
 //    * wer liegt zwischen brustwarzen? => Pk (KG17)
 //    * wer liegt (als einziger) (2C) seitlich vom nabel? => Di (Ma25)

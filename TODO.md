@@ -3,29 +3,30 @@
 
 ## NOW
 * context menu entries: reset data
-* answers jedesmal beim question aufruf shufflen
+* @BoPunctGenerator: when generating 1..3, each time the except list should grow (see also down below), otherwise there will be duplicates!
+* @BoPunctGenerator: generate the random answers each time question is displayed!
 
 ## High
-
-## Med
-* mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random)
-* display artifact version in app (global menu thingy)
-* travis build
-* check for DI framework in kotlin+android => testability of rand stuff
+* @QuestionsLoader: mehr BO fragen
+* mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
 * add progress bar for highscore indicator at bottom of screen
 
-## Low
+## Med
 * new activity: bo / yu punct table (info grafik; schummler)
+* BoPunctDistributionItem: introduce special distribution type: use same meridian as "except" instance but different point
+* display artifact version in app (global menu thingy)
 * neuer frage typ: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
-* load questions catalog from web
+
+## Low
 * new question type: freetext (dynamic question renderer pro type)
-* DE und EN
-* fragengruppen machen: anatomie, meridian, punkte (leicht/mittel/schwer)
-* auto-release script (set version, tag on github, create apk and deploy somewhere (github release?!), increment version)
 * menu entry: about (version)
-* menu entry: display all questions (including statistics for it)
+* menu entry for development: display all questions (including statistics for it)
+* DE und EN
 
 ## Tech
+* auto-release script (set version, tag on github, create apk and deploy somewhere (github release?!), increment version)
+* check for DI framework in kotlin+android => testability of rand stuff
+* travis build
 * investigate anko (persistence, intents, programmatic UI; including anko androidstudio plugin)
 * ORM:
 ** PultusORM: https://github.com/s4kibs4mi/PultusORM

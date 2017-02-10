@@ -91,7 +91,7 @@ class QuestionStatisticServiceTest : RobolectricTest() {
             service.rightAnswered(question)
         }
 
-        verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = TEST_DATE))
+        verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = NOW))
     }
 
     @Test fun rightAnswered_twice_insertsNewQuestionStatisticWithCount2() {
@@ -106,8 +106,8 @@ class QuestionStatisticServiceTest : RobolectricTest() {
         }
 
         val inOrder = inOrder(mockRepo)
-        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = TEST_DATE))
-        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 2, lastRight = TEST_DATE))
+        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 1, lastRight = NOW))
+        inOrder.verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countRight = 2, lastRight = NOW))
     }
 
     @Test fun answerRightAndWrong() {
@@ -136,7 +136,7 @@ class QuestionStatisticServiceTest : RobolectricTest() {
         withTestActivity { activity ->
             service.wrongAnswered(question)
         }
-        verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countWrong = 1, lastWrong = TEST_DATE))
+        verify(mockRepo).insertOrUpdate(QuestionStatistic.testee(id = question.id, countWrong = 1, lastWrong = NOW))
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -171,14 +171,14 @@ class QuestionStatisticServiceTest : RobolectricTest() {
                 QuestionStatistic.testee(countWrong = 1),
                 QuestionStatistic.testee(countWrong = 0))
         assertBiggerPoints("lastRight bigger",
-                QuestionStatistic.testee(lastRight = NOW.minusDays(1)),
-                QuestionStatistic.testee(lastRight = NOW.minusDays(2)))
+                QuestionStatistic.testee(lastRight = NOW.minusDays(2)),
+                QuestionStatistic.testee(lastRight = NOW.minusDays(1)))
         assertBiggerPoints("lastRight null",
                 QuestionStatistic.testee(lastRight = null),
                 QuestionStatistic.testee(lastRight = NOW))
         assertBiggerPoints("lastWrong bigger",
-                QuestionStatistic.testee(lastWrong = NOW.minusDays(1)),
-                QuestionStatistic.testee(lastWrong = NOW.minusDays(2)))
+                QuestionStatistic.testee(lastWrong = NOW.minusDays(2)),
+                QuestionStatistic.testee(lastWrong = NOW.minusDays(1)))
         assertBiggerPoints("lastWrong null",
                 QuestionStatistic.testee(lastWrong = null),
                 QuestionStatistic.testee(lastWrong = NOW))
@@ -202,7 +202,7 @@ class QuestionStatisticServiceTest : RobolectricTest() {
         whenever(mockClock.now()).thenReturn(date.parseDateTime())
     }
 
-    private fun setDefaultClockDate(date: Date = NOW) {
+    private fun setDefaultClockDate(date: Date) {
         whenever(mockClock.now()).thenReturn(date)
     }
 
