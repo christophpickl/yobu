@@ -18,7 +18,7 @@ val KG17 = PunctCoordinate(Meridian.KG, 17)
 enum class BoRelevantMeridian(
         val meridian: MainMeridian,
         val boPunct: PunctCoordinate,
-        val localisation: String
+        val localisation: String // this could (should?) actually be part of PunctCoordinate, but would mean optional fields which i dont like, so...!
 ) : IMeridian by meridian {
     Lu(MainMeridian.Lu, Lu1, "Schlüsselbein"),
     Di(MainMeridian.Di, Ma25, "2C lat Nabel"),

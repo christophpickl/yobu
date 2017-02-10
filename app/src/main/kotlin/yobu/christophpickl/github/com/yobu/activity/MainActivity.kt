@@ -14,8 +14,8 @@ import yobu.christophpickl.github.com.yobu.BoRelevantMeridian
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.R
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
-import yobu.christophpickl.github.com.yobu.logic.QuestionsRepository
-import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
+import yobu.christophpickl.github.com.yobu.logic.QuestionsLoader
+import yobu.christophpickl.github.com.yobu.logic.QuestionSelector
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 import yobu.christophpickl.github.com.yobu.common.LOG
@@ -46,8 +46,8 @@ class MainActivity : AppCompatActivity() {
     private val boGenerator = BoPunctGenerator()
 
     private val questions by lazy {
-        QuestionRepo(
-                QuestionsRepository().load(resources.openRawResource(R.raw.questions_catalog))
+        QuestionSelector(
+                QuestionsLoader().load(resources.openRawResource(R.raw.questions_catalog))
                         .plus(boGenerator.generateDefaultQuestions()),
                 stats)
     }

@@ -1,22 +1,4 @@
 {
   "questions": [
-    {
-      "id": "BoLageLu",
-      "text": "Lage von Bo Punkt für Lunge?",
-      "answers": [
-        {
-          "text": "Unterhalb vom Schlüsselbein"
-        },
-        {
-          "text": "Ende 12. Rippe"
-        },
-        {
-          "text": "2C unterhalb Nabel"
-        },
-        {
-          "text": "2C seitlich Nabel"
-        }
-      ]
-    }
   ]
 }

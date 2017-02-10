@@ -60,7 +60,7 @@ class QuestionRepoIT : RobolectricTest() {
         withTestActivity { activity ->
             val questions = listOf(question1, question2)
             val stats = QuestionStatisticService(activity)
-            val repo = QuestionRepo(questions, stats)
+            val repo = QuestionSelector(questions, stats)
 
             val firstQuestion = repo.nextQuestion()
 

@@ -7,7 +7,7 @@ import yobu.christophpickl.github.com.yobu.common.readString
 import java.io.InputStream
 
 
-class QuestionsRepository {
+class QuestionsLoader {
 
     private val boGenerator = BoPunctGenerator()
 

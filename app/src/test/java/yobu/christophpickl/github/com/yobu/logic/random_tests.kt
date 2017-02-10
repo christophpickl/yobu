@@ -7,27 +7,7 @@ import yobu.christophpickl.github.com.yobu.MainMeridian
 import yobu.christophpickl.github.com.yobu.Meridian
 import yobu.christophpickl.github.com.yobu.PunctCoordinate
 import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
-
-class BoPunctGeneratorTest : RobolectricTest() {
-
-    @Test
-    fun generate() {
-        val except = PunctCoordinate(Meridian.Lu, 1)
-        doCoupleOfTimes {
-            // TODO inject mock
-            val randPunct = BoPunctGenerator().generate(except)
-            assertThat(randPunct, not(equalTo(except)))
-        }
-    }
-
-    @Test fun generateDefaultQuestions_forEachMainMeridianGeneratesPunctAndLocalisationQuestion() {
-        withTestActivity { activity ->
-            val questions = BoPunctGenerator().generateDefaultQuestions()
-//            println(questions.joinToString("\n"))
-            assertThat(questions, hasSize(MainMeridian.size * 2))
-        }
-    }
-}
+import yobu.christophpickl.github.com.yobu.testinfra.doCoupleOfTimes
 
 
 class RandXImplTest {
@@ -78,9 +58,4 @@ class RandXImplTest {
                     not(equalTo(5)))
         }
     }
-}
-
-
-private fun doCoupleOfTimes(code: () -> Unit) {
-    1.rangeTo(100).forEach { code() }
 }
