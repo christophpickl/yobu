@@ -59,7 +59,11 @@ enum class MainMeridian(meridian: Meridian) : IMeridian by meridian {
     Pk(Meridian.Pk),
     EEE(Meridian.EEE),
     Gb(Meridian.Gb),
-    Le(Meridian.Le)
+    Le(Meridian.Le);
+
+    companion object {
+        val size by lazy { MainMeridian.values().size }
+    }
 }
 
 interface IMeridian {

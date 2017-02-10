@@ -3,10 +3,12 @@ package yobu.christophpickl.github.com.yobu.logic
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.MainMeridian
 import yobu.christophpickl.github.com.yobu.Meridian
 import yobu.christophpickl.github.com.yobu.PunctCoordinate
+import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
 
-class BoPunctGeneratorTest {
+class BoPunctGeneratorTest : RobolectricTest() {
 
     @Test
     fun generate() {
@@ -15,6 +17,14 @@ class BoPunctGeneratorTest {
             // TODO inject mock
             val randPunct = BoPunctGenerator().generate(except)
             assertThat(randPunct, not(equalTo(except)))
+        }
+    }
+
+    @Test fun generateDefaultQuestions_forEachMainMeridianGeneratesPunctAndLocalisationQuestion() {
+        withTestActivity { activity ->
+            val questions = BoPunctGenerator().generateDefaultQuestions()
+//            println(questions.joinToString("\n"))
+            assertThat(questions, hasSize(MainMeridian.size * 2))
         }
     }
 }

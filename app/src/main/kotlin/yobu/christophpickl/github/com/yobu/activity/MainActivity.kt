@@ -10,15 +10,16 @@ import com.pawegio.kandroid.find
 import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.Answer
+import yobu.christophpickl.github.com.yobu.BoRelevantMeridian
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.R
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
-import yobu.christophpickl.github.com.yobu.logic.CatalogsRepository
+import yobu.christophpickl.github.com.yobu.logic.QuestionsRepository
 import yobu.christophpickl.github.com.yobu.logic.QuestionRepo
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 import yobu.christophpickl.github.com.yobu.common.LOG
-
+import yobu.christophpickl.github.com.yobu.logic.BoPunctGenerator
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,9 +43,12 @@ class MainActivity : AppCompatActivity() {
     }
     private val txtCountRight by lazy { find<TextView>(R.id.txtCountRight) }
 
+    private val boGenerator = BoPunctGenerator()
+
     private val questions by lazy {
         QuestionRepo(
-                CatalogsRepository().load(resources.openRawResource(R.raw.questions_catalog)),
+                QuestionsRepository().load(resources.openRawResource(R.raw.questions_catalog))
+                        .plus(boGenerator.generateDefaultQuestions()),
                 stats)
     }
 
