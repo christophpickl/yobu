@@ -5,55 +5,45 @@ import yobu.christophpickl.github.com.yobu.*
 
 
 class BoPunctGenerator(private val randX: RandX = RandXImpl) {
-    //    {
-//        "id": "BoPunktLu",
-//        "text": "Bo Punkt von Lunge?",
-//        "flags": [ "RANDOM_BO_PUNCT" ],
-//        "answers": [
-//        {
-//            "text": "Lu1"
-//        }
-//        ]
-//    }
+
     private val boPunctDistribution = Distribution(BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
 
     fun generateDefaultQuestions(): List<Question> {
-        // generate questions asking for Bo POINTS
-        return YuRelevant.values().map { yu ->
-            Question(
-                    id = "YuPunkt${yu.labelShort}",
-                    text = "Yu Punkt von ${yu.labelLong}?",
-                    answers = listOf(Answer(yu.yuPunct.label, isRight = true))
-                            .plus(randomYuPunctAnswers(yu))
-            )
-        }
-
 //        // TODO generate the random answers each time question is displayed!
-//        return BoRelevantMeridian.values().map { boMeridian ->
-//            Question(
-//                    id = "BoPunkt${boMeridian.labelShort}",
-//                    text = "Bo Punkt von ${boMeridian.labelLong}?",
-//                    answers = listOf(Answer(boMeridian.boPunct.label, isRight = true))
-//                            .plus(randomBoPunctAnswers(boMeridian.boPunct))
-//            )
-//        // generate questions asking for Bo LOCALISATION texts
-//        }.plus(BoRelevantMeridian.values().map { boMeridian ->
-//            Question(
-//                    id = "BoLocalisation${boMeridian.labelShort}",
-//                    text = "Lage von Bo Punkt für ${boMeridian.labelLong}?",
-//                    answers = listOf(Answer(boMeridian.localisation, isRight = true))
-//                            .plus(randomBoLocalisationAnswers(boMeridian))
-//            )
-//        })
-//        // generation questions asking for Yu POINTS
-//                .plus(YuRelevant.values().map { yu ->
-//                    Question(
-//                            id = "YuPunkt${yu.labelShort}",
-//                            text = "Bo Punkt von ${yu.labelLong}?",
-//                            answers = listOf(Answer(yu.yuPunct.label, isRight = true))
-////                                   FIXME .plus(randomBoPunctAnswers(boMeridian.boPunct))
-//                    )
-//                })
+        // generate questions asking for Bo POINTS
+        return BoRelevantMeridian.values().map({ boMeridian ->
+            Question(
+                    id = "BoPunkt${boMeridian.labelShort}",
+                    text = "Bo Punkt von ${boMeridian.labelLong}?",
+                    answers = listOf(Answer(boMeridian.boPunct.label, isRight = true))
+                            .plus(randomBoPunctAnswers(boMeridian.boPunct))
+            )
+            // generate questions asking for Bo LOCALISATION texts
+        }).plus(BoRelevantMeridian.values().map { boMeridian ->
+            Question(
+                    id = "BoLocalisation${boMeridian.labelShort}",
+                    text = "Lage von Bo Punkt für ${boMeridian.labelLong}?",
+                    answers = listOf(Answer(boMeridian.localisation, isRight = true))
+                            .plus(randomBoLocalisationAnswers(boMeridian))
+            )
+        })
+                // generation questions asking for Yu POINTS
+                .plus(YuRelevant.values().map { yu ->
+                    Question(
+                            id = "YuPunkt${yu.labelShort}",
+                            text = "Yu Punkt von ${yu.labelLong}?",
+                            answers = listOf(Answer(yu.yuPunct.label, isRight = true))
+                                    .plus(randomYuPunctAnswers(yu))
+                    )
+                })
+                .plus(YuRelevant.values().map { yu ->
+                    Question(
+                            id = "YuLocalisation${yu.labelShort}",
+                            text = "Lage von Yu für ${yu.labelLong}?",
+                            answers = listOf(Answer(yu.localisation, isRight = true))
+                                    .plus(randomYuLocalisationAnswers(yu))
+                    )
+                })
     }
 
     private fun randomBoPunctAnswers(except: PunctCoordinate): List<Answer> {
@@ -63,11 +53,21 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
         }
     }
 
+    // FIXME when generating 1..3, each time the except list should grow (see also down below)
     private fun randomYuPunctAnswers(except: YuRelevant): List<Answer> {
-        // FIXME when generating 1..3, each time the except list should grow (see also down below)
         return 1.rangeTo(3).map {
             Answer(randomYuPunct(except.yuPunct.point).label)
         }
+    }
+
+    private fun randomYuLocalisationAnswers(except: YuRelevant): List<Answer> {
+        return 1.rangeTo(3).map {
+            Answer(randomYuMeridian(except).localisation)
+        }
+    }
+
+    private fun randomYuMeridian(except: YuRelevant): YuRelevant {
+        return randX.randomOf(YuRelevant.valuesArray(), except)
     }
 
     private fun randomBoLocalisationAnswers(except: BoRelevantMeridian): List<Answer> {

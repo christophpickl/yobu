@@ -28,7 +28,6 @@ fun <T> distributionOf(vararg pairs: Pair<Int, T>) =
         Distribution<T>(pairs.map { DistributionItem(it.first, it.second) })
 
 object RandXImpl : RandX {
-
     override fun <T> distributed(distribution: Distribution<T>): T {
         val rand = randomBetween(0, 100)
         return _distributed(distribution, rand)
@@ -48,7 +47,6 @@ object RandXImpl : RandX {
         throw IllegalStateException("Distribution algorithm failed! rand=$rand, distribution=$distribution (currentPercent=$currentPercent)")
     }
 
-
     override fun randomBetween(from: Int, to: Int, except: Int?): Int {
         val diff = to - from
         if (except == null) {
@@ -62,16 +60,16 @@ object RandXImpl : RandX {
         return randPos!!
     }
 
-    override fun <T> randomOf(array: Array<T>, except: T): T {
-        if (array.size <= 1) throw IllegalArgumentException("array must contain at least 2 elements: $array")
+    override fun <T> randomOf(items: Array<T>, except: T): T {
+        if (items.size <= 1) throw IllegalArgumentException("array must contain at least 2 elements: $items")
         var randItem: T?
         do {
-            randItem = array[randomBetween(0, array.size - 1)]
+            randItem = items[randomBetween(0, items.size - 1)]
         } while (randItem == except)
         return randItem!!
     }
 
-    override fun <T> randomOf(list: List<T>) = list[randomBetween(0, list.size - 1)]
+    override fun <T> randomOf(items: List<T>) = items[randomBetween(0, items.size - 1)]
 
     private fun <T> Distribution<T>.sumOfPercents() = this.items.sumBy { it.percent }
 }
@@ -80,8 +78,8 @@ interface RandX {
     fun <T> distributed(distribution: Distribution<T>): T
     fun randomBetween(from: Int, to: Int, except: Int? = null): Int
 
-    fun <T> randomOf(array: Array<T>, except: T): T
-    fun <T> randomOf(list: List<T>): T
+    fun <T> randomOf(items: Array<T>, except: T): T
+    fun <T> randomOf(items: List<T>): T
 }
 
 private fun rand(diff: Int) = Math.round(Math.random() * diff).toInt()
