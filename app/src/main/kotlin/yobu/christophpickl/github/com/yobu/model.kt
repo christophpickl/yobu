@@ -4,8 +4,8 @@ val Lu1 = PunctCoordinate(Meridian.Lu, 1)
 val Ma25 = PunctCoordinate(Meridian.Ma, 25)
 val Le13 = PunctCoordinate(Meridian.Le, 13)
 val Le14 = PunctCoordinate(Meridian.Le, 14)
-val Gb24= PunctCoordinate(Meridian.Gb, 24)
-val Gb25= PunctCoordinate(Meridian.Gb, 25)
+val Gb24 = PunctCoordinate(Meridian.Gb, 24)
+val Gb25 = PunctCoordinate(Meridian.Gb, 25)
 
 val KG3 = PunctCoordinate(Meridian.KG, 3)
 val KG4 = PunctCoordinate(Meridian.KG, 4)
@@ -14,6 +14,36 @@ val KG7 = PunctCoordinate(Meridian.KG, 7)
 val KG12 = PunctCoordinate(Meridian.KG, 12)
 val KG14 = PunctCoordinate(Meridian.KG, 14)
 val KG17 = PunctCoordinate(Meridian.KG, 17)
+
+sealed class YuRelevant(
+        val labelShort: String,
+        val labelLong: String,
+        blPoint: Int
+) {
+    val yuPunct = PunctCoordinate(Meridian.Bl, blPoint)
+
+    companion object {
+        private val VALUES: List<YuRelevant> = listOf(
+                YuRelevantMeridian(Meridian.Lu, 13),
+                YuRelevantMeridian(Meridian.Pk, 14),
+                YuRelevantMeridian(Meridian.He, 15),
+                YuRelevantExtraMeridian("Gv", "Gouverneur", 16),
+                YuRelevantExtraMeridian("Zf", "Zwerchfell", 17)
+        )
+
+        fun values() = VALUES
+    }
+
+    class YuRelevantMeridian(meridian: Meridian, blPoint: Int)
+        : YuRelevant(meridian.labelShort, meridian.labelLong, blPoint) {
+
+    }
+
+    class YuRelevantExtraMeridian(labelShort: String, labelLong: String, blPoint: Int)
+        : YuRelevant(labelShort, labelLong, blPoint) {
+
+    }
+}
 
 enum class BoRelevantMeridian(
         val meridian: MainMeridian,
@@ -34,6 +64,10 @@ enum class BoRelevantMeridian(
     Le(MainMeridian.Le, Le14, "Im 6. ICR");
 }
 
+enum class YuRelevantMeridian(
+
+) : IMeridian
+
 data class PunctCoordinate(val meridian: Meridian, val point: Int) {
     companion object {
         fun parse(string: String): PunctCoordinate {
@@ -43,6 +77,7 @@ data class PunctCoordinate(val meridian: Meridian, val point: Int) {
             return PunctCoordinate(meridian, number)
         }
     }
+
     val label = meridian.labelShort + point
 //    fun toNiceString() = meridian.text + point
 }

@@ -2,6 +2,7 @@
 # TODOs
 
 ## NOW
+* Yu points
 * context menu entries: reset data
 * answers jedesmal beim question aufruf shufflen
 
