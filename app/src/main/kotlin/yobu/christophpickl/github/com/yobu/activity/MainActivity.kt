@@ -9,10 +9,7 @@ import android.widget.TextView
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
-import yobu.christophpickl.github.com.yobu.Answer
-import yobu.christophpickl.github.com.yobu.BoRelevantMeridian
-import yobu.christophpickl.github.com.yobu.Question
-import yobu.christophpickl.github.com.yobu.R
+import yobu.christophpickl.github.com.yobu.*
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
 import yobu.christophpickl.github.com.yobu.logic.QuestionsLoader
 import yobu.christophpickl.github.com.yobu.logic.QuestionSelector
@@ -26,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val LOG = LOG(MainActivity::class.java)
 
+        private val ANSWER_DELAY_RIGHT = if (ENABLE_FAST_MODE) 100L else 500L
+        private val ANSWER_DELAY_WRONG = if (ENABLE_FAST_MODE) 100L else 2000L
     }
 
     private val stats by lazy { QuestionStatisticService(this) }
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private val questions by lazy {
         QuestionSelector(
-                QuestionsLoader().load(resources.openRawResource(R.raw.questions_catalog))
+                QuestionsLoader().load()
                         .plus(boGenerator.generateDefaultQuestions()),
                 stats)
     }
@@ -77,36 +76,6 @@ class MainActivity : AppCompatActivity() {
             currentCountRight = 0 // force highscore number update
             onNextQuestion()
         }
-    }
-
-    override fun onStart() {
-        LOG.i("onStart()")
-        super.onStart()
-    }
-
-    override fun onResume() {
-        LOG.i("onResume()")
-        super.onResume()
-    }
-
-    override fun onPause() { // vs: onSaveInstanceState
-        LOG.i("onPause()")
-        super.onPause()
-    }
-
-    override fun onStop() {
-        LOG.i("onStop()")
-        super.onStop()
-    }
-
-    override fun onRestart() {
-        LOG.i("onRestart()")
-        super.onRestart()
-    }
-
-    override fun onDestroy() {
-        LOG.i("onDestroy()")
-        super.onDestroy()
     }
 
     override fun onSaveInstanceState(state: Bundle?) {
@@ -152,11 +121,12 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             stats.wrongAnswered(question)
+            toast("Ups, das war falsch.")
             val rightAnswerView = answersList.getChildAt(question.indexOfRightAnswer).find<TextView>(R.id.answerLabel)
             rightAnswerView.setBackgroundColor(Color.GREEN)
         }
 
-        runDelayed(if (selectedAnswer.isRight) 500 else 2000) {
+        runDelayed(if (selectedAnswer.isRight) ANSWER_DELAY_RIGHT else ANSWER_DELAY_WRONG) {
             answersList.isEnabled = true
             if (selectedAnswer.isRight) {
                 onNextQuestion()
@@ -179,4 +149,34 @@ class MainActivity : AppCompatActivity() {
         onNextQuestion()
     }
 
+
+    override fun onStart() {
+        LOG.i("onStart()")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        LOG.i("onResume()")
+        super.onResume()
+    }
+
+    override fun onPause() { // vs: onSaveInstanceState
+        LOG.i("onPause()")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        LOG.i("onStop()")
+        super.onStop()
+    }
+
+    override fun onRestart() {
+        LOG.i("onRestart()")
+        super.onRestart()
+    }
+
+    override fun onDestroy() {
+        LOG.i("onDestroy()")
+        super.onDestroy()
+    }
 }

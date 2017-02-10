@@ -20,18 +20,18 @@ enum class BoRelevantMeridian(
         val boPunct: PunctCoordinate,
         val localisation: String // this could (should?) actually be part of PunctCoordinate, but would mean optional fields which i dont like, so...!
 ) : IMeridian by meridian {
-    Lu(MainMeridian.Lu, Lu1, "Schlüsselbein"),
-    Di(MainMeridian.Di, Ma25, "2C lat Nabel"),
-    Ma(MainMeridian.Ma, KG12, "4C cranial Nabel"),
-    MP(MainMeridian.MP, Le13, "11. Rippe"),
-    He(MainMeridian.He, KG14, "6C cranial Nabel"),
-    Due(MainMeridian.Due, KG4, "3C caudal Nabel"),
-    Bl(MainMeridian.Bl, KG3, "4C caudal Nabel"),
-    Ni(MainMeridian.Ni, Gb25, "12. Rippe"),
-    Pk(MainMeridian.Pk, KG17, "Zw. Brustwarzen"),
-    EEE(MainMeridian.EEE, KG7, "1C caudal Nabel"),
-    Gb(MainMeridian.Gb, Gb24, "7. ICR"),
-    Le(MainMeridian.Le, Le14, "6. ICR");
+    Lu(MainMeridian.Lu, Lu1, "Unter'm Schlüsselbein"),
+    Di(MainMeridian.Di, Ma25, "2C lateral vom Nabel"),
+    Ma(MainMeridian.Ma, KG12, "4C cranial vom Nabel"),
+    MP(MainMeridian.MP, Le13, "An der 11. Rippe"),
+    He(MainMeridian.He, KG14, "6C cranial vom Nabel"),
+    Due(MainMeridian.Due, KG4, "3C caudal vom Nabel"),
+    Bl(MainMeridian.Bl, KG3, "4C caudal vom Nabel"),
+    Ni(MainMeridian.Ni, Gb25, "An der 12. Rippe"),
+    Pk(MainMeridian.Pk, KG17, "Zwischen den Brustwarzen"),
+    EEE(MainMeridian.EEE, KG7, "1C caudal vom Nabel"),
+    Gb(MainMeridian.Gb, Gb24, "Im 7. ICR"),
+    Le(MainMeridian.Le, Le14, "Im 6. ICR");
 }
 
 data class PunctCoordinate(val meridian: Meridian, val point: Int) {
