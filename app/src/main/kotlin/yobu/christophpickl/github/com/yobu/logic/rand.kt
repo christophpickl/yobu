@@ -10,6 +10,12 @@ fun <T> List<T>.randomizeElements(): List<T> {
     }
 }
 
+
+fun <E> List<E>.randomElementsExcept(randomElementsCount: Int, except: E, rand: RandX = RandXImpl): List<E> {
+    return rand.randomElementsExcept(this, randomElementsCount, except)
+}
+
+
 fun <T> List<T>.randomElement(): T {
     return RandXImpl.randomOf(this)
 }
@@ -28,6 +34,17 @@ fun <T> distributionOf(vararg pairs: Pair<Int, T>) =
         Distribution<T>(pairs.map { DistributionItem(it.first, it.second) })
 
 object RandXImpl : RandX {
+    override fun <T> randomElementsExcept(items: List<T>, randomElementsCount: Int, except: T): List<T> {
+        // TODO check randomElementsCount for limits
+        val result = mutableListOf<T>()
+        var honeypot = items.toMutableList().minus(except)
+        while (result.size != randomElementsCount) {
+            val randomElement = randomOf(honeypot)
+            result += randomElement
+            honeypot = honeypot.minus(randomElement)
+        }
+        return result
+    }
 
     override fun <T> distributed(distribution: Distribution<T>): T {
         val rand = randomBetween(0, 100)
@@ -72,6 +89,16 @@ object RandXImpl : RandX {
     }
 
     override fun <T> randomOf(list: List<T>) = list[randomBetween(0, list.size - 1)]
+    override fun <T> randomOf(list: List<T>, except: T): T {
+        // TODO copy'n'paste from array
+        if (list.size <= 1) throw IllegalArgumentException("list must contain at least 2 elements: $list")
+        var randItem: T?
+        do {
+            randItem = list[randomBetween(0, list.size - 1)]
+        } while (randItem == except)
+        return randItem!!
+    }
+
 
     private fun <T> Distribution<T>.sumOfPercents() = this.items.sumBy { it.percent }
 }
@@ -82,6 +109,8 @@ interface RandX {
 
     fun <T> randomOf(array: Array<T>, except: T): T
     fun <T> randomOf(list: List<T>): T
+    fun <T> randomOf(list: List<T>, except: T): T
+    fun <T> randomElementsExcept(items: List<T>, randomElementsCount: Int, except: T): List<T>
 }
 
 private fun rand(diff: Int) = Math.round(Math.random() * diff).toInt()

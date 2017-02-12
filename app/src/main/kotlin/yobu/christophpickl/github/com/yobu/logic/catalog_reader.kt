@@ -27,6 +27,16 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
 
         return PunctCoordinate(randMeridian, randPoint)
     }
+
+    fun generateAnswers(count: Int, except: PunctCoordinate): List<Answer> {
+        // TODO check count limits
+        val result = mutableSetOf<Answer>()
+        while (result.size != count) {
+            // using a Set will ensure there are no duplicates
+            result += Answer(generate(except).label)
+        }
+        return result.toList()
+    }
 }
 
 class CatalogsRepository {
@@ -69,9 +79,7 @@ class CatalogsRepository {
     }
 
     private fun generateRandomAnswers(except: PunctCoordinate): List<Answer> {
-        return 1.rangeTo(3).map {
-            Answer(boGenerator.generate(except).label)
-        }
+        return boGenerator.generateAnswers(3, except)
     }
 }
 

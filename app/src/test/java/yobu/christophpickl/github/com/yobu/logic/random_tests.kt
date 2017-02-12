@@ -3,19 +3,32 @@ package yobu.christophpickl.github.com.yobu.logic
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.Answer
 import yobu.christophpickl.github.com.yobu.Meridian
 import yobu.christophpickl.github.com.yobu.PunctCoordinate
 
 class BoPunctGeneratorTest {
 
-    @Test
-    fun generate() {
-        val except = PunctCoordinate(Meridian.Lu, 1)
+    private val except = PunctCoordinate(Meridian.Lu, 1)
+
+    @Test fun generate() {
         doCoupleOfTimes {
             // TODO inject mock
             val randPunct = BoPunctGenerator().generate(except)
             assertThat(randPunct, not(equalTo(except)))
         }
+    }
+
+    @Test fun generateAnswers() {
+        doCoupleOfTimes {
+            val generatedAnswers = BoPunctGenerator().generateAnswers(5, except)
+            assertThat(generatedAnswers, not(contains(Answer(except.label))))
+            generatedAnswers.assertDistinctItems()
+        }
+    }
+
+    private fun <E> List<E>.assertDistinctItems() {
+        assertThat(distinct(), hasSize(size))
     }
 }
 
@@ -68,6 +81,15 @@ class RandXImplTest {
                     not(equalTo(5)))
         }
     }
+
+    @Test fun randomElementsExcept() {
+        val abc = listOf("a", "b", "c")
+        assertThat(RandXImpl.randomElementsExcept(abc, 2, "a"),
+                containsInAnyOrder("b", "c"))
+        assertThat(RandXImpl.randomElementsExcept(abc, 1, "a"),
+                anyOf(contains("b"), contains("c")))
+    }
+
 }
 
 
