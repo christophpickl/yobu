@@ -25,7 +25,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import yobu.christophpickl.github.com.yobu.common.Alerts
+import yobu.christophpickl.github.com.yobu.common.onClickMakeGone
+import yobu.christophpickl.github.com.yobu.common.toggleVisibility
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,22 +43,15 @@ class MainActivity : AppCompatActivity() {
     private val stats by lazy { QuestionStatisticService(this) }
     private val prefs by lazy { createPreferences() }
 
-    private val boView by lazy {
-        val view = find<ImageView>(R.id.cheatsheet_bo)
-        view.setImageResource(R.drawable.cheatsheet_bo)
-        view.setOnClickListener {
-            onBoViewClicked()
+    private val cheatsheetContainer by lazy {
+        find<RelativeLayout>(R.id.cheatsheet_container).apply {
+            onClickMakeGone() {
+                shownCheatsheet = ShownCheatsheet.NONE
+            }
         }
-        view
     }
-
-    private val yuView by lazy {
-        val view = find<ImageView>(R.id.cheatsheet_yu)
-        view.setImageResource(R.drawable.cheatsheet_yu)
-        view.setOnClickListener {
-            onYuViewClicked()
-        }
-        view
+    private val cheatsheetImage by lazy {
+        find<ImageView>(R.id.cheatsheet_image)
     }
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
@@ -204,49 +200,69 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var shownCheatsheet = ShownCheatsheet.NONE
+
     private fun onShowBo() {
         LOG.i("onShowBo()")
-        yuView.visibility = View.GONE
-        boView.toggleVisibility()
-    }
-
-    private fun onBoViewClicked() {
-        boView.visibility = View.GONE
+        when (shownCheatsheet) {
+            ShownCheatsheet.NONE -> {
+                changeCheatsheet(R.drawable.cheatsheet_bo, ShownCheatsheet.BO)
+                cheatsheetContainer.toggleVisibility()
+            }
+            ShownCheatsheet.BO -> {
+                shownCheatsheet = ShownCheatsheet.NONE
+                cheatsheetContainer.toggleVisibility()
+            }
+            ShownCheatsheet.YU -> {
+                changeCheatsheet(R.drawable.cheatsheet_bo, ShownCheatsheet.BO)
+            }
+        }
     }
 
     private fun onShowYu() {
         LOG.i("onShowYu()")
-        boView.visibility = View.GONE
-        yuView.toggleVisibility()
+        when (shownCheatsheet) {
+            ShownCheatsheet.NONE -> {
+                changeCheatsheet(R.drawable.cheatsheet_yu, ShownCheatsheet.YU)
+                cheatsheetContainer.toggleVisibility()
+            }
+            ShownCheatsheet.YU -> {
+                shownCheatsheet = ShownCheatsheet.NONE
+                cheatsheetContainer.toggleVisibility()
+            }
+            ShownCheatsheet.BO -> {
+                changeCheatsheet(R.drawable.cheatsheet_yu, ShownCheatsheet.YU)
+            }
+        }
     }
 
-    private fun onYuViewClicked() {
-        yuView.visibility = View.GONE
-    }
-
-    private fun ImageView.toggleVisibility() {
-        visibility = if (visibility == View.GONE) View.VISIBLE else View.GONE
+    private fun changeCheatsheet(drawable: Int, sheet: ShownCheatsheet) {
+        cheatsheetImage.setImageResource(drawable)
+        shownCheatsheet = sheet
     }
 
     private fun onAbout() {
         Alerts.showOkDialog(this,
                 title = "Über Yobu",
-                message = "Version: $GADSU_APP_VERSION")
+                message = "Version: $GADSU_APP_VERSION\nErstellt von: Christoph")
     }
 
+    private var shownDialog: AlertDialog? = null
     private fun onResetData() {
         LOG.i("onResetData()")
-        AlertDialog.Builder(this)
+        shownDialog = AlertDialog.Builder(this)
                 .setTitle("Daten löschen")
                 .setMessage("Bist du dir sicher dass du alle Daten zurücksetzen willst?")
                 .setCancelable(true)
                 .setPositiveButton("Löschen") { dialog, which ->
                     doResetData()
-                    dialog.cancel()
+//                    dialog.cancel()
+                    dialog.dismiss()
                     toast("Daten wurden erfolgreich zurückgesetzt.")
                 }
-                .setNegativeButton("Abbrechen") { dialog, which -> dialog.cancel() }
-                .create().show()
+                .setNegativeButton("Abbrechen") { dialog, which -> dialog.dismiss() }
+                .create()
+        shownDialog!!.show()
     }
 
     private fun doResetData() {
@@ -269,6 +285,14 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() { // vs: onSaveInstanceState
         LOG.i("onPause()")
         super.onPause()
+
+        LOG.i { "shownDialog is null: ${shownDialog == null}" }
+        shownDialog?.apply {
+            // TODO MainActivity has leaked window
+            if (isShowing) {
+                dismiss()
+            }
+        }
     }
 
     override fun onStop() {
@@ -285,4 +309,8 @@ class MainActivity : AppCompatActivity() {
         LOG.i("onDestroy()")
         super.onDestroy()
     }
+}
+
+private enum class ShownCheatsheet {
+    NONE, BO, YU
 }

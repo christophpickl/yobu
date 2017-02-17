@@ -11,11 +11,11 @@
     tools:context="yobu.christophpickl.github.com.yobu.activity.MainActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/txtCountRight"
@@ -36,16 +36,18 @@
 
     </LinearLayout>
 
-    <ImageView android:id="@+id/cheatsheet_bo"
+    <RelativeLayout
+        android:id="@+id/cheatsheet_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:clickable="true" />
-    <ImageView android:id="@+id/cheatsheet_yu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:clickable="true" />
+        android:clickable="true"
+        android:background="@color/colorWhite"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/cheatsheet_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
 
 
 </RelativeLayout>
