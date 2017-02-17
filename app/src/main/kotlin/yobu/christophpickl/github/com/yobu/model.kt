@@ -157,8 +157,8 @@ data class Question(
         val text: String,
         val answers: List<Answer>
 ) {
-    val rightAnswer = answers.first { it.isRight }
-    val indexOfRightAnswer = answers.indexOfFirst { it.isRight }
+    val rightAnswers = answers.filter { it.isRight }
+    val indicesOfRightAnswers = rightAnswers.mapIndexed { i, answer -> i }
 
     companion object // for (test) extensions
 }

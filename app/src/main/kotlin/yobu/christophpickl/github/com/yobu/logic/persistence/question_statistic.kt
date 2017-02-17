@@ -18,31 +18,34 @@ class QuestionStatisticsSqliteRepository(context: Context) : QuestionStatisticsR
     companion object {
 
         private val LOG = LOG(QuestionStatisticsSqliteRepository::class.java)
+
     }
-/*
-A resource was acquired at attached stack trace but never released. See java.io.Closeable for information on avoiding resource leaks.
-                                                                  java.lang.Throwable: Explicit termination method 'close' not called
-                                                                      at dalvik.system.CloseGuard.open(CloseGuard.java:184)
-                                                                      at android.database.sqlite.SQLiteConnectionPool.open(SQLiteConnectionPool.java:190)
-                                                                      at android.database.sqlite.SQLiteConnectionPool.open(SQLiteConnectionPool.java:177)
-                                                                      at android.database.sqlite.SQLiteDatabase.openInner(SQLiteDatabase.java:804)
-                                                                      at android.database.sqlite.SQLiteDatabase.open(SQLiteDatabase.java:789)
-                                                                      at android.database.sqlite.SQLiteDatabase.openDatabase(SQLiteDatabase.java:694)
- */
+
+    /*
+    A resource was acquired at attached stack trace but never released. See java.io.Closeable for information on avoiding resource leaks.
+                                                                      java.lang.Throwable: Explicit termination method 'close' not called
+                                                                          at dalvik.system.CloseGuard.open(CloseGuard.java:184)
+                                                                          at android.database.sqlite.SQLiteConnectionPool.open(SQLiteConnectionPool.java:190)
+                                                                          at android.database.sqlite.SQLiteConnectionPool.open(SQLiteConnectionPool.java:177)
+                                                                          at android.database.sqlite.SQLiteDatabase.openInner(SQLiteDatabase.java:804)
+                                                                          at android.database.sqlite.SQLiteDatabase.open(SQLiteDatabase.java:789)
+                                                                          at android.database.sqlite.SQLiteDatabase.openDatabase(SQLiteDatabase.java:694)
+     */
     private val sqlOpen = QuestionStatisticsOpenHelper(context)
 
     override fun read(id: String): QuestionStatistic? {
         LOG.d { "read($id)" }
 
-        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME WHERE ${Column.ID.key} = ?", arrayOf(id))
-
-        if (cursor.count == 0) {
-            return null
-        }
-        cursor.moveToFirst()
-        val statistic = cursor.readQuestionStatistic()
-        cursor.close()
-        return statistic
+        sqlOpen.readableDatabase
+                .rawQuery("SELECT * FROM $TABLE_NAME WHERE ${Column.ID.key} = ?", arrayOf(id))
+                .use { cursor ->
+                    if (cursor.count == 0) {
+                        return null
+                    }
+                    cursor.moveToFirst()
+                    val statistic = cursor.readQuestionStatistic()
+                    return statistic
+                }
     }
 
     override fun readAll(): List<QuestionStatistic> {
@@ -50,21 +53,25 @@ A resource was acquired at attached stack trace but never released. See java.io.
         // new String[] { "(SELECT max(column1) FROM table1) AS max" }
         // http://stackoverflow.com/questions/10600670/sqlitedatabase-query-method
 
-        val cursor = sqlOpen.readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY ${Column.ID.key}", null)
-        try {
-            if (cursor.count == 0) {
-                return emptyList()
-            }
+        sqlOpen.readableDatabase
+                .rawQuery("SELECT * FROM $TABLE_NAME ORDER BY ${Column.ID.key}", null)
+                .use { cursor ->
+                    if (cursor.count == 0) {
+                        return emptyList()
+                    }
 
-            val statistics = mutableListOf<QuestionStatistic>()
-            cursor.moveToFirst()
-            do {
-                statistics += cursor.readQuestionStatistic()
-            } while (cursor.moveToNext())
-            return statistics
-        } finally {
-            cursor.close()
-        }
+                    val statistics = mutableListOf<QuestionStatistic>()
+                    cursor.moveToFirst()
+                    do {
+                        statistics += cursor.readQuestionStatistic()
+                    } while (cursor.moveToNext())
+                    return statistics
+                }
+    }
+
+    override fun deleteAll() {
+        LOG.d("deleteAll()")
+        sqlOpen.deleteAll()
     }
 
     private fun Cursor.readQuestionStatistic() = QuestionStatistic(
@@ -74,7 +81,6 @@ A resource was acquired at attached stack trace but never released. See java.io.
             lastRight = readDate(Column.LAST_RIGHT),
             lastWrong = readDate(Column.LAST_WRONG)
     )
-
 
 
     override fun insertOrUpdate(statistic: QuestionStatistic) {
@@ -126,6 +132,7 @@ private enum class Column(
     abstract fun toSqlProp(statistic: QuestionStatistic): SqlProp
 
 }
+
 private fun Cursor.readString(column: Column) = readString(column.key)
 private fun Cursor.readInt(column: Column) = readInt(column.key)
 private fun Cursor.readDate(column: Column) = readNullableDate(column.key)
@@ -160,6 +167,13 @@ private class QuestionStatisticsOpenHelper internal constructor(context: Context
     fun update(id: String, props: List<SqlProp>) {
         transactional {
             update(TABLE_NAME, SqlProp.build(props), "${Column.ID.key} = ?", arrayOf(id))
+        }
+    }
+
+    fun deleteAll() {
+        transactional {
+            delete(TABLE_NAME, null, null)
+//            writableDatabase.rawQuery("DELETE FROM $TABLE_NAME", null).close()
         }
     }
 

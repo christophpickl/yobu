@@ -17,6 +17,16 @@ import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 import yobu.christophpickl.github.com.yobu.common.LOG
 import yobu.christophpickl.github.com.yobu.logic.BoPunctGenerator
+import android.R.menu
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import yobu.christophpickl.github.com.yobu.common.Alerts
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,9 +40,28 @@ class MainActivity : AppCompatActivity() {
     private val stats by lazy { QuestionStatisticService(this) }
     private val prefs by lazy { createPreferences() }
 
+    private val boView by lazy {
+        val view = find<ImageView>(R.id.cheatsheet_bo)
+        view.setImageResource(R.drawable.cheatsheet_bo)
+        view.setOnClickListener {
+            onBoViewClicked()
+        }
+        view
+    }
+
+    private val yuView by lazy {
+        val view = find<ImageView>(R.id.cheatsheet_yu)
+        view.setImageResource(R.drawable.cheatsheet_yu)
+        view.setOnClickListener {
+            onYuViewClicked()
+        }
+        view
+    }
+
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
+
     private val answersList by lazy {
-        find<ListView>(R.id.answersList) .apply {
+        find<ListView>(R.id.answersList).apply {
             setOnItemClickListener { parent, view, position, id ->
                 LOG.d("answersList.onItemClickListener on position: $position")
                 val answerLabel = view.find<TextView>(R.id.answerLabel)
@@ -71,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             val yobuState = StateManager.read(savedInstanceState)
             currentCountRight = yobuState.countRight
-             changeQuestion(yobuState.question)
+            changeQuestion(yobuState.question)
         } else {
             currentCountRight = 0 // force highscore number update
             onNextQuestion()
@@ -122,8 +151,10 @@ class MainActivity : AppCompatActivity() {
         } else {
             stats.wrongAnswered(question)
             toast("Ups, das war falsch.")
-            val rightAnswerView = answersList.getChildAt(question.indexOfRightAnswer).find<TextView>(R.id.answerLabel)
-            rightAnswerView.setBackgroundColor(Color.GREEN)
+            question.indicesOfRightAnswers.forEach { index ->
+                val rightAnswerView = answersList.getChildAt(index).find<TextView>(R.id.answerLabel)
+                rightAnswerView.setBackgroundColor(Color.GREEN)
+            }
         }
 
         runDelayed(if (selectedAnswer.isRight) ANSWER_DELAY_RIGHT else ANSWER_DELAY_WRONG) {
@@ -149,6 +180,81 @@ class MainActivity : AppCompatActivity() {
         onNextQuestion()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.mainmenu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_resetdata -> {
+                onResetData(); true
+            }
+            R.id.menu_showbo -> {
+                onShowBo(); true
+            }
+            R.id.menu_showyu -> {
+                onShowYu(); true
+            }
+            R.id.menu_about -> {
+                onAbout(); true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun onShowBo() {
+        LOG.i("onShowBo()")
+        yuView.visibility = View.GONE
+        boView.toggleVisibility()
+    }
+
+    private fun onBoViewClicked() {
+        boView.visibility = View.GONE
+    }
+
+    private fun onShowYu() {
+        LOG.i("onShowYu()")
+        boView.visibility = View.GONE
+        yuView.toggleVisibility()
+    }
+
+    private fun onYuViewClicked() {
+        yuView.visibility = View.GONE
+    }
+
+    private fun ImageView.toggleVisibility() {
+        visibility = if (visibility == View.GONE) View.VISIBLE else View.GONE
+    }
+
+    private fun onAbout() {
+        Alerts.showOkDialog(this,
+                title = "Über Yobu",
+                message = "Version: $GADSU_APP_VERSION")
+    }
+
+    private fun onResetData() {
+        LOG.i("onResetData()")
+        AlertDialog.Builder(this)
+                .setTitle("Daten löschen")
+                .setMessage("Bist du dir sicher dass du alle Daten zurücksetzen willst?")
+                .setCancelable(true)
+                .setPositiveButton("Löschen") { dialog, which ->
+                    doResetData()
+                    dialog.cancel()
+                    toast("Daten wurden erfolgreich zurückgesetzt.")
+                }
+                .setNegativeButton("Abbrechen") { dialog, which -> dialog.cancel() }
+                .create().show()
+    }
+
+    private fun doResetData() {
+        stats.deleteAll()
+        prefs.highscore = 0
+        currentHighScore = 0
+        currentCountRight = 0
+    }
 
     override fun onStart() {
         LOG.i("onStart()")

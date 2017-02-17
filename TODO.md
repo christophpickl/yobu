@@ -2,9 +2,11 @@
 # TODOs
 
 ## NOW
-* context menu entries: reset data
+* context menu entries: about (version number), show historic data
+* swipe left/right for cheatsheets (images with bo/yu points)
 * @BoPunctGenerator: when generating 1..3, each time the except list should grow (see also down below), otherwise there will be duplicates!
 * @BoPunctGenerator: generate the random answers each time question is displayed!
+* get sure in build that DEVELOPMENT is disabled
 
 ## High
 * @QuestionsLoader: mehr BO fragen
@@ -18,6 +20,7 @@
 * neuer frage typ: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
 
 ## Low
+* DEV action to execute a specific quesiton (by id/list to select it)
 * new question type: freetext (dynamic question renderer pro type)
 * menu entry: about (version)
 * menu entry for development: display all questions (including statistics for it)

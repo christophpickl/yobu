@@ -21,10 +21,10 @@ inline fun SQLiteDatabase.transactional(code: SQLiteDatabase.() -> Unit) {
 }
 
 fun SQLiteOpenHelper.readCount(sql: String, args: Array<String>): Int {
-    val cursor = readableDatabase.rawQuery(sql, args)
-    val count = cursor.count
-    cursor.close()
-    return count
+    readableDatabase.rawQuery(sql, args).use { cursor ->
+        val count = cursor.count
+        return count
+    }
 }
 
 fun Cursor.readString(column: String): String {

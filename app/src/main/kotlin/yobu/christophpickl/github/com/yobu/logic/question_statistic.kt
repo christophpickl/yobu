@@ -46,6 +46,10 @@ class QuestionStatisticService(
         answered(question, isRight = false)
     }
 
+    fun deleteAll() {
+        repository.deleteAll()
+    }
+
     private fun answered(question: Question, isRight: Boolean) {
         val maybeStat = repository.read(question.id)
 
@@ -133,6 +137,7 @@ interface QuestionStatisticsRepository {
     fun insertOrUpdate(statistic: QuestionStatistic)
     fun readAll(): List<QuestionStatistic>
     fun read(id: String): QuestionStatistic?
+    fun deleteAll()
 }
 
 /**
@@ -142,10 +147,9 @@ class CachedQuestionStatisticsRepository(
         context: Context,
         private val sqliteDelegate: QuestionStatisticsRepository = QuestionStatisticsSqliteRepository(context)
 ) : QuestionStatisticsRepository {
-
     private val cache = mutableMapOf<String, QuestionStatistic>()
-    private var firstReadAll = true
 
+    private var firstReadAll = true
     override fun read(id: String): QuestionStatistic? = cache[id]
 
     override fun readAll(): List<QuestionStatistic> {
@@ -159,6 +163,11 @@ class CachedQuestionStatisticsRepository(
     override fun insertOrUpdate(statistic: QuestionStatistic) {
         cache.put(statistic.id, statistic)
         sqliteDelegate.insertOrUpdate(statistic)
+    }
+
+    override fun deleteAll() {
+        cache.clear()
+        sqliteDelegate.deleteAll()
     }
 
 }

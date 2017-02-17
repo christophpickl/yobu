@@ -1,5 +1,7 @@
 package yobu.christophpickl.github.com.yobu.common
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.SharedPreferences
 import java.io.BufferedReader
 import java.io.IOException
@@ -37,6 +39,18 @@ fun InputStream.readString(): String {
     return sb.toString()
 }
 
+object Alerts {
+    fun showOkDialog(context: Context, title: String, message: String) {
+        AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(true)
+                .setNeutralButton(android.R.string.ok) { dialog, which -> dialog.cancel() }
+                .create().show()
+    }
+}
+
+// TODO replace with groupBy{}
 fun <K, V> List<V>.associateMultiBy(transform: (V) -> K): Map<K, List<V>> {
     val map = mutableMapOf<K, MutableList<V>>()
     this.forEach { value ->

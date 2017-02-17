@@ -35,4 +35,17 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+
+    <ImageView android:id="@+id/cheatsheet_bo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true" />
+    <ImageView android:id="@+id/cheatsheet_yu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true" />
+
+
 </RelativeLayout>
