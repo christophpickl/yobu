@@ -10,25 +10,45 @@ class BoPunctGeneratorTest {
 
     private val except = PunctCoordinate(Meridian.Lu, 1)
 
-    @Test fun generate() {
+    @Test fun randomBoPunct() {
         doCoupleOfTimes {
             // TODO inject mock
-            val randPunct = BoPunctGenerator().generate(except)
+            val randPunct = BoPunctGenerator().randomBoPunct(except)
             assertThat(randPunct, not(equalTo(except)))
         }
     }
 
-    @Test fun generateAnswers() {
-        doCoupleOfTimes {
-            val generatedAnswers = BoPunctGenerator().generateAnswers(5, except)
-            assertThat(generatedAnswers, not(contains(Answer(except.label))))
-            generatedAnswers.assertDistinctItems()
-        }
-    }
+//    @Test fun generateAnswers() {
+//        doCoupleOfTimes {
+//            val generatedAnswers = BoPunctGenerator().generateAnswers(5, except)
+//            assertThat(generatedAnswers, not(contains(Answer(except.label))))
+//            generatedAnswers.assertDistinctItems()
+//        }
+//    }
 
     private fun <E> List<E>.assertDistinctItems() {
         assertThat(distinct(), hasSize(size))
     }
+    /*
+
+    @Test
+    fun generate() {
+        val except = PunctCoordinate(Meridian.Lu, 1)
+        doCoupleOfTimes {
+            // could inject mock and test more precisely
+            val randPunct = BoPunctGenerator().randomBoPunct(except)
+            MatcherAssert.assertThat(randPunct, Matchers.not(Matchers.equalTo(except)))
+        }
+    }
+
+    @Test fun generateDefaultQuestions_forEachMainMeridianGeneratesPunctAndLocalisationQuestion() {
+        withTestActivity { activity ->
+            val questions = BoPunctGenerator().generateDefaultQuestions()
+            println(questions.joinToString("\n"))
+            MatcherAssert.assertThat(questions, Matchers.hasSize(MainMeridian.size * 2))
+        }
+    }
+     */
 }
 
 

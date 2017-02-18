@@ -45,6 +45,21 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
                 })
     }
 
+    fun generateBoAnswers222(count: Int, except: PunctCoordinate): List<Answer> {
+        // TODO check count limits
+        val result = mutableSetOf<Answer>()
+        while (result.size != count) {
+            // using a Set will ensure there are no duplicates
+            result += Answer(randomBoPunct(except).label)
+        }
+        return result.toList()
+    }
+    // FIXME this will lead to not having duplicate answers!
+    private fun randomBoPunctAnswers222(except: PunctCoordinate): List<Answer> {
+        // statt: return 1.rangeTo(3).map {
+        return generateBoAnswers222(3, except)
+    }
+
     private fun randomBoPunctAnswers(except: PunctCoordinate): List<Answer> {
         return 1.rangeTo(3).map {
             Answer(randomBoPunct(except).label)

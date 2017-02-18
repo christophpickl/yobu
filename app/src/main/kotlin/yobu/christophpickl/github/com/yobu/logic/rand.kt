@@ -87,13 +87,13 @@ object RandXImpl : RandX {
         return randItem!!
     }
 
-    override fun <T> randomOf(items: List<T>) = list[randomBetween(0, list.size - 1)]
+    override fun <T> randomOf(items: List<T>) = items[randomBetween(0, items.size - 1)]
     override fun <T> randomOf(items: List<T>, except: T): T {
         // TODO copy'n'paste from array
-        if (list.size <= 1) throw IllegalArgumentException("list must contain at least 2 elements: $list")
+        if (items.size <= 1) throw IllegalArgumentException("list must contain at least 2 elements: $items")
         var randItem: T?
         do {
-            randItem = list[randomBetween(0, list.size - 1)]
+            randItem = items[randomBetween(0, items.size - 1)]
         } while (randItem == except)
         return randItem!!
     }
