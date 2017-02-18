@@ -9,11 +9,15 @@ class QuestionSelector(
         private val statisticService: QuestionStatisticService
 ) {
 
+    private val sequentialSelector = SequentialQuestionSelector(questions)
     private val questionsById = questions.associateBy { it.id }
 
-    private val seqSelector = SequentialQuestionSelector(questions)
     fun nextQuestion(): Question {
-        val question = if (DISABLE_RANDOM_QUESTIONS) seqSelector.nextQuestion() else statisticService.nextQuestion(questionsById)
+        val question = if (DISABLE_RANDOM_QUESTIONS) {
+            sequentialSelector.nextQuestion()
+        } else {
+            statisticService.nextQuestion(questionsById)
+        }
         return question.copy(answers = question.answers.randomizeElements())
     }
 

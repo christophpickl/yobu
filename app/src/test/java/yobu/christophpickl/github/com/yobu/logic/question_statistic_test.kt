@@ -10,7 +10,9 @@ import org.mockito.Mockito
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.logic.persistence.testee
 import yobu.christophpickl.github.com.yobu.common.Clock
+import yobu.christophpickl.github.com.yobu.common.RealClock
 import yobu.christophpickl.github.com.yobu.common.parseDateTime
+import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 import yobu.christophpickl.github.com.yobu.testee
 import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
 import java.util.*
@@ -41,7 +43,7 @@ class CachedQuestionStatisticsRepositoryTest : RobolectricTest() {
         }
 
         withTestActivity { activity ->
-            val repo = CachedQuestionStatisticsRepository(activity, mockSqlite)
+            val repo = CachedQuestionStatisticsRepository(mockSqlite)
 
             assertThat(repo.readAll(), emptyCollectionOf(QuestionStatistic::class.java))
 
@@ -59,14 +61,15 @@ class QuestionRepoIT : RobolectricTest() {
     @Test fun answerFirstQuestion_nextQuestionShouldBeSecondQuestion() {
         withTestActivity { activity ->
             val questions = listOf(question1, question2)
-            val stats = QuestionStatisticService(activity)
-            val repo = QuestionSelector(questions, stats)
+            val repo = QuestionStatisticsSqliteRepository(activity)
+            val stats = QuestionStatisticService(repo, RealClock)
+            val selector = QuestionSelector(questions, stats)
 
-            val firstQuestion = repo.nextQuestion()
+            val firstQuestion = selector.nextQuestion()
 
             stats.rightAnswered(firstQuestion)
 
-            val secondQuestion = repo.nextQuestion()
+            val secondQuestion = selector.nextQuestion()
             assertThat(secondQuestion, not(equalTo(firstQuestion)))
         }
     }

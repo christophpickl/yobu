@@ -12,9 +12,36 @@ import java.util.*
 
 class QuestionStatisticService(
         private val repository: QuestionStatisticsRepository,
-        private val clock: Clock = RealClock()
+        private val clock: Clock = RealClock
 ) {
-    constructor(context: Context) : this(CachedQuestionStatisticsRepository(context, QuestionStatisticsSqliteRepository(context)))
+
+    fun rightAnswered(question: Question) {
+        answered(question, isRight = true)
+    }
+
+    fun wrongAnswered(question: Question) {
+        answered(question, isRight = false)
+    }
+
+    fun nextQuestion(questionsById: Map<String, Question>): Question {
+        if (questionsById.isEmpty()) throw IllegalArgumentException("empty questions map is not allowed!")
+        val answeredStats: List<QuestionStatistic> = repository.readAll()
+
+        val unansweredQuestionIds = questionsById.keys.minus(answeredStats.map { it.id })
+        if (unansweredQuestionIds.isNotEmpty()) {
+            val nextQuestionId = unansweredQuestionIds.randomElement()
+            return questionsById.getOrThrow(nextQuestionId)
+        }
+
+        // all questions have been answered at least once
+        val statsByPoints = answeredStats.associateMultiBy { calcPoints(it) }
+        val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
+        return questionsById.getOrThrow(highestPointsStats.randomElement().id)
+    }
+
+    fun deleteAll() {
+        repository.deleteAll()
+    }
 
     @VisibleForTesting fun calcPoints(statistic: QuestionStatistic): Double {
         var datePoints = 0.0
@@ -36,18 +63,6 @@ class QuestionStatisticService(
     private fun Date.diffDaysToToday(): Int {
         val diffTime = clock.now().time - this.time
         return (diffTime / (1000 * 60 * 60 * 24)).toInt()
-    }
-
-    fun rightAnswered(question: Question) {
-        answered(question, isRight = true)
-    }
-
-    fun wrongAnswered(question: Question) {
-        answered(question, isRight = false)
-    }
-
-    fun deleteAll() {
-        repository.deleteAll()
     }
 
     private fun answered(question: Question, isRight: Boolean) {
@@ -76,22 +91,6 @@ class QuestionStatisticService(
                     clock.now()
                 }
         ))
-    }
-
-    fun nextQuestion(questionsById: Map<String, Question>): Question {
-        if (questionsById.isEmpty()) throw IllegalArgumentException("empty questions map is not allowed!")
-        val answeredStats: List<QuestionStatistic> = repository.readAll()
-
-        val unansweredQuestionIds = questionsById.keys.minus(answeredStats.map { it.id })
-        if (unansweredQuestionIds.isNotEmpty()) {
-            val nextQuestionId = unansweredQuestionIds.randomElement()
-            return questionsById.getOrThrow(nextQuestionId)
-        }
-
-        // all questions have been answered at least once
-        val statsByPoints = answeredStats.associateMultiBy { calcPoints(it) }
-        val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
-        return questionsById.getOrThrow(highestPointsStats.randomElement().id)
     }
 
     private fun Map<String, Question>.getOrThrow(id: String) =
@@ -144,8 +143,8 @@ interface QuestionStatisticsRepository {
  * Avoid readAll communication to sqlite by caching.
  */
 class CachedQuestionStatisticsRepository(
-        context: Context,
-        private val sqliteDelegate: QuestionStatisticsRepository = QuestionStatisticsSqliteRepository(context)
+//        context: Context,
+        private val sqliteDelegate: QuestionStatisticsRepository //= QuestionStatisticsSqliteRepository(context)
 ) : QuestionStatisticsRepository {
     private val cache = mutableMapOf<String, QuestionStatistic>()
 

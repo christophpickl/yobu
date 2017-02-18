@@ -7,7 +7,7 @@ interface Clock {
     fun now(): Date
 }
 
-class RealClock : Clock {
+object RealClock : Clock {
     override fun now() = Date()
 
 }

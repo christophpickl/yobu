@@ -11,14 +11,10 @@ import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.*
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
-import yobu.christophpickl.github.com.yobu.logic.QuestionsLoader
-import yobu.christophpickl.github.com.yobu.logic.QuestionSelector
-import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
-import yobu.christophpickl.github.com.yobu.common.LOG
-import yobu.christophpickl.github.com.yobu.logic.BoPunctGenerator
 import android.R.menu
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.view.Menu
 import android.view.MenuInflater
@@ -27,10 +23,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.pawegio.kandroid.startActivity
-import yobu.christophpickl.github.com.yobu.common.Alerts
-import yobu.christophpickl.github.com.yobu.common.onClickMakeGone
-import yobu.christophpickl.github.com.yobu.common.toggleVisibility
-
+import yobu.christophpickl.github.com.yobu.common.*
+import yobu.christophpickl.github.com.yobu.logic.*
+import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         private val ANSWER_DELAY_WRONG = if (ENABLE_FAST_MODE) 100L else 2000L
     }
 
-    private val stats by lazy { QuestionStatisticService(this) }
+    private val repo by lazy { GlobalDb.getRepo(this) }
+    private val stats by lazy { QuestionStatisticService(repo, RealClock) }
     private val prefs by lazy { createPreferences() }
 
     private val cheatsheetContainer by lazy {
@@ -68,13 +64,8 @@ class MainActivity : AppCompatActivity() {
     }
     private val txtCountRight by lazy { find<TextView>(R.id.txtCountRight) }
 
-    private val boGenerator = BoPunctGenerator()
-
     private val questions by lazy {
-        QuestionSelector(
-                QuestionsLoader().load()
-                        .plus(boGenerator.generateDefaultQuestions()),
-                stats)
+        QuestionSelector(GlobalQuestions.allQuestions, stats)
     }
 
     private var currentQuestion: Question? = null
@@ -137,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onAnswerClicked(question: Question, selectedAnswer: Answer, answerLabel: TextView) {
         answersList.isEnabled = false
-        answerLabel.setBackgroundColor(if (selectedAnswer.isRight) Color.GREEN else Color.RED)
+        answerLabel.setBackgroundColor(if (selectedAnswer.isRight) Colors.QuestionRight else Colors.QuestionWrong)
 
         if (selectedAnswer.isRight) {
             stats.rightAnswered(question)
@@ -182,25 +173,16 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private val menuActions = mapOf(
+            R.id.menu_resetdata to { onResetData() },
+            R.id.menu_showbo to { onShowBo() },
+            R.id.menu_showyu to { onShowYu() },
+            R.id.menu_about to { onAbout() },
+            R.id.menu_stats to { startActivity<StatsActivity>() }
+    )
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_resetdata -> {
-                onResetData(); true
-            }
-            R.id.menu_showbo -> {
-                onShowBo(); true
-            }
-            R.id.menu_showyu -> {
-                onShowYu(); true
-            }
-            R.id.menu_about -> {
-                onAbout(); true
-            }
-            R.id.menu_stats -> {
-                startActivity<StatsActivity>(); true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        menuActions[item.itemId]?.invoke() ?: return super.onOptionsItemSelected(item)
+        return true
     }
 
     private var shownCheatsheet = ShownCheatsheet.NONE
