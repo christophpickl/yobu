@@ -26,6 +26,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import com.pawegio.kandroid.startActivity
 import yobu.christophpickl.github.com.yobu.common.Alerts
 import yobu.christophpickl.github.com.yobu.common.onClickMakeGone
 import yobu.christophpickl.github.com.yobu.common.toggleVisibility
@@ -195,7 +196,9 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_about -> {
                 onAbout(); true
             }
-
+            R.id.menu_stats -> {
+                startActivity<StatsActivity>(); true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

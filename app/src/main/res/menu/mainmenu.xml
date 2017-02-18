@@ -5,6 +5,7 @@
     <item android:id="@+id/menu_resetdata" android:title="Historie zurücksetzen" />
     <item android:id="@+id/menu_showbo" android:title="Bo Schummler" />
     <item android:id="@+id/menu_showyu" android:title="Yu Schummler" />
+    <item android:id="@+id/menu_stats" android:title="Statistik" />
     <item android:id="@+id/menu_about" android:title="Über Gadsu" />
     <!--<item android:id="@+id/menu_about"-->
         <!--android:icon="@drawable/ic_help"-->
