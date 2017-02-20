@@ -4,7 +4,7 @@ import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.*
 
 
-class BoPunctGenerator(private val randX: RandX = RandXImpl) {
+class QuestionsGenerator(private val randX: RandX = RandXImpl) {
 
     private val boPunctDistribution = Distribution(BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
 

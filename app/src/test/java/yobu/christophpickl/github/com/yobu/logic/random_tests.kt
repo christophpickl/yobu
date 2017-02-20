@@ -8,14 +8,14 @@ import yobu.christophpickl.github.com.yobu.Lu1
 import yobu.christophpickl.github.com.yobu.Meridian
 import yobu.christophpickl.github.com.yobu.PunctCoordinate
 
-class BoPunctGeneratorTest {
+class QuestionsGeneratorTest {
 
     private val anyPunct = Lu1
 
-    private lateinit var generator: BoPunctGenerator
+    private lateinit var generator: QuestionsGenerator
 
     @Before fun setup() {
-        generator = BoPunctGenerator()
+        generator = QuestionsGenerator()
     }
 
     @Test fun randomBoPunct_shouldNotReturnTheExceptPunct() {
@@ -44,14 +44,14 @@ class BoPunctGeneratorTest {
         val except = PunctCoordinate(Meridian.Lu, 1)
         doCoupleOfTimes {
             // could inject mock and test more precisely
-            val randPunct = BoPunctGenerator().randomBoPunct(except)
+            val randPunct = generator.randomBoPunct(except)
             MatcherAssert.assertThat(randPunct, Matchers.not(Matchers.equalTo(except)))
         }
     }
 
     @Test fun generateDefaultQuestions_forEachMainMeridianGeneratesPunctAndLocalisationQuestion() {
         withTestActivity { activity ->
-            val questions = BoPunctGenerator().generateDefaultQuestions()
+            val questions = generator.generateDefaultQuestions()
             println(questions.joinToString("\n"))
             MatcherAssert.assertThat(questions, Matchers.hasSize(MainMeridian.size * 2))
         }

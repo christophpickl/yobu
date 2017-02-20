@@ -2,12 +2,12 @@
 # TODOs
 
 ## NOW
-* @BoPunctGenerator: generate the random answers each time question is displayed!
 * get sure in build that DEVELOPMENT is disabled
+* mehr (Bo) fragen, ausfeilen
 
 ## High
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
-* @QuestionsLoader: mehr BO fragen
+* fine tuned distribution a la zettel
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
 
 ## Med
@@ -18,6 +18,7 @@
 * neuer frage typ: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
 
 ## Low
+* @question generation: generate the random answers each time question is displayed, not only once at app startup!
 * swipe left/right for cheatsheets (images with bo/yu points)
 * DEV action to execute a specific quesiton (by id/list to select it)
 * new question type: freetext (dynamic question renderer pro type)

@@ -7,8 +7,9 @@ import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsS
 // ======================== shared among activities ========================
 
 object GlobalDb {
-    //    val repo: QuestionStatisticsRepository = CachedQuestionStatisticsRepository(QuestionStatisticsSqliteRepository(context))
+
     private var repo: QuestionStatisticsRepository? = null
+
     fun getRepo(context: Context): QuestionStatisticsRepository {
         if (repo == null) {
             repo = CachedQuestionStatisticsRepository(QuestionStatisticsSqliteRepository(context))
@@ -19,10 +20,11 @@ object GlobalDb {
 
 object GlobalQuestions {
 
-    private val boGenerator = BoPunctGenerator()
+    private val questionsGenerator = QuestionsGenerator()
 
     val allQuestions: List<Question> by lazy {
-        QuestionsLoader().load().plus(boGenerator.generateDefaultQuestions())
+        QuestionsLoader().load()
+                .plus(questionsGenerator.generateDefaultQuestions())
     }
 
 }
