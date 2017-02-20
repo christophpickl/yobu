@@ -1,35 +1,33 @@
 package yobu.christophpickl.github.com.yobu.activity
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.ListView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.runDelayed
+import com.pawegio.kandroid.startActivity
 import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.*
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
-import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
-import android.R.menu
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import com.pawegio.kandroid.startActivity
 import yobu.christophpickl.github.com.yobu.common.*
-import yobu.christophpickl.github.com.yobu.logic.*
-import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
+import yobu.christophpickl.github.com.yobu.logic.GlobalDb
+import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
+import yobu.christophpickl.github.com.yobu.logic.QuestionSelector
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
+import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        val INTENT_QUESTION_ID = "questionId"
+
         private val LOG = LOG(MainActivity::class.java)
 
         private val ANSWER_DELAY_RIGHT = if (ENABLE_FAST_MODE) 100L else 500L
@@ -62,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private val txtCountRight by lazy { find<TextView>(R.id.txtCountRight) }
+    private val txtScoreAndHighscore by lazy { find<TextView>(R.id.txtScoreAndHighscore) }
 
     private val questions by lazy {
         QuestionSelector(GlobalQuestions.allQuestions, stats)
@@ -70,13 +68,21 @@ class MainActivity : AppCompatActivity() {
 
     private var currentQuestion: Question? = null
     private var currentHighScore = 0
-    private var currentCountRight: Int = 0
         get() = field
         set(value) {
-            txtCountRight.text = "$value / $currentHighScore"
             field = value
+            updateTxtCountRight()
+        }
+    private var currentScore: Int = 0
+        get() = field
+        set(value) {
+            field = value
+            updateTxtCountRight()
         }
 
+    private fun updateTxtCountRight() {
+        txtScoreAndHighscore.text = "$currentScore / $currentHighScore"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) { // vs: onRestoreInstanceState
         LOG.i("onCreate(savedInstanceState.isNull=${savedInstanceState == null})")
@@ -87,11 +93,21 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState != null) {
             val yobuState = StateManager.read(savedInstanceState)
-            currentCountRight = yobuState.countRight
+            LOG.d { "Restoring state from: $yobuState" }
+            currentScore = yobuState.countRight
             changeQuestion(yobuState.question)
         } else {
-            currentCountRight = 0 // force highscore number update
-            onNextQuestion()
+            val intentQuestionId: String? = intent.getStringExtra(INTENT_QUESTION_ID)
+            LOG.i("No instance state saved.")
+
+            if (intentQuestionId != null) {
+                changeQuestion(questions.questionById(intentQuestionId))
+                currentScore = prefs.currentScore
+                LOG.i { "Question ID from intent: $intentQuestionId; currentScore: $currentScore " }
+            } else {
+                updateTxtCountRight() // force highscore text value update
+                onNextQuestion()
+            }
         }
     }
 
@@ -102,8 +118,12 @@ class MainActivity : AppCompatActivity() {
             LOG.w("Not saving state as of null bundle!")
             return
         }
+
+        // maybe we are navigating away (statistics) and return back here again
+        prefs.currentScore = currentScore
+
         StateManager.save(state, YobuState(
-                countRight = currentCountRight,
+                countRight = currentScore,
                 question = currentQuestion!!
         ))
     }
@@ -132,8 +152,8 @@ class MainActivity : AppCompatActivity() {
 
         if (selectedAnswer.isRight) {
             stats.rightAnswered(question)
-            currentCountRight++
-            if (currentCountRight - 1 == currentHighScore) {
+            currentScore++
+            if (currentScore - 1 == currentHighScore) {
                 toast("Highscore gebrochen!")
             }
         } else {
@@ -157,14 +177,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun onRestartRiddle() {
         val oldHighscore = prefs.highscore
-        val newHighscore = currentCountRight
+        val newHighscore = currentScore
         if (newHighscore > oldHighscore) {
             toast("Juchu, neue Highscore: $newHighscore!")
             prefs.highscore = newHighscore
             currentHighScore = newHighscore
         }
 
-        currentCountRight = 0
+        currentScore = 0
         onNextQuestion()
     }
 
@@ -180,6 +200,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_about to { onAbout() },
             R.id.menu_stats to { startActivity<StatsActivity>() }
     )
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         menuActions[item.itemId]?.invoke() ?: return super.onOptionsItemSelected(item)
         return true
@@ -254,7 +275,7 @@ class MainActivity : AppCompatActivity() {
         stats.deleteAll()
         prefs.highscore = 0
         currentHighScore = 0
-        currentCountRight = 0
+        currentScore = 0
     }
 
     override fun onStart() {

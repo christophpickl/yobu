@@ -21,6 +21,8 @@ class QuestionSelector(
         return question.copy(answers = question.answers.randomizeElements())
     }
 
+    fun questionById(id: String) = questionsById[id]!!
+
 }
 
 private class SequentialQuestionSelector(private val questions: List<Question>) {

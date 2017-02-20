@@ -1,35 +1,24 @@
 package yobu.christophpickl.github.com.yobu.activity
 
-import android.R
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.annotation.ColorInt
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.View
-import android.view.View.TEXT_ALIGNMENT_TEXT_END
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewManager
-import android.widget.AbsListView
 import android.widget.BaseAdapter
-import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.RelativeLayout
 import org.jetbrains.anko.*
 import yobu.christophpickl.github.com.yobu.Colors
-import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.common.LOG
 import yobu.christophpickl.github.com.yobu.common.textViewX
-import yobu.christophpickl.github.com.yobu.debugColor
 import yobu.christophpickl.github.com.yobu.logic.GlobalDb
 import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
 
 
 class StatsActivity : AppCompatActivity() {
+
 
     private val repo by lazy { GlobalDb.getRepo(this) }
 
@@ -79,8 +68,10 @@ class StatsActivityUi(private val stats: List<QuestionStatistic>) : AnkoComponen
 
                 onItemClick { adapterView, view, position, id ->
                     val questionId = questionAdapter.getItem(position).id
-                    LOG.i("IMPLEMENT ME: on question stat clicked: $questionId")
-                    // FIXME start MainActivity via intent and pass questionId
+                    LOG.i { "Item clicked for question with ID: $questionId" }
+                    startActivity<MainActivity>(
+                            MainActivity.INTENT_QUESTION_ID to questionId
+                    )
                 }
             }
 
