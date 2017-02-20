@@ -28,7 +28,7 @@ class QuestionsGeneratorTest {
 
     @Test fun generatePoPunctAnswers_shouldNotReturnDuplicates() {
         doCoupleOfTimes {
-            generator.generatePoPunctAnswers(anyPunct)
+            generator.generateBoPunctAnswers(anyPunct)
                     .assertDistinctItems()
         }
     }

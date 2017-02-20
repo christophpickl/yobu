@@ -6,27 +6,41 @@ import yobu.christophpickl.github.com.yobu.*
 
 class QuestionsGenerator(private val randX: RandX = RandXImpl) {
 
-    private val boPunctDistribution = Distribution(BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
+    private val boPunctDistribution = Distribution(
+            BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
 
     fun generateDefaultQuestions(): List<Question> {
-        // generate questions asking for Bo POINTS
-        return BoRelevantMeridian.values().map({ boMeridian ->
+
+        //region BO questions
+        return BoRelevantMeridian.values().map({ bo ->
             Question(
-                    id = "BoPunkt${boMeridian.labelShort}",
-                    text = "Bo Punkt von ${boMeridian.labelLong}?",
-                    answers = listOf(Answer(boMeridian.boPunct.label, isRight = true))
-                            .plus(generatePoPunctAnswers(boMeridian.boPunct))
-            )
-            // generate questions asking for Bo LOCALISATION texts
-        }).plus(BoRelevantMeridian.values().map { boMeridian ->
-            Question(
-                    id = "BoLocalisation${boMeridian.labelShort}",
-                    text = "Lage von Bo Punkt für ${boMeridian.labelLong}?",
-                    answers = listOf(Answer(boMeridian.localisation, isRight = true))
-                            .plus(generateBoLocalisationAnswers(boMeridian))
+                    id = "BoPunkt${bo.labelShort}",
+                    text = "Bo Punkt von ${bo.labelLong}?",
+                    answers = listOf(Answer(bo.boPunct.label, isRight = true))
+                            .plus(generateBoPunctAnswers(bo.boPunct))
             )
         })
-                // generation questions asking for Yu POINTS
+                .plus(BoRelevantMeridian.values().map { bo ->
+                    Question(
+                            id = "BoLocalisation${bo.labelShort}",
+                            text = "Lage von Bo Punkt für ${bo.labelLong}?",
+                            answers = listOf(Answer(bo.localisation, isRight = true))
+                                    .plus(generateBoAnswersByMeridianLocalisation(bo))
+                    )
+                })
+                .plus(BoRelevantMeridian.values().map { bo ->
+                    Question(
+                            id = "BoLocalisation2${bo.labelShort}",
+                            text = "Welcher Bo Punkt ist hier lokalisiert: ${bo.localisation}?",
+                            answers = listOf(Answer(bo.meridian.labelLong, isRight = true))
+                                    .plus(generateBoAnswersByMeridianLabel(bo))
+                    )
+                })
+
+                //endregion
+
+                //region YU questions
+
                 .plus(YuRelevant.values().map { yu ->
                     Question(
                             id = "YuPunkt${yu.labelShort}",
@@ -35,19 +49,33 @@ class QuestionsGenerator(private val randX: RandX = RandXImpl) {
                                     .plus(generateYuPunctAnswers(yu))
                     )
                 })
+                // TODO "Welcher Yu Punkt auf Bl13"
                 .plus(YuRelevant.values().map { yu ->
                     Question(
                             id = "YuLocalisation${yu.labelShort}",
-                            text = "Lage von Yu für ${yu.labelLong}?",
+                            text = "Lage vom Yu Punkt für ${yu.labelLong}?",
                             answers = listOf(Answer(yu.localisation, isRight = true))
-                                    .plus(generateYuLocalisationAnswers(yu))
+                                    .plus(generateYuAnswersByMeridianLocalisation(yu))
                     )
                 })
+                .plus(YuRelevant.values().map { yu ->
+                    Question(
+                            id = "YuLocalisation2${yu.labelShort}",
+                            text = "Welcher Yu Punkt befindet sich am ${yu.localisation}?",
+                            answers = listOf(Answer(yu.labelLong, isRight = true))
+                                    .plus(generateYuAnswersByMeridianLabel(yu))
+                    )
+                })
+
+                // MINOR question about oberer/mittlerer/unterer erwaermer
+
+        //endregion
+
     }
 
     //region BO stuff
 
-    @VisibleForTesting fun generatePoPunctAnswers(except: PunctCoordinate): List<Answer> {
+    @VisibleForTesting fun generateBoPunctAnswers(except: PunctCoordinate): List<Answer> {
         return generateDistinctAnswers(3, except, { randomBoPunct(except).label })
     }
 
@@ -60,8 +88,12 @@ class QuestionsGenerator(private val randX: RandX = RandXImpl) {
         return PunctCoordinate(randMeridian, randPoint)
     }
 
-    private fun generateBoLocalisationAnswers(except: BoRelevantMeridian): List<Answer> {
+    private fun generateBoAnswersByMeridianLocalisation(except: BoRelevantMeridian): List<Answer> {
         return generateDistinctAnswers(3, except, { randomBoMeridian(except).localisation })
+    }
+
+    private fun generateBoAnswersByMeridianLabel(except: BoRelevantMeridian): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomBoMeridian(except).labelLong })
     }
 
     @VisibleForTesting fun randomBoMeridian(except: BoRelevantMeridian): BoRelevantMeridian {
@@ -80,8 +112,12 @@ class QuestionsGenerator(private val randX: RandX = RandXImpl) {
         return PunctCoordinate(Meridian.Bl, randPoint)
     }
 
-    private fun generateYuLocalisationAnswers(except: YuRelevant): List<Answer> {
+    private fun generateYuAnswersByMeridianLocalisation(except: YuRelevant): List<Answer> {
         return generateDistinctAnswers(3, except, { randomYuMeridian(except).localisation })
+    }
+
+    private fun generateYuAnswersByMeridianLabel(except: YuRelevant): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomYuMeridian(except).labelLong })
     }
 
     private fun randomYuMeridian(except: YuRelevant): YuRelevant {
@@ -107,3 +143,4 @@ private enum class BoPunctDistributionItem(val percent: Int, val meridian: Merid
     Le(10, Meridian.Le),
     Gb(10, Meridian.Gb)
 }
+// TODO more and more precise distributions
