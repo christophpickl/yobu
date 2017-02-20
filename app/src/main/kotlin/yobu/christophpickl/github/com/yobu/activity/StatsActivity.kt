@@ -101,38 +101,19 @@ class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : Bas
 
         return with(parent!!.context) {
             relativeLayout {
-
-                debugColor(Color.YELLOW)
-
-//                layoutParams = AbsListView.LayoutParams(
-//                        AbsListView.LayoutParams.MATCH_PARENT,
-//                        AbsListView.LayoutParams.WRAP_CONTENT
-//                )
-
                 textView {
                     text = item.id
                     lparams {
                         alignParentLeft()
                     }
                 }
-
-//                val viewCountWrong = textViewX(item.countWrong.toString(), Colors.QuestionWrong).lparams {
-//                    alignParentRight()
-//                }
-//                val viewSlash = textViewX(" / ").lparams {
-//                    rightOf(viewCountWrong)
-//                }
-//                textViewX(item.countRight.toString(), Colors.QuestionRight).lparams {
-//                    rightOf(viewSlash)
-//                }
-
                 linearLayout {
-                    gravity = Gravity.END
-                    lparams {
-                        // nope ... alignParentRight()
+                    layoutParams = RelativeLayout.LayoutParams(wrapContent, wrapContent).apply {
+                        alignParentRight()
                     }
-
+                    horizontalPadding = dip(0)
                     orientation = HORIZONTAL
+                    // or textView("<font color=foo>1</font>...")
                     textViewX(item.countRight.toString(), Colors.QuestionRight)
                     textViewX(" / ")
                     textViewX(item.countWrong.toString(), Colors.QuestionWrong)
