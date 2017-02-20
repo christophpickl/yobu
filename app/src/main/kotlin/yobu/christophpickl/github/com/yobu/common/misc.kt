@@ -50,7 +50,7 @@ object Alerts {
     }
 }
 
-// TODO replace with groupBy{}
+// MINOR replace with groupBy{}
 fun <K, V> List<V>.associateMultiBy(transform: (V) -> K): Map<K, List<V>> {
     val map = mutableMapOf<K, MutableList<V>>()
     this.forEach { value ->

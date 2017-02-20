@@ -15,49 +15,69 @@ val KG12 = PunctCoordinate(Meridian.KG, 12)
 val KG14 = PunctCoordinate(Meridian.KG, 14)
 val KG17 = PunctCoordinate(Meridian.KG, 17)
 
+val Bl13 = PunctCoordinate(Meridian.Bl, 13)
+val Bl14 = PunctCoordinate(Meridian.Bl, 14)
+val Bl15 = PunctCoordinate(Meridian.Bl, 15)
+val Bl16 = PunctCoordinate(Meridian.Bl, 16)
+val Bl17 = PunctCoordinate(Meridian.Bl, 17)
+val Bl18 = PunctCoordinate(Meridian.Bl, 18)
+val Bl19 = PunctCoordinate(Meridian.Bl, 19)
+val Bl20 = PunctCoordinate(Meridian.Bl, 20)
+val Bl21 = PunctCoordinate(Meridian.Bl, 21)
+val Bl22 = PunctCoordinate(Meridian.Bl, 22)
+val Bl23 = PunctCoordinate(Meridian.Bl, 23)
+val Bl24 = PunctCoordinate(Meridian.Bl, 24)
+val Bl25 = PunctCoordinate(Meridian.Bl, 25)
+val Bl26 = PunctCoordinate(Meridian.Bl, 26)
+val Bl27 = PunctCoordinate(Meridian.Bl, 27)
+val Bl28 = PunctCoordinate(Meridian.Bl, 28)
+
 sealed class YuRelevant(
         val labelShort: String,
         val labelLong: String,
-        blPoint: Int,
+        val yuPunct: PunctCoordinate,
         val localisation: String
 ) {
-    val yuPunct = PunctCoordinate(Meridian.Bl, blPoint)
 
     @Suppress("LeakingThis")
     val isExtra = this is YuRelevantExtraMeridian
 
     companion object {
         private val VALUES: List<YuRelevant> = listOf(
-                YuRelevantMeridian(Meridian.Lu, 13, "3. BW"),
-                YuRelevantMeridian(Meridian.Pk, 14, "4. BW"),
-                YuRelevantMeridian(Meridian.He, 15, "5. BW"),
-                YuRelevantExtraMeridian("Gv", "Gouverneur", 16, "6. BW"),
-                YuRelevantExtraMeridian("Zf", "Zwerchfell", 17, "7. BW"),
-                YuRelevantMeridian(Meridian.Le, 18, "9. BW"),
-                YuRelevantMeridian(Meridian.Gb, 19, "10. BW"),
-                YuRelevantMeridian(Meridian.MP, 20, "11. BW"),
-                YuRelevantMeridian(Meridian.Ma, 21, "12. BW"),
-                YuRelevantMeridian(Meridian.EEE, 22, "1. LW"),
-                YuRelevantMeridian(Meridian.Ni, 23, "2. LW"),
-                YuRelevantExtraMeridian("QiMeer", "Meer der Lebensenergie", 24, "3. LW"),
-                YuRelevantMeridian(Meridian.Di, 25, "4. LW"),
-                YuRelevantExtraMeridian("QiUrspr", "Ursprungsenergie", 26, "5. LW"),
-                YuRelevantMeridian(Meridian.Due, 27, "1. KBL"),
-                YuRelevantMeridian(Meridian.Bl, 28, "2. KBL")
+                YuRelevantMeridian(Meridian.Lu, Bl13, "3. BW"),
+                YuRelevantMeridian(Meridian.Pk, Bl14, "4. BW"),
+                YuRelevantMeridian(Meridian.He, Bl15, "5. BW"),
+                YuRelevantExtraMeridian("Gv", "Gouverneur", Bl16, "6. BW"),
+                YuRelevantExtraMeridian("Zf", "Zwerchfell", Bl17, "7. BW"),
+                YuRelevantMeridian(Meridian.Le, Bl18, "9. BW"),
+                YuRelevantMeridian(Meridian.Gb, Bl19, "10. BW"),
+                YuRelevantMeridian(Meridian.MP, Bl20, "11. BW"),
+                YuRelevantMeridian(Meridian.Ma, Bl21, "12. BW"),
+                YuRelevantMeridian(Meridian.EEE, Bl22, "1. LW"),
+                YuRelevantMeridian(Meridian.Ni, Bl23, "2. LW"),
+                YuRelevantExtraMeridian("QiMeer", "Meer der Lebensenergie", Bl24, "3. LW"),
+                YuRelevantMeridian(Meridian.Di, Bl25, "4. LW"),
+                YuRelevantExtraMeridian("QiUrspr", "Ursprungsenergie", Bl26, "5. LW"),
+                YuRelevantMeridian(Meridian.Due, Bl27, "1. KBL"),
+                YuRelevantMeridian(Meridian.Bl, Bl28, "2. KBL")
         )
         private val VALUES_ARRAY = VALUES.toTypedArray()
 
         fun values() = VALUES
         fun valuesArray() = VALUES_ARRAY
+
+        // nice search logic ;)
+//        private val yuRelevantByMeridian by lazy { VALUES.filter { it is YuRelevantMeridian }.associateBy { (it as YuRelevantMeridian).meridian } }
+//        private fun yuRelevantByMeridian(search: Meridian): YuRelevant = yuRelevantByMeridian[search]!!
     }
 
-    class YuRelevantMeridian(meridian: Meridian, blPoint: Int, localisation: String)
-        : YuRelevant(meridian.labelShort, meridian.labelLong, blPoint, localisation) {
+    class YuRelevantMeridian(val meridian: Meridian, yuPunct: PunctCoordinate, localisation: String)
+        : YuRelevant(meridian.labelShort, meridian.labelLong, yuPunct, localisation) {
 
     }
 
-    class YuRelevantExtraMeridian(labelShort: String, labelLong: String, blPoint: Int, localisation: String)
-        : YuRelevant(labelShort, labelLong, blPoint, localisation) {
+    class YuRelevantExtraMeridian(labelShort: String, labelLong: String, yuPunct: PunctCoordinate, localisation: String)
+        : YuRelevant(labelShort, labelLong, yuPunct, localisation) {
 
     }
 }

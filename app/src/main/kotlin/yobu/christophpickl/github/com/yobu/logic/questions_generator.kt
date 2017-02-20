@@ -15,7 +15,7 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
                     id = "BoPunkt${boMeridian.labelShort}",
                     text = "Bo Punkt von ${boMeridian.labelLong}?",
                     answers = listOf(Answer(boMeridian.boPunct.label, isRight = true))
-                            .plus(randomBoPunctAnswers(boMeridian.boPunct))
+                            .plus(generatePoPunctAnswers(boMeridian.boPunct))
             )
             // generate questions asking for Bo LOCALISATION texts
         }).plus(BoRelevantMeridian.values().map { boMeridian ->
@@ -23,7 +23,7 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
                     id = "BoLocalisation${boMeridian.labelShort}",
                     text = "Lage von Bo Punkt für ${boMeridian.labelLong}?",
                     answers = listOf(Answer(boMeridian.localisation, isRight = true))
-                            .plus(randomBoLocalisationAnswers(boMeridian))
+                            .plus(generateBoLocalisationAnswers(boMeridian))
             )
         })
                 // generation questions asking for Yu POINTS
@@ -32,7 +32,7 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
                             id = "YuPunkt${yu.labelShort}",
                             text = "Yu Punkt von ${yu.labelLong}?",
                             answers = listOf(Answer(yu.yuPunct.label, isRight = true))
-                                    .plus(randomYuPunctAnswers(yu))
+                                    .plus(generateYuPunctAnswers(yu))
                     )
                 })
                 .plus(YuRelevant.values().map { yu ->
@@ -40,52 +40,15 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
                             id = "YuLocalisation${yu.labelShort}",
                             text = "Lage von Yu für ${yu.labelLong}?",
                             answers = listOf(Answer(yu.localisation, isRight = true))
-                                    .plus(randomYuLocalisationAnswers(yu))
+                                    .plus(generateYuLocalisationAnswers(yu))
                     )
                 })
     }
 
-    fun generateBoAnswers222(count: Int, except: PunctCoordinate): List<Answer> {
-        // TODO check count limits
-        val result = mutableSetOf<Answer>()
-        while (result.size != count) {
-            // using a Set will ensure there are no duplicates
-            result += Answer(randomBoPunct(except).label)
-        }
-        return result.toList()
-    }
-    // FIXME this will lead to not having duplicate answers!
-    private fun randomBoPunctAnswers222(except: PunctCoordinate): List<Answer> {
-        // statt: return 1.rangeTo(3).map {
-        return generateBoAnswers222(3, except)
-    }
+    //region BO stuff
 
-    private fun randomBoPunctAnswers(except: PunctCoordinate): List<Answer> {
-        return 1.rangeTo(3).map {
-            Answer(randomBoPunct(except).label)
-        }
-    }
-
-    private fun randomYuPunctAnswers(except: YuRelevant): List<Answer> {
-        return 1.rangeTo(3).map {
-            Answer(randomYuPunct(except.yuPunct.point).label)
-        }
-    }
-
-    private fun randomYuLocalisationAnswers(except: YuRelevant): List<Answer> {
-        return 1.rangeTo(3).map {
-            Answer(randomYuMeridian(except).localisation)
-        }
-    }
-
-    private fun randomYuMeridian(except: YuRelevant): YuRelevant {
-        return randX.randomOf(YuRelevant.valuesArray(), except)
-    }
-
-    private fun randomBoLocalisationAnswers(except: BoRelevantMeridian): List<Answer> {
-        return 1.rangeTo(3).map {
-            Answer(randomBoMeridian(except).localisation)
-        }
+    @VisibleForTesting fun generatePoPunctAnswers(except: PunctCoordinate): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomBoPunct(except).label })
     }
 
     @VisibleForTesting fun randomBoPunct(except: PunctCoordinate): PunctCoordinate {
@@ -97,13 +60,43 @@ class BoPunctGenerator(private val randX: RandX = RandXImpl) {
         return PunctCoordinate(randMeridian, randPoint)
     }
 
+    private fun generateBoLocalisationAnswers(except: BoRelevantMeridian): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomBoMeridian(except).localisation })
+    }
+
+    @VisibleForTesting fun randomBoMeridian(except: BoRelevantMeridian): BoRelevantMeridian {
+        return randX.randomOf(BoRelevantMeridian.values(), except)
+    }
+    //endregion
+
+    //region YU stuff
+
+    private fun generateYuPunctAnswers(except: YuRelevant): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomYuPunct(except.yuPunct.point).label })
+    }
+
     private fun randomYuPunct(exceptPoint: Int): PunctCoordinate {
         val randPoint = randX.randomBetween(1, Meridian.Bl.points, exceptPoint)
         return PunctCoordinate(Meridian.Bl, randPoint)
     }
 
-    @VisibleForTesting fun randomBoMeridian(except: BoRelevantMeridian): BoRelevantMeridian {
-        return randX.randomOf(BoRelevantMeridian.values(), except)
+    private fun generateYuLocalisationAnswers(except: YuRelevant): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomYuMeridian(except).localisation })
+    }
+
+    private fun randomYuMeridian(except: YuRelevant): YuRelevant {
+        return randX.randomOf(YuRelevant.valuesArray(), except)
+    }
+
+    //endregion
+
+    private fun <T> generateDistinctAnswers(count: Int, except: T, answerText: () -> String): List<Answer> {
+        val result = mutableSetOf<Answer>()
+        while (result.size != count) {
+            // using a Set will ensure there are no duplicates
+            result += Answer(answerText())
+        }
+        return result.toList()
     }
 }
 
