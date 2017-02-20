@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         private val ANSWER_DELAY_WRONG = if (ENABLE_FAST_MODE) 100L else 2000L
     }
 
-    private val repo by lazy { GlobalDb.getRepo(this) }
+    private val repo by lazy { GlobalDb.getStatisticsRepo(this) }
     private val stats by lazy { QuestionStatisticService(repo, RealClock) }
     private val prefs by lazy { createPreferences() }
 

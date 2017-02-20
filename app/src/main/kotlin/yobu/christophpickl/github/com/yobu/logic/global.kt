@@ -10,7 +10,7 @@ object GlobalDb {
 
     private var repo: QuestionStatisticsRepository? = null
 
-    fun getRepo(context: Context): QuestionStatisticsRepository {
+    fun getStatisticsRepo(context: Context): QuestionStatisticsRepository {
         if (repo == null) {
             repo = CachedQuestionStatisticsRepository(QuestionStatisticsSqliteRepository(context))
         }
@@ -23,8 +23,7 @@ object GlobalQuestions {
     private val questionsGenerator = QuestionsGenerator()
 
     val allQuestions: List<Question> by lazy {
-        QuestionsLoader().load()
-                .plus(questionsGenerator.generateDefaultQuestions())
+        StaticQuestions.questions.plus(questionsGenerator.generateDefaultQuestions())
     }
 
 }

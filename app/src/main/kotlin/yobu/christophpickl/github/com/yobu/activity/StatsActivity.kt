@@ -20,7 +20,7 @@ import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
 class StatsActivity : AppCompatActivity() {
 
 
-    private val repo by lazy { GlobalDb.getRepo(this) }
+    private val repo by lazy { GlobalDb.getStatisticsRepo(this) }
 
     // QuestionStatisticsRepository
     override fun onCreate(savedInstanceState: Bundle?) {
