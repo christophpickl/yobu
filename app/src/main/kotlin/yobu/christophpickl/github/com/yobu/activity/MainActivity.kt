@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onAnswerClicked(question: Question, selectedAnswer: Answer, answerLabel: TextView) {
         answersList.isEnabled = false
-        answerLabel.setBackgroundColor(if (selectedAnswer.isRight) Colors.QuestionRight else Colors.QuestionWrong)
+        answerLabel.setBackgroundColor(if (selectedAnswer.isRight) MyColor.QuestionRight.intVal else MyColor.QuestionWrong.intVal)
 
         if (selectedAnswer.isRight) {
             stats.rightAnswered(question)

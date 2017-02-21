@@ -27,6 +27,7 @@
 * DE und EN
 
 ## Tech
+* for testing anko UIs, do this: id = View.generateViewId()
 * auto-release script (set version, tag on github, create apk and deploy somewhere (github release?!), increment version)
 * check for DI framework in kotlin+android => testability of rand stuff
 * travis build

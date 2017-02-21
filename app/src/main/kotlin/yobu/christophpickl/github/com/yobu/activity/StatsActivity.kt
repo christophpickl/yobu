@@ -1,47 +1,34 @@
 package yobu.christophpickl.github.com.yobu.activity
 
-import android.R
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.annotation.ColorInt
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
+import android.text.Html
 import android.view.View
-import android.view.View.TEXT_ALIGNMENT_TEXT_END
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewManager
-import android.widget.AbsListView
 import android.widget.BaseAdapter
-import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
-import android.widget.RelativeLayout
+import android.widget.LinearLayout.SCROLLBARS_OUTSIDE_OVERLAY
+import android.widget.TextView
 import org.jetbrains.anko.*
-import yobu.christophpickl.github.com.yobu.Colors
-import yobu.christophpickl.github.com.yobu.Question
+import yobu.christophpickl.github.com.yobu.MyColor
 import yobu.christophpickl.github.com.yobu.common.LOG
+import yobu.christophpickl.github.com.yobu.common.htmlText
+import yobu.christophpickl.github.com.yobu.common.lparams_rl
 import yobu.christophpickl.github.com.yobu.common.textViewX
-import yobu.christophpickl.github.com.yobu.debugColor
 import yobu.christophpickl.github.com.yobu.logic.GlobalDb
 import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
-
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
 
 class StatsActivity : AppCompatActivity() {
 
-    private val repo by lazy { GlobalDb.getRepo(this) }
+    private val repo: QuestionStatisticsRepository by lazy { GlobalDb.getRepo(this) }
 
-    // QuestionStatisticsRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         StatsActivityUi(generateStatsText()).setContentView(this)
-    }
-
-    fun onFinish() {
-        finish()
     }
 
     private fun generateStatsText(): List<QuestionStatistic> {
@@ -74,6 +61,8 @@ class StatsActivityUi(private val stats: List<QuestionStatistic>) : AnkoComponen
             padding = ui.dip(20)
 
             listView {
+                scrollBarStyle = View.SCROLLBARS_OUTSIDE_INSET
+
                 val questionAdapter = QuestionStatisticAdapter(stats)
                 adapter = questionAdapter
 
@@ -93,6 +82,7 @@ class StatsActivityUi(private val stats: List<QuestionStatistic>) : AnkoComponen
 
 }
 
+
 class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : BaseAdapter() {
 
 
@@ -107,22 +97,16 @@ class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : Bas
                         alignParentLeft()
                     }
                 }
-                linearLayout {
-                    layoutParams = RelativeLayout.LayoutParams(wrapContent, wrapContent).apply {
+                textView {
+                    htmlText = """<font color="${MyColor.QuestionRight.hexStringVal}">1</font> / <font color="${MyColor.QuestionWrong.hexStringVal}">2</font>"""
+                    lparams {
                         alignParentRight()
                     }
-                    horizontalPadding = dip(0)
-                    orientation = HORIZONTAL
-                    // or textView("<font color=foo>1</font>...")
-                    textViewX(item.countRight.toString(), Colors.QuestionRight)
-                    textViewX(" / ")
-                    textViewX(item.countWrong.toString(), Colors.QuestionWrong)
                 }
+
             }
         }
     }
-
-
 
     override fun getItem(position: Int) = stats.get(position)
     override fun getCount() = stats.size

@@ -20,7 +20,14 @@ fun View.debugColor(@ColorInt color: Int) {
     }
 }
 
-object Colors {
-    val QuestionRight = Color.GREEN
-    val QuestionWrong = Color.RED
+enum class MyColor(
+        val intVal: Int
+) {
+    QuestionRight(0xFF00FF00.toInt()),
+    QuestionWrong(0xFFFF0000.toInt())
+    ;
+
+    // e.g.: "#00FF00"
+    val hexStringVal = String.format("#%06X", (0xFFFFFF and intVal))
+
 }
