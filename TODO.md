@@ -7,10 +7,12 @@
 
 ## High
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
-* fine tuned distribution a la zettel
+* fine tuned distribution a la zettel: ad BoPunctDistributionItem
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
 
 ## Med
+* MainActivity has leaked window
+* settings menu entry: reset data, immediate response, (sequential questions?)
 * add progress bar for highscore indicator at bottom of screen
 * new activity: bo / yu punct table (info grafik; schummler)
 * BoPunctDistributionItem: introduce special distribution type: use same meridian as "except" instance but different point
@@ -24,9 +26,11 @@
 * new question type: freetext (dynamic question renderer pro type)
 * menu entry: about (version)
 * menu entry for development: display all questions (including statistics for it)
-* DE und EN
+* support DE und EN
+* could display the back button in top panel where the context menu is in main activity
 
 ## Tech
+* introduce kodein for DI
 * auto-release script (set version, tag on github, create apk and deploy somewhere (github release?!), increment version)
 * check for DI framework in kotlin+android => testability of rand stuff
 * travis build

@@ -35,7 +35,9 @@ fun <T> distributionOf(vararg pairs: Pair<Int, T>) =
 
 object RandXImpl : RandX {
     override fun <T> randomElementsExcept(items: List<T>, randomElementsCount: Int, except: T): List<T> {
-        // TODO check randomElementsCount for limits
+        if (items.size < randomElementsCount) {
+            throw IllegalArgumentException("items.size [${items.size}] < randomElementsCount [$randomElementsCount]")
+        }
         val result = mutableListOf<T>()
         var honeypot = items.toMutableList().minus(except)
         while (result.size != randomElementsCount) {

@@ -74,11 +74,6 @@ class StatsActivityUi(private val stats: List<QuestionStatistic>) : AnkoComponen
                     )
                 }
             }
-
-//            button("Zurück") {
-//                // MINOR could display the back button in top panel where the context menu is in main activity
-//                onClick { ui.owner.onFinish() }
-//            }
         }
     }
 
