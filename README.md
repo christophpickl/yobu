@@ -1,8 +1,16 @@
-# yobu
-Simple Shiatsu quiz app for checking your knowledge of bo and yu points
+# About
 
-* spielprinzip: KO prinzip, soviele fragen solang richtig, dann geht counter hoch, und max counter ist highscore
+Yobu is a simple quiz app for checking your knowledge of Bo and Yu points as known from acupuncture of the Traditional Chinese Medicine.
 
+The game's principle is straight forward: You get **single-choice questions** and with each correct answer, a counter is increased by one.
+As soon as you answer a question wrong (**KO principal**), the score will be reset and there by creates a global high score.
 
-## Ideen Fragen
+# Features
 
+* Huge catalog of questions to help you finding the Bo and Yu points
+* Question selection algorithm based on historic data
+
+# Roadmap
+
+* English translation
+* Questions containing images
