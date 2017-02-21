@@ -7,7 +7,7 @@ import android.support.annotation.ColorInt
 import android.view.View
 import org.jetbrains.anko.backgroundColor
 
-val GADSU_APP_VERSION = "0.1"
+val GADSU_APP_VERSION = "0.1-alpha"
 
 
 private val ENABLE_DEVELOPMENT = true
