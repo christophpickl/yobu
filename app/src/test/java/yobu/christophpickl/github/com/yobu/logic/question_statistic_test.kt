@@ -101,7 +101,7 @@ class QuestionStatisticServiceTest : RobolectricTest() {
         setDefaultClock()
         whenever(mockRepo.read(question.id))
                 .thenReturn(null)
-                .thenReturn(QuestionStatistic.testee(id = question.id, countRight = 1)) // TODO set lastRight
+                .thenReturn(QuestionStatistic.testee(id = question.id, countRight = 1)) // MINOR TEST set lastRight
 
         withTestActivity { activity ->
             service.rightAnswered(question)

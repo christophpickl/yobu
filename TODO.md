@@ -2,24 +2,24 @@
 # TODOs
 
 ## NOW
-* context menu entries: about (version number), show historic data
-* swipe left/right for cheatsheets (images with bo/yu points)
-* @BoPunctGenerator: when generating 1..3, each time the except list should grow (see also down below), otherwise there will be duplicates!
-* @BoPunctGenerator: generate the random answers each time question is displayed!
 * get sure in build that DEVELOPMENT is disabled
+* mehr (Bo) fragen, ausfeilen
 
 ## High
-* @QuestionsLoader: mehr BO fragen
+* cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
+* fine tuned distribution a la zettel
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
-* add progress bar for highscore indicator at bottom of screen
 
 ## Med
+* add progress bar for highscore indicator at bottom of screen
 * new activity: bo / yu punct table (info grafik; schummler)
 * BoPunctDistributionItem: introduce special distribution type: use same meridian as "except" instance but different point
 * display artifact version in app (global menu thingy)
 * neuer frage typ: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
 
 ## Low
+* @question generation: generate the random answers each time question is displayed, not only once at app startup!
+* swipe left/right for cheatsheets (images with bo/yu points)
 * DEV action to execute a specific quesiton (by id/list to select it)
 * new question type: freetext (dynamic question renderer pro type)
 * menu entry: about (version)

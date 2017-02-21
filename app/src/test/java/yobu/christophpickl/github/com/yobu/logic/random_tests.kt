@@ -2,32 +2,40 @@ package yobu.christophpickl.github.com.yobu.logic
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
+import org.junit.Before
 import org.junit.Test
+import yobu.christophpickl.github.com.yobu.Lu1
 import yobu.christophpickl.github.com.yobu.Meridian
 import yobu.christophpickl.github.com.yobu.PunctCoordinate
 
-class BoPunctGeneratorTest {
+class QuestionsGeneratorTest {
 
-    private val except = PunctCoordinate(Meridian.Lu, 1)
+    private val anyPunct = Lu1
 
-    @Test fun randomBoPunct() {
+    private lateinit var generator: QuestionsGenerator
+
+    @Before fun setup() {
+        generator = QuestionsGenerator()
+    }
+
+    @Test fun randomBoPunct_shouldNotReturnTheExceptPunct() {
         doCoupleOfTimes {
-            // TODO inject mock
-            val randPunct = BoPunctGenerator().randomBoPunct(except)
-            assertThat(randPunct, not(equalTo(except)))
+            // MINOR TEST inject mock
+            assertThat(generator.randomBoPunct(except = anyPunct),
+                    not(equalTo(anyPunct)))
         }
     }
 
-//    @Test fun generateAnswers() {
-//        doCoupleOfTimes {
-//            val generatedAnswers = BoPunctGenerator().generateAnswers(5, except)
-//            assertThat(generatedAnswers, not(contains(Answer(except.label))))
-//            generatedAnswers.assertDistinctItems()
-//        }
-//    }
+    @Test fun generatePoPunctAnswers_shouldNotReturnDuplicates() {
+        doCoupleOfTimes {
+            generator.generateBoPunctAnswers(anyPunct)
+                    .assertDistinctItems()
+        }
+    }
+
 
     private fun <E> List<E>.assertDistinctItems() {
-        assertThat(distinct(), hasSize(size))
+        assertThat("list: $this", distinct(), hasSize(size))
     }
     /*
 
@@ -36,14 +44,14 @@ class BoPunctGeneratorTest {
         val except = PunctCoordinate(Meridian.Lu, 1)
         doCoupleOfTimes {
             // could inject mock and test more precisely
-            val randPunct = BoPunctGenerator().randomBoPunct(except)
+            val randPunct = generator.randomBoPunct(except)
             MatcherAssert.assertThat(randPunct, Matchers.not(Matchers.equalTo(except)))
         }
     }
 
     @Test fun generateDefaultQuestions_forEachMainMeridianGeneratesPunctAndLocalisationQuestion() {
         withTestActivity { activity ->
-            val questions = BoPunctGenerator().generateDefaultQuestions()
+            val questions = generator.generateDefaultQuestions()
             println(questions.joinToString("\n"))
             MatcherAssert.assertThat(questions, Matchers.hasSize(MainMeridian.size * 2))
         }
@@ -76,6 +84,7 @@ class RandXImplTest {
     fun distributedWrongTooLess() {
         RandXImpl.distributed(distributionOf(99 to ""))
     }
+
     @Test(expected = IllegalArgumentException::class)
     fun distributedWrongTooMuch() {
         RandXImpl.distributed(distributionOf(100 to "", 1 to ""))

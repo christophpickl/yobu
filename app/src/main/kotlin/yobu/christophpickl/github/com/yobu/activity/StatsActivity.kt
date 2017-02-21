@@ -23,7 +23,8 @@ import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
 
 class StatsActivity : AppCompatActivity() {
 
-    private val repo: QuestionStatisticsRepository by lazy { GlobalDb.getRepo(this) }
+
+    private val repo: QuestionStatisticsRepository by lazy { GlobalDb.getStatisticsRepo(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +69,10 @@ class StatsActivityUi(private val stats: List<QuestionStatistic>) : AnkoComponen
 
                 onItemClick { adapterView, view, position, id ->
                     val questionId = questionAdapter.getItem(position).id
-                    LOG.i("IMPLEMENT ME: on question stat clicked: $questionId")
-                    // FIXME start MainActivity via intent and pass questionId
+                    LOG.i { "Item clicked for question with ID: $questionId" }
+                    startActivity<MainActivity>(
+                            MainActivity.INTENT_QUESTION_ID to questionId
+                    )
                 }
             }
 
