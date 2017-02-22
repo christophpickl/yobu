@@ -8,34 +8,34 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.RelativeLayout
+import com.github.salomonbrys.kodein.KodeinInjected
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
+import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
 import org.jetbrains.anko.*
 import yobu.christophpickl.github.com.yobu.Colors
 import yobu.christophpickl.github.com.yobu.common.LOG
 import yobu.christophpickl.github.com.yobu.common.textViewX
-import yobu.christophpickl.github.com.yobu.logic.GlobalDb
-import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
+import yobu.christophpickl.github.com.yobu.logic.QuestionLoader
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
 
 
-class StatsActivity : AppCompatActivity() {
+class StatsActivity : KodeinAppCompatActivity() {
 
+    private val repo: QuestionStatisticsRepository by instance()
+    private val loader: QuestionLoader by instance()
 
-    private val repo by lazy { GlobalDb.getStatisticsRepo(this) }
-
-    // QuestionStatisticsRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         StatsActivityUi(generateStatsText()).setContentView(this)
     }
 
-    fun onFinish() {
-        finish()
-    }
-
     private fun generateStatsText(): List<QuestionStatistic> {
         val answeredStats = repo.readAll()
-        val allQuestions = GlobalQuestions.allQuestions
+        val allQuestions = loader.load()
         val unanswerdStats = allQuestions
                 .map { it.id }
                 .minus(answeredStats.map { it.id })
@@ -43,10 +43,6 @@ class StatsActivity : AppCompatActivity() {
         val allStats = answeredStats.plus(unanswerdStats).sortedBy { it.id }
 
         return allStats.sortedBy { it.id }
-//        return "ID - OK / KO\n============\n" +
-//                allStats.sortedBy { it.id }
-//                        .map { "${it.id} - ${it.countRight}/${it.countWrong}" }
-//                        .joinToString("\n")
     }
 }
 
@@ -107,7 +103,6 @@ class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : Bas
             }
         }
     }
-
 
 
     override fun getItem(position: Int) = stats.get(position)

@@ -62,7 +62,7 @@ class QuestionRepoIT : RobolectricTest() {
         withTestActivity { activity ->
             val questions = listOf(question1, question2)
             val repo = QuestionStatisticsSqliteRepository(activity)
-            val stats = QuestionStatisticService(repo, RealClock)
+            val stats = StatisticService(repo, RealClock)
             val selector = QuestionSelector(questions, stats)
 
             val firstQuestion = selector.nextQuestion()
@@ -76,7 +76,7 @@ class QuestionRepoIT : RobolectricTest() {
 }
 
 
-class QuestionStatisticServiceTest : RobolectricTest() {
+class StatisticServiceTest : RobolectricTest() {
 
     companion object {
         private val NOW_STRING = "2017-01-01 00:21:42"
@@ -86,7 +86,7 @@ class QuestionStatisticServiceTest : RobolectricTest() {
     private val question = Question.testee()
     private val mockRepo = mock<QuestionStatisticsRepository>()
     private val mockClock = mock<Clock>()
-    private val service = QuestionStatisticService(mockRepo, mockClock)
+    private val service = StatisticService(mockRepo, mockClock)
 
     @Test fun rightAnswered_insertsNewQuestionStatistic() {
         setDefaultClock()
@@ -188,7 +188,7 @@ class QuestionStatisticServiceTest : RobolectricTest() {
     }
 
     private fun assertBiggerPoints(message: String, bigger: QuestionStatistic, lower: QuestionStatistic) {
-        val service = QuestionStatisticService(mockRepo, mockClock)
+        val service = StatisticService(mockRepo, mockClock)
         assertThat("$message => Expected $bigger > $lower", service.calcPoints(bigger),
                 greaterThan(service.calcPoints(lower)))
     }

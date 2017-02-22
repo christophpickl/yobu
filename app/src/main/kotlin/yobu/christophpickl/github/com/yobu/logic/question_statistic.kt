@@ -7,20 +7,31 @@ import yobu.christophpickl.github.com.yobu.common.RealClock
 import java.util.*
 
 
-class QuestionStatisticService(
-        private val repository: QuestionStatisticsRepository,
-        private val clock: Clock = RealClock
-) {
+interface StatisticService {
 
-    fun rightAnswered(question: Question) {
+    fun rightAnswered(question: Question)
+    fun wrongAnswered(question: Question)
+
+    fun nextQuestion(questionsById: Map<String, Question>): Question
+
+    fun deleteAll()
+
+}
+
+class StatisticServiceImpl(
+        private val repository: QuestionStatisticsRepository,
+        private val clock: Clock
+) : StatisticService {
+
+    override fun rightAnswered(question: Question) {
         answered(question, isRight = true)
     }
 
-    fun wrongAnswered(question: Question) {
+    override fun wrongAnswered(question: Question) {
         answered(question, isRight = false)
     }
 
-    fun nextQuestion(questionsById: Map<String, Question>): Question {
+    override fun nextQuestion(questionsById: Map<String, Question>): Question {
         if (questionsById.isEmpty()) throw IllegalArgumentException("empty questions map is not allowed!")
         val answeredStats: List<QuestionStatistic> = repository.readAll()
 
@@ -36,7 +47,7 @@ class QuestionStatisticService(
         return questionsById.getOrThrow(highestPointsStats.randomElement().id)
     }
 
-    fun deleteAll() {
+    override fun deleteAll() {
         repository.deleteAll()
     }
 
@@ -140,7 +151,7 @@ interface QuestionStatisticsRepository {
  * Avoid readAll communication to sqlite by caching.
  */
 class CachedQuestionStatisticsRepository(
-//        context: Context,
+        //        context: Context,
         private val sqliteDelegate: QuestionStatisticsRepository //= QuestionStatisticsSqliteRepository(context)
 ) : QuestionStatisticsRepository {
     private val cache = mutableMapOf<String, QuestionStatistic>()

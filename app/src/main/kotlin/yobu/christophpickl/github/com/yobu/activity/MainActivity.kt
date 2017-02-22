@@ -10,6 +10,10 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.github.salomonbrys.kodein.KodeinInjected
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
+import com.github.salomonbrys.kodein.instance
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.startActivity
@@ -17,27 +21,27 @@ import com.pawegio.kandroid.toast
 import yobu.christophpickl.github.com.yobu.*
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
 import yobu.christophpickl.github.com.yobu.common.*
-import yobu.christophpickl.github.com.yobu.logic.GlobalDb
-import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
-import yobu.christophpickl.github.com.yobu.logic.QuestionSelector
-import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticService
+import yobu.christophpickl.github.com.yobu.logic.*
+import yobu.christophpickl.github.com.yobu.logic.persistence.Preferences
 import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : KodeinAppCompatActivity() {
 
     companion object {
         val INTENT_QUESTION_ID = "questionId"
 
-        private val LOG = LOG(MainActivity::class.java)
-
-        private val ANSWER_DELAY_RIGHT = if (ENABLE_FAST_MODE) 100L else 500L
-        private val ANSWER_DELAY_WRONG = if (ENABLE_FAST_MODE) 100L else 2000L
+        private val log = LOG(MainActivity::class.java)
+        private val ANSWER_DELAY_RIGHT = 200L
+        private val ANSWER_DELAY_WRONG = 500L
     }
 
-    private val repo by lazy { GlobalDb.getStatisticsRepo(this) }
-    private val stats by lazy { QuestionStatisticService(repo, RealClock) }
-    private val prefs by lazy { createPreferences() }
+    private val prefs: Preferences by instance()
+    private val stats: StatisticService by instance()
+    private val selector: QuestionSelector by instance()
 
+    private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
+    private val txtScoreAndHighscore by lazy { find<TextView>(R.id.txtScoreAndHighscore) }
+    private val cheatsheetImage by lazy { find<ImageView>(R.id.cheatsheet_image) }
     private val cheatsheetContainer by lazy {
         find<RelativeLayout>(R.id.cheatsheet_container).apply {
             onClickMakeGone() {
@@ -45,25 +49,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private val cheatsheetImage by lazy {
-        find<ImageView>(R.id.cheatsheet_image)
-    }
-
-    private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
-
     private val answersList by lazy {
         find<ListView>(R.id.answersList).apply {
             setOnItemClickListener { parent, view, position, id ->
-                LOG.d("answersList.onItemClickListener on position: $position")
+                log.d("answersList.onItemClickListener on position: $position")
                 val answerLabel = view.find<TextView>(R.id.answerLabel)
                 onAnswerClicked(currentQuestion!!, currentQuestion!!.answers[position], answerLabel)
             }
         }
-    }
-    private val txtScoreAndHighscore by lazy { find<TextView>(R.id.txtScoreAndHighscore) }
-
-    private val questions by lazy {
-        QuestionSelector(GlobalQuestions.allQuestions, stats)
     }
 
     private var currentQuestion: Question? = null
@@ -80,12 +73,9 @@ class MainActivity : AppCompatActivity() {
             updateTxtCountRight()
         }
 
-    private fun updateTxtCountRight() {
-        txtScoreAndHighscore.text = "$currentScore / $currentHighScore"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) { // vs: onRestoreInstanceState
-        LOG.i("onCreate(savedInstanceState.isNull=${savedInstanceState == null})")
+        log.i("onCreate(savedInstanceState.isNull=${savedInstanceState == null})")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -93,17 +83,17 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState != null) {
             val yobuState = StateManager.read(savedInstanceState)
-            LOG.d { "Restoring state from: $yobuState" }
+            log.d { "Restoring state from: $yobuState" }
             currentScore = yobuState.countRight
             changeQuestion(yobuState.question)
         } else {
             val intentQuestionId: String? = intent.getStringExtra(INTENT_QUESTION_ID)
-            LOG.i("No instance state saved.")
+            log.i("No instance state saved.")
 
             if (intentQuestionId != null) {
-                changeQuestion(questions.questionById(intentQuestionId))
+                changeQuestion(selector.questionById(intentQuestionId))
                 currentScore = prefs.currentScore
-                LOG.i { "Question ID from intent: $intentQuestionId; currentScore: $currentScore " }
+                log.i { "Question ID from intent: $intentQuestionId; currentScore: $currentScore " }
             } else {
                 updateTxtCountRight() // force highscore text value update
                 onNextQuestion()
@@ -112,10 +102,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(state: Bundle?) {
-        LOG.i { "onSaveInstanceState(state.isNull=${state == null})" }
+        log.i { "onSaveInstanceState(state.isNull=${state == null})" }
         super.onSaveInstanceState(state)
         if (state == null) {
-            LOG.w("Not saving state as of null bundle!")
+            log.w("Not saving state as of null bundle!")
             return
         }
 
@@ -129,14 +119,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRestoreInstanceState(state: Bundle?) {
-        LOG.i { "onRestoreInstanceState(state.isNull=${state == null})" }
+        log.i { "onRestoreInstanceState(state.isNull=${state == null})" }
         super.onRestoreInstanceState(state)
     }
 
     private fun onNextQuestion() {
-        LOG.d("onNextQuestion()")
+        log.d("onNextQuestion()")
 
-        changeQuestion(questions.nextQuestion())
+        changeQuestion(selector.nextQuestion())
+    }
+
+    private fun updateTxtCountRight() {
+        txtScoreAndHighscore.text = "$currentScore / $currentHighScore"
     }
 
     private fun changeQuestion(newQuestion: Question) {
@@ -209,7 +203,7 @@ class MainActivity : AppCompatActivity() {
     private var shownCheatsheet = ShownCheatsheet.NONE
 
     private fun onShowBo() {
-        LOG.i("onShowBo()")
+        log.i("onShowBo()")
         when (shownCheatsheet) {
             ShownCheatsheet.NONE -> {
                 changeCheatsheet(R.drawable.cheatsheet_bo, ShownCheatsheet.BO)
@@ -226,7 +220,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onShowYu() {
-        LOG.i("onShowYu()")
+        log.i("onShowYu()")
         when (shownCheatsheet) {
             ShownCheatsheet.NONE -> {
                 changeCheatsheet(R.drawable.cheatsheet_yu, ShownCheatsheet.YU)
@@ -255,7 +249,7 @@ class MainActivity : AppCompatActivity() {
 
     private var shownDialog: AlertDialog? = null
     private fun onResetData() {
-        LOG.i("onResetData()")
+        log.i("onResetData()")
         shownDialog = AlertDialog.Builder(this)
                 .setTitle("Daten löschen")
                 .setMessage("Bist du dir sicher dass du alle Daten zurücksetzen willst?")
@@ -279,20 +273,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        LOG.i("onStart()")
+        log.i("onStart()")
         super.onStart()
     }
 
     override fun onResume() {
-        LOG.i("onResume()")
+        log.i("onResume()")
         super.onResume()
     }
 
     override fun onPause() { // vs: onSaveInstanceState
-        LOG.i("onPause()")
+        log.i("onPause()")
         super.onPause()
 
-        LOG.i { "shownDialog is null: ${shownDialog == null}" }
+        log.i { "shownDialog is null: ${shownDialog == null}" }
         shownDialog?.apply {
             if (isShowing) {
                 dismiss()
@@ -301,17 +295,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        LOG.i("onStop()")
+        log.i("onStop()")
         super.onStop()
     }
 
     override fun onRestart() {
-        LOG.i("onRestart()")
+        log.i("onRestart()")
         super.onRestart()
     }
 
     override fun onDestroy() {
-        LOG.i("onDestroy()")
+        log.i("onDestroy()")
         super.onDestroy()
     }
 }

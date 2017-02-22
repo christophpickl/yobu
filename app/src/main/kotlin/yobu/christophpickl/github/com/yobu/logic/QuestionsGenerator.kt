@@ -3,13 +3,17 @@ package yobu.christophpickl.github.com.yobu.logic
 import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.*
 
-
-class QuestionsGenerator(private val randX: RandX = RandXImpl) {
+interface QuestionsGenerator {
+    fun generateDefaultQuestions(): List<Question>
+}
+class QuestionsGeneratorImpl (
+        private val randX: RandX
+): QuestionsGenerator  {
 
     private val boPunctDistribution = Distribution(
             BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
 
-    fun generateDefaultQuestions(): List<Question> {
+    override fun generateDefaultQuestions(): List<Question> {
 
         //region BO questions
         return BoRelevantMeridian.values().map({ bo ->
