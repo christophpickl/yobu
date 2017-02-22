@@ -30,6 +30,7 @@ class QuestionsGeneratorImpl(
         return BoRelevantMeridian.values().map({ bo ->
             Question(
                     id = "BoPunkt${bo.nameShort}",
+                    title = "Bo Punkt von ${bo.nameShort}",
                     text = "Bo Punkt von ${bo.nameLong}?",
                     answers = listOf(Answer(bo.boPunct.label, isRight = true))
                             .plus(generateBoPunctAnswers(bo.boPunct))
@@ -38,6 +39,7 @@ class QuestionsGeneratorImpl(
                 .plus(BoRelevantMeridian.values().map { bo ->
                     Question(
                             id = "BoLocalisation${bo.nameShort}",
+                            title = "Bo Lage von ${bo.nameShort}",
                             text = "Lage von Bo Punkt für ${bo.nameLong}?",
                             answers = listOf(Answer(bo.localisation, isRight = true))
                                     .plus(generateBoAnswersByMeridianLocalisation(bo))
@@ -46,6 +48,7 @@ class QuestionsGeneratorImpl(
                 .plus(BoRelevantMeridian.values().map { bo ->
                     Question(
                             id = "BoLocalisation2${bo.nameShort}",
+                            title = "Bo Lage anhand ${bo.nameShort}",
                             text = "Bo Lage von: \"${bo.localisation}\"?",
                             answers = listOf(Answer(bo.meridian.nameLong, isRight = true))
                                     .plus(generateBoAnswersByMeridianName(bo))
@@ -63,6 +66,7 @@ class QuestionsGeneratorImpl(
                 .plus(YuRelevant.values().map { yu ->
                     Question(
                             id = "YuPunkt${yu.labelShort}",
+                            title = "Yu Punkt von ${yu.labelShort}",
                             text = "Yu Punkt von ${yu.labelLong}?",
                             answers = listOf(Answer(yu.yuPunct.label, isRight = true))
                                     .plus(generateYuPunctAnswers(yu))
@@ -72,6 +76,7 @@ class QuestionsGeneratorImpl(
                 .plus(YuRelevant.values().map { yu ->
                     Question(
                             id = "YuLocalisation${yu.labelShort}",
+                            title = "Yu Lage von ${yu.labelShort}",
                             text = "Lage vom Yu Punkt für ${yu.labelLong}?",
                             answers = listOf(Answer(yu.localisation, isRight = true))
                                     .plus(generateYuAnswersByMeridianLocalisation(yu))
@@ -80,6 +85,7 @@ class QuestionsGeneratorImpl(
                 .plus(YuRelevant.values().map { yu ->
                     Question(
                             id = "YuLocalisation2${yu.labelShort}",
+                            title = "Yu Lage anhand ${yu.labelShort}",
                             text = "Welcher Yu Punkt befindet sich am ${yu.localisation}?",
                             answers = listOf(Answer(yu.labelLong, isRight = true))
                                     .plus(generateYuAnswersByMeridianLabel(yu))

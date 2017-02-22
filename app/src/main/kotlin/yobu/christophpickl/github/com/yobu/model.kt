@@ -33,7 +33,9 @@ val Bl27 = PunctCoordinate(Meridian.Bl, 27)
 val Bl28 = PunctCoordinate(Meridian.Bl, 28)
 
 sealed class YuRelevant(
+        // Lu, Gv
         val labelShort: String,
+        // Lunge, Gouverneur
         val labelLong: String,
         val yuPunct: PunctCoordinate,
         val localisation: String
@@ -182,6 +184,7 @@ data class Answer(
 
 data class Question(
         val id: String,
+        val title: String,
         val text: String,
         val answers: List<Answer>
 ) {

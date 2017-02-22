@@ -2,13 +2,14 @@
 # TODOs
 
 ## NOW
+* cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
 
 ## High
-* cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
-* swipe left/right for cheatsheets (images with bo/yu points)
 * add progress bar for highscore indicator at bottom of screen
+* TECH: rewrite MainActivity with anko
 
 ## Med
+* swipe left/right for cheatsheets (images with bo/yu points)
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
 * new question type: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
 * new question type: freetext (dynamic question renderer pro type)
