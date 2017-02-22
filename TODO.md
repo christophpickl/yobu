@@ -2,9 +2,11 @@
 # TODOs
 
 ## NOW
-* get sure in build that DEVELOPMENT is disabled
+* get sure in build that DEVELOPMENT is disabled (oder einfach nur sequ mode weg, und fast mode in settings en/disablebar)
+    * (semi) automate release: in constants.kt and build.gradle
 * mehr (Bo) fragen, ausfeilen
-* (semi) automate release: in constants.kt and build.gradle
+* introduce kodein for DI
+
 
 ## High
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
@@ -31,7 +33,6 @@
 * could display the back button in top panel where the context menu is in main activity
 
 ## Tech
-* introduce kodein for DI
 * auto-release script (set version, tag on github, create apk and deploy somewhere (github release?!), increment version)
 * check for DI framework in kotlin+android => testability of rand stuff
 * travis build
