@@ -22,7 +22,7 @@ class StatApp {
         val mockClock = mock<Clock>()
         whenever(mockClock.now()).thenReturn(today)
 
-        val service = StatisticService(mock<QuestionStatisticsRepository>(), mockClock)
+        val service = StatisticServiceImpl(mock<QuestionStatisticsRepository>(), mockClock)
 
         println("(now: ${DATE_FORMAT.format(today)})")
         println("%7s  %4s  %4s  %10s  %10s".format("PTS", "#OK", "#KO", "Last OK", "Last KO"))

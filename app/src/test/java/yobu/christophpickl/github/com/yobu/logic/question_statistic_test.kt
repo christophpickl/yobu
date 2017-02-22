@@ -57,13 +57,17 @@ class CachedQuestionStatisticsRepositoryTest : RobolectricTest() {
     }
 }
 
+class StubbedQuestionLoader(val questions: List<Question>) : QuestionLoader {
+    override fun load() = questions
+}
+
 class QuestionRepoIT : RobolectricTest() {
     @Test fun answerFirstQuestion_nextQuestionShouldBeSecondQuestion() {
         withTestActivity { activity ->
             val questions = listOf(question1, question2)
             val repo = QuestionStatisticsSqliteRepository(activity)
-            val stats = StatisticService(repo, RealClock)
-            val selector = QuestionSelector(questions, stats)
+            val stats = StatisticServiceImpl(repo, RealClock)
+            val selector = QuestionSelectorImpl(StubbedQuestionLoader(questions), stats)
 
             val firstQuestion = selector.nextQuestion()
 
@@ -86,7 +90,7 @@ class StatisticServiceTest : RobolectricTest() {
     private val question = Question.testee()
     private val mockRepo = mock<QuestionStatisticsRepository>()
     private val mockClock = mock<Clock>()
-    private val service = StatisticService(mockRepo, mockClock)
+    private val service = StatisticServiceImpl(mockRepo, mockClock)
 
     @Test fun rightAnswered_insertsNewQuestionStatistic() {
         setDefaultClock()
@@ -188,7 +192,7 @@ class StatisticServiceTest : RobolectricTest() {
     }
 
     private fun assertBiggerPoints(message: String, bigger: QuestionStatistic, lower: QuestionStatistic) {
-        val service = StatisticService(mockRepo, mockClock)
+        val service = StatisticServiceImpl(mockRepo, mockClock)
         assertThat("$message => Expected $bigger > $lower", service.calcPoints(bigger),
                 greaterThan(service.calcPoints(lower)))
     }

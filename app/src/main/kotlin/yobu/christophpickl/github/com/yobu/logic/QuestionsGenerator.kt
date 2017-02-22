@@ -2,44 +2,59 @@ package yobu.christophpickl.github.com.yobu.logic
 
 import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.*
+import yobu.christophpickl.github.com.yobu.common.prettyPrint
+
+fun main(args: Array<String>) {
+    QuestionsGeneratorImpl(RandXImpl)
+            .generateDefaultQuestions()
+            .filter { it.id.startsWith("BoLocalisation") }
+            .prettyPrintQuestions()
+}
 
 interface QuestionsGenerator {
     fun generateDefaultQuestions(): List<Question>
 }
+
 class QuestionsGeneratorImpl (
         private val randX: RandX
 ): QuestionsGenerator  {
 
     private val boPunctDistribution = Distribution(
             BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
+    private val boLocalDistribution = Distribution(
+            BoLocalisationDistributionGroup.values().map { DistributionItem(it.percent, it) })
 
     override fun generateDefaultQuestions(): List<Question> {
 
         //region BO questions
         return BoRelevantMeridian.values().map({ bo ->
             Question(
-                    id = "BoPunkt${bo.labelShort}",
-                    text = "Bo Punkt von ${bo.labelLong}?",
+                    id = "BoPunkt${bo.nameShort}",
+                    text = "Bo Punkt von ${bo.nameLong}?",
                     answers = listOf(Answer(bo.boPunct.label, isRight = true))
                             .plus(generateBoPunctAnswers(bo.boPunct))
             )
         })
                 .plus(BoRelevantMeridian.values().map { bo ->
                     Question(
-                            id = "BoLocalisation${bo.labelShort}",
-                            text = "Lage von Bo Punkt für ${bo.labelLong}?",
+                            id = "BoLocalisation${bo.nameShort}",
+                            text = "Lage von Bo Punkt für ${bo.nameLong}?",
                             answers = listOf(Answer(bo.localisation, isRight = true))
                                     .plus(generateBoAnswersByMeridianLocalisation(bo))
                     )
                 })
                 .plus(BoRelevantMeridian.values().map { bo ->
                     Question(
-                            id = "BoLocalisation2${bo.labelShort}",
+                            id = "BoLocalisation2${bo.nameShort}",
                             text = "Welcher Bo Punkt ist hier lokalisiert: ${bo.localisation}?",
-                            answers = listOf(Answer(bo.meridian.labelLong, isRight = true))
-                                    .plus(generateBoAnswersByMeridianLabel(bo))
+                            answers = listOf(Answer(bo.meridian.nameLong, isRight = true))
+                                    .plus(generateBoAnswersByMeridianName(bo))
                     )
                 })
+                // MINOR question about BO for oberer/mittlerer/unterer erwaermer
+                // BO oberer: wo Pk ist
+                // BO mittlerer E: wo Ma ist; KG12, 4C A nabel
+                // BO unterer: KG7, 1C V nabel
 
                 //endregion
 
@@ -71,7 +86,6 @@ class QuestionsGeneratorImpl (
                     )
                 })
 
-                // MINOR question about oberer/mittlerer/unterer erwaermer
 
         //endregion
 
@@ -93,11 +107,13 @@ class QuestionsGeneratorImpl (
     }
 
     private fun generateBoAnswersByMeridianLocalisation(except: BoRelevantMeridian): List<Answer> {
-        return generateDistinctAnswers(3, except, { randomBoMeridian(except).localisation })
+        return generateDistinctAnswers(3, except, {
+            randX.distributed(boLocalDistribution).randomLocalisation(randX)
+        })
     }
 
-    private fun generateBoAnswersByMeridianLabel(except: BoRelevantMeridian): List<Answer> {
-        return generateDistinctAnswers(3, except, { randomBoMeridian(except).labelLong })
+    private fun generateBoAnswersByMeridianName(except: BoRelevantMeridian): List<Answer> {
+        return generateDistinctAnswers(3, except, { randomBoMeridian(except).nameLong })
     }
 
     @VisibleForTesting fun randomBoMeridian(except: BoRelevantMeridian): BoRelevantMeridian {
@@ -138,6 +154,58 @@ class QuestionsGeneratorImpl (
         }
         return result.toList()
     }
+}
+
+private enum class BoLocalisationDistributionGroup(val percent: Int) {
+    AboveBelly(28) {
+        override fun randomLocalisation(randX: RandX): String {
+            // 4, 6 correct
+            return randX.randomOf(1.rangeTo(8).toList()).toString() + "C cranial vom Nabel"
+        }
+    },
+    BelowBelly(28) {
+        override fun randomLocalisation(randX: RandX): String {
+            // 2, 3, 4 correct (1 is unterer erwaermer)
+            return randX.randomOf(1.rangeTo(6).toList()).toString() + "C caudal vom Nabel"
+        }
+    },
+    SideBelly(5) {
+        override fun randomLocalisation(randX: RandX): String {
+            // 2 is correct
+            return randX.randomOf(1.rangeTo(4).toList()).toString() + "C lateral vom Nabel"
+        }
+    },
+    OnBelly(3) {
+        override fun randomLocalisation(randX: RandX): String {
+            return "Am Bauchnabel"
+        }
+    },
+    Rips(7) {
+        override fun randomLocalisation(randX: RandX): String {
+            return "An der " + randX.randomOf(listOf(11, 12)).toString() + ". Rippe"
+        }
+    },
+    Clavicula(3) {
+        override fun randomLocalisation(randX: RandX): String {
+            return "Unter'm Schlüsselbein"
+        }
+    },
+    ICRRight(14) {
+        override fun randomLocalisation(randX: RandX): String {
+            return "Im " + randX.randomOf(listOf("6", "7")) + ". ICR"
+        }
+    },
+    ICRWrong(7) {
+        override fun randomLocalisation(randX: RandX): String {
+            return "Im " + randX.randomOf(listOf("3", "4", "5", "8", "9")) + ". ICR"
+        }
+    },
+    BetweenNipples(5) {
+        override fun randomLocalisation(randX: RandX)= "Zwischen den Brustwarzen"
+    }
+    ;
+
+    abstract fun randomLocalisation(randX: RandX): String
 }
 
 private enum class BoPunctDistributionItem(val percent: Int, val meridian: Meridian) {

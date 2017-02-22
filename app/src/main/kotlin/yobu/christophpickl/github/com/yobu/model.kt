@@ -72,7 +72,7 @@ sealed class YuRelevant(
     }
 
     class YuRelevantMeridian(val meridian: Meridian, yuPunct: PunctCoordinate, localisation: String)
-        : YuRelevant(meridian.labelShort, meridian.labelLong, yuPunct, localisation) {
+        : YuRelevant(meridian.nameShort, meridian.nameLong, yuPunct, localisation) {
 
     }
 
@@ -108,14 +108,14 @@ enum class YuRelevantMeridian(
 data class PunctCoordinate(val meridian: Meridian, val point: Int) {
     companion object {
         fun parse(string: String): PunctCoordinate {
-            val meridian = Meridian.values().firstOrNull { string.startsWith(it.labelShort) } ?: throw IllegalArgumentException("Invalid meridian name: [$string]")
-            val number = string.substring(meridian.labelShort.length).toInt()
+            val meridian = Meridian.values().firstOrNull { string.startsWith(it.nameShort) } ?: throw IllegalArgumentException("Invalid meridian name: [$string]")
+            val number = string.substring(meridian.nameShort.length).toInt()
             if (number < 1 || number > meridian.points) throw IllegalArgumentException("Invalid point number: $number for meridian $meridian")
             return PunctCoordinate(meridian, number)
         }
     }
 
-    val label = meridian.labelShort + point
+    val label = meridian.nameShort + point
 //    fun toNiceString() = meridian.text + point
 }
 
@@ -139,14 +139,17 @@ enum class MainMeridian(meridian: Meridian) : IMeridian by meridian {
 }
 
 interface IMeridian {
-    val labelShort: String
-    val labelLong: String
+    /** Lu, Di */
+    val nameShort: String
+    /** Lunge, Dickdarm */
+    val nameLong: String
+    /** count of tsubos */
     val points: Int
 }
 
 enum class Meridian(
-        override val labelShort: String,
-        override val labelLong: String,
+        override val nameShort: String,
+        override val nameLong: String,
         override val points: Int
 ) : IMeridian {
     Lu("Lu", "Lunge", 11),
@@ -170,6 +173,10 @@ data class Answer(
         val isRight: Boolean = false
 ) {
     companion object // for (test) extensions
+
+    val prettyFormatted: String by lazy {
+        (if (isRight) "(R) " else "") + text
+    }
 }
 
 data class Question(
@@ -177,8 +184,15 @@ data class Question(
         val text: String,
         val answers: List<Answer>
 ) {
+    companion object // for (test) extensions
+
     val rightAnswers = answers.filter { it.isRight }
     val indicesOfRightAnswers = rightAnswers.mapIndexed { i, answer -> i }
 
-    companion object // for (test) extensions
+    val prettyFormatted: String by lazy {
+        "[$id] $text\n" + answers.map { "\t- " + it.prettyFormatted }.joinToString("\n")
+    }
+
 }
+fun List<Question>.prettyFormatQuestions() = map { it.prettyFormatted }.joinToString("\n\n")
+fun List<Question>.prettyPrintQuestions() { println(prettyFormatQuestions())}
