@@ -4,6 +4,7 @@
 ## NOW
 * get sure in build that DEVELOPMENT is disabled
 * mehr (Bo) fragen, ausfeilen
+* (semi) automate release: in constants.kt and build.gradle
 
 ## High
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
