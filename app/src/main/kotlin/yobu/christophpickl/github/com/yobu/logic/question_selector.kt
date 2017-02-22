@@ -2,6 +2,7 @@ package yobu.christophpickl.github.com.yobu.logic
 
 import yobu.christophpickl.github.com.yobu.DISABLE_RANDOM_QUESTIONS
 import yobu.christophpickl.github.com.yobu.Question
+import yobu.christophpickl.github.com.yobu.common.YobuException
 
 class QuestionSelector(
         questions: List<Question>,
@@ -20,7 +21,7 @@ class QuestionSelector(
         return question.copy(answers = question.answers.randomizeElements())
     }
 
-    fun questionById(id: String) = questionsById[id]!!
+    fun questionById(id: String) = questionsById[id] ?: throw YobuException("Could not find question by ID: '$id'!")
 
 }
 

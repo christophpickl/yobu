@@ -8,6 +8,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 
+class YobuException(message: String, cause: Exception? = null) : RuntimeException(message, cause)
 
 // don't forget to call 'apply()' ;)
 inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
