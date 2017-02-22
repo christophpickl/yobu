@@ -4,6 +4,9 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -35,7 +38,6 @@ class MainActivity : KodeinAppCompatActivity() {
         private val ANSWER_DELAY_WRONG = 500L
     }
 
-
     private val prefs: Preferences by instance()
     private val stats: StatisticService by instance()
     private val loader: QuestionLoader by instance()
@@ -60,6 +62,9 @@ class MainActivity : KodeinAppCompatActivity() {
         }
     }
 
+    private var shownDialog: AlertDialog? = null
+    private var shownCheatsheet = ShownCheatsheet.NONE
+
     private var currentQuestion: Question? = null
     private var currentHighScore = 0
         get() = field
@@ -79,6 +84,8 @@ class MainActivity : KodeinAppCompatActivity() {
         log.i("onCreate(savedInstanceState.isNull=${savedInstanceState == null})")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        displayYobuLogo()
 
         currentHighScore = prefs.highscore
 
@@ -202,8 +209,6 @@ class MainActivity : KodeinAppCompatActivity() {
         return true
     }
 
-    private var shownCheatsheet = ShownCheatsheet.NONE
-
     private fun onShowBo() {
         log.i("onShowBo()")
         when (shownCheatsheet) {
@@ -244,12 +249,17 @@ class MainActivity : KodeinAppCompatActivity() {
     }
 
     private fun onAbout() {
-        Alerts.showOkDialog(this,
-                title = "Über Yobu",
-                message = "Version: $GADSU_APP_VERSION\nErstellt von: Christoph")
+        AlertDialog.Builder(this)
+                .setTitle("Über Yobu")
+                .setCancelable(true)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setPositiveButton("Schließen", null)
+                .setHtmlView(this, "Version: $GADSU_APP_VERSION\nhttps://github.com/christophpickl/yobu")
+                .create()
+                .show()
     }
 
-    private var shownDialog: AlertDialog? = null
+
     private fun onResetData() {
         log.i("onResetData()")
         shownDialog = AlertDialog.Builder(this)

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity" android:label=" Yobu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.StatsActivity" android:label="Statistik" />
+        <activity android:name=".activity.StatsActivity" android:label=" Statistik" />
 
     </application>
 

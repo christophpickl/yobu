@@ -30,6 +30,8 @@ class StatsActivity : KodeinAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        displayYobuLogo()
+
         StatsActivityUi(generateStatsText()).setContentView(this)
     }
 

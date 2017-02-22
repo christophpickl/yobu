@@ -2,21 +2,19 @@
 # TODOs
 
 ## NOW
-* mehr (Bo) fragen, ausfeilen
-* fine tuned distribution a la zettel: ad BoPunctDistributionItem
 
 ## High
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
-* mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
-
-## Med
-* MainActivity has leaked window
 * swipe left/right for cheatsheets (images with bo/yu points)
 * add progress bar for highscore indicator at bottom of screen
+
+## Med
+* mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
 * new question type: mit bildchen, wo man sagen muss welcher bo/yu punkt das ist auf grafik eingezeichnet
 * new question type: freetext (dynamic question renderer pro type)
 
 ## Low
+* MainActivity has leaked window
 * support DE und EN
 * @question generation: generate the random answers each time question is displayed, not only once at app startup!
 * menu entry: about (version)
