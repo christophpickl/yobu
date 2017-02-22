@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity() {
     private fun onAbout() {
         Alerts.showOkDialog(this,
                 title = "Über Yobu",
-                message = "Version: $GADSU_APP_VERSION\nErstellt von: Christoph")
+                message = "Version: $YOBU_APP_VERSION\nErstellt von: Christoph")
     }
 
     private var shownDialog: AlertDialog? = null

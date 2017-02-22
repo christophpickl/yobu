@@ -2,6 +2,8 @@
 # TODOs
 
 ## NOW
+* investigate google play store
+* automate release: enter release + dev version, write to file, git commit+tag, build APK and store in local dir (extended: create release in github, deploy to playstore)
 * get sure in build that DEVELOPMENT is disabled
 * mehr (Bo) fragen, ausfeilen
 
@@ -9,6 +11,8 @@
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
 * fine tuned distribution a la zettel
 * mehrere falsche antworten, aber nur beschraenkte anzahl zeigen (random); nuetzlich fuer custom (non-generated) questions
+* Question.shortLabel einfuehren, was in der StatActivity rendered wird
+* wenn in MainActivity back button drueckt soll app geschlossen werden (stat activity quasi nicht am stack)
 
 ## Med
 * add progress bar for highscore indicator at bottom of screen

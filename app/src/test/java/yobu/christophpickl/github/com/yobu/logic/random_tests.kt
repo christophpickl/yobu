@@ -5,8 +5,6 @@ import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Test
 import yobu.christophpickl.github.com.yobu.Lu1
-import yobu.christophpickl.github.com.yobu.Meridian
-import yobu.christophpickl.github.com.yobu.PunctCoordinate
 
 class QuestionsGeneratorTest {
 

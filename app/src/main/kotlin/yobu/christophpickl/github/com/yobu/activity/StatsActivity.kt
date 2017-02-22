@@ -3,19 +3,13 @@ package yobu.christophpickl.github.com.yobu.activity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.LinearLayout.HORIZONTAL
-import android.widget.LinearLayout.SCROLLBARS_OUTSIDE_OVERLAY
-import android.widget.TextView
 import org.jetbrains.anko.*
 import yobu.christophpickl.github.com.yobu.MyColor
 import yobu.christophpickl.github.com.yobu.common.LOG
 import yobu.christophpickl.github.com.yobu.common.htmlText
-import yobu.christophpickl.github.com.yobu.common.lparams_rl
-import yobu.christophpickl.github.com.yobu.common.textViewX
 import yobu.christophpickl.github.com.yobu.logic.GlobalDb
 import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
@@ -42,10 +36,6 @@ class StatsActivity : AppCompatActivity() {
         val allStats = answeredStats.plus(unanswerdStats).sortedBy { it.id }
 
         return allStats.sortedBy { it.id }
-//        return "ID - OK / KO\n============\n" +
-//                allStats.sortedBy { it.id }
-//                        .map { "${it.id} - ${it.countRight}/${it.countWrong}" }
-//                        .joinToString("\n")
     }
 }
 
@@ -75,33 +65,26 @@ class StatsActivityUi(private val stats: List<QuestionStatistic>) : AnkoComponen
                     )
                 }
             }
-
-//            button("Zurück") {
-//                // MINOR could display the back button in top panel where the context menu is in main activity
-//                onClick { ui.owner.onFinish() }
-//            }
         }
     }
-
 }
 
 
 class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : BaseAdapter() {
 
-
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
-        val item = getItem(i)
+        val stat = getItem(i)
 
         return with(parent!!.context) {
             relativeLayout {
                 textView {
-                    text = item.id
+                    text = stat.id
                     lparams {
                         alignParentLeft()
                     }
                 }
                 textView {
-                    htmlText = """<font color="${MyColor.QuestionRight.hexStringVal}">1</font> / <font color="${MyColor.QuestionWrong.hexStringVal}">2</font>"""
+                    htmlText = """<font color="${MyColor.QuestionRight.hexStringVal}">${stat.countRight}</font> / <font color="${MyColor.QuestionWrong.hexStringVal}">${stat.countWrong}</font>"""
                     lparams {
                         alignParentRight()
                     }
@@ -111,7 +94,7 @@ class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : Bas
         }
     }
 
-    override fun getItem(position: Int) = stats.get(position)
+    override fun getItem(position: Int) = stats[position]
     override fun getCount() = stats.size
     override fun getItemId(position: Int) = getItem(position).id.hashCode().toLong()
 

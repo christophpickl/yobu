@@ -2,7 +2,6 @@ package yobu.christophpickl.github.com.yobu.logic
 
 import yobu.christophpickl.github.com.yobu.DISABLE_RANDOM_QUESTIONS
 import yobu.christophpickl.github.com.yobu.Question
-import java.util.*
 
 class QuestionSelector(
         questions: List<Question>,

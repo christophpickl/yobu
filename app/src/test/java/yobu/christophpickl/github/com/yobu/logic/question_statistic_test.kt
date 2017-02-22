@@ -2,17 +2,14 @@ package yobu.christophpickl.github.com.yobu.logic
 
 import com.nhaarman.mockito_kotlin.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.Test
-import org.mockito.InOrder
-import org.mockito.Mockito
 import yobu.christophpickl.github.com.yobu.Question
-import yobu.christophpickl.github.com.yobu.logic.persistence.testee
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.RealClock
 import yobu.christophpickl.github.com.yobu.common.parseDateTime
 import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
+import yobu.christophpickl.github.com.yobu.logic.persistence.testee
 import yobu.christophpickl.github.com.yobu.testee
 import yobu.christophpickl.github.com.yobu.testinfra.RobolectricTest
 import java.util.*
