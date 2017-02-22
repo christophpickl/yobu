@@ -128,7 +128,7 @@ class MainActivity : KodeinAppCompatActivity() {
         log.d("onNextQuestion()")
 
         val question = stats.nextQuestion()
-        changeQuestion(question.copy(answers = question.answers.sortedBy { it.text })) // NO: randomizeElements()
+        changeQuestion(question.copy(answers = question.answers.randomizeElements())) // OR: sortedBy { it.text }
     }
 
     private fun updateTxtCountRight() {

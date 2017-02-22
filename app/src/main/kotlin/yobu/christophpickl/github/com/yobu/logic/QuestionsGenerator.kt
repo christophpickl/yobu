@@ -7,7 +7,7 @@ import yobu.christophpickl.github.com.yobu.common.prettyPrint
 fun main(args: Array<String>) {
     QuestionsGeneratorImpl(RandXImpl)
             .generateDefaultQuestions()
-            .filter { it.id.startsWith("BoPunkt") }
+//            .filter { it.id.startsWith("BoPunkt") }
             .prettyPrintQuestions()
 }
 
@@ -46,7 +46,7 @@ class QuestionsGeneratorImpl(
                 .plus(BoRelevantMeridian.values().map { bo ->
                     Question(
                             id = "BoLocalisation2${bo.nameShort}",
-                            text = "Welcher Bo Punkt ist hier lokalisiert: ${bo.localisation}?",
+                            text = "Bo Lage von: \"${bo.localisation}\"?",
                             answers = listOf(Answer(bo.meridian.nameLong, isRight = true))
                                     .plus(generateBoAnswersByMeridianName(bo))
                     )
@@ -124,7 +124,7 @@ class QuestionsGeneratorImpl(
     }
 
     private fun randomYuPunct(exceptPoint: Int): PunctCoordinate {
-        val randPoint = randX.randomBetween(1, Meridian.Bl.points, exceptPoint)
+        val randPoint = randX.randomBetween(11, 28, exceptPoint)
         return PunctCoordinate(Meridian.Bl, randPoint)
     }
 
