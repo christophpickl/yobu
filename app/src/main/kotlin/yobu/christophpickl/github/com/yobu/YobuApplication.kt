@@ -25,8 +25,7 @@ class YobuApplication : Application(), KodeinAware {
         bind<QuestionsGenerator>() with singleton { QuestionsGeneratorImpl(instance()) }
         bind<QuestionLoader>() with singleton { QuestionLoaderImpl(instance()) }
 
-        bind<StatisticService>() with singleton { StatisticServiceImpl(instance(), instance()) }
-        bind<QuestionSelector>() with singleton { QuestionSelectorImpl(instance(), instance()) }
+        bind<StatisticService>() with singleton { StatisticServiceImpl(instance(), instance(), instance()) }
     }
 
     override fun onCreate() {

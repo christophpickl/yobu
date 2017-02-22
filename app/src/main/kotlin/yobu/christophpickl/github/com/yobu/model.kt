@@ -99,6 +99,7 @@ enum class BoRelevantMeridian(
     EEE(MainMeridian.EEE, KG7, "1C caudal vom Nabel"),
     Gb(MainMeridian.Gb, Gb24, "Im 7. ICR"),
     Le(MainMeridian.Le, Le14, "Im 6. ICR");
+
 }
 
 enum class YuRelevantMeridian(
@@ -115,8 +116,8 @@ data class PunctCoordinate(val meridian: Meridian, val point: Int) {
         }
     }
 
+    /** Meridian short name + point number; e.g.: "Lu1" */
     val label = meridian.nameShort + point
-//    fun toNiceString() = meridian.text + point
 }
 
 enum class MainMeridian(meridian: Meridian) : IMeridian by meridian {

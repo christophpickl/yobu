@@ -7,7 +7,7 @@ import yobu.christophpickl.github.com.yobu.common.prettyPrint
 fun main(args: Array<String>) {
     QuestionsGeneratorImpl(RandXImpl)
             .generateDefaultQuestions()
-            .filter { it.id.startsWith("BoLocalisation") }
+            .filter { it.id.startsWith("BoPunkt") }
             .prettyPrintQuestions()
 }
 
@@ -15,14 +15,14 @@ interface QuestionsGenerator {
     fun generateDefaultQuestions(): List<Question>
 }
 
-class QuestionsGeneratorImpl (
+class QuestionsGeneratorImpl(
         private val randX: RandX
-): QuestionsGenerator  {
+) : QuestionsGenerator {
 
-    private val boPunctDistribution = Distribution(
-            BoPunctDistributionItem.values().map { DistributionItem(it.percent, it.meridian) })
-    private val boLocalDistribution = Distribution(
-            BoLocalisationDistributionGroup.values().map { DistributionItem(it.percent, it) })
+//    private val boPunctDistribution = Distribution(
+//            BoPunctDistributionItem.values().map { DistributionItem(it.percent, it) })
+//    private val boLocalDistribution = Distribution(
+//            BoLocalisationDistributionGroup.values().map { DistributionItem(it.percent, it) })
 
     override fun generateDefaultQuestions(): List<Question> {
 
@@ -98,17 +98,13 @@ class QuestionsGeneratorImpl (
     }
 
     @VisibleForTesting fun randomBoPunct(except: PunctCoordinate): PunctCoordinate {
-        val randMeridian = randX.distributed(boPunctDistribution)
-
-        val optionalExceptPoint = if (randMeridian == except.meridian) except.point else null
-        val randPoint = randX.randomBetween(1, randMeridian.points, optionalExceptPoint)
-
-        return PunctCoordinate(randMeridian, randPoint)
+        val distribution = randX.distributed(BoPunctDistributionItem.Distribution)
+        return distribution.randomLocalisation(randX)
     }
 
     private fun generateBoAnswersByMeridianLocalisation(except: BoRelevantMeridian): List<Answer> {
         return generateDistinctAnswers(3, except, {
-            randX.distributed(boLocalDistribution).randomLocalisation(randX)
+            randX.distributed(BoLocalisationDistributionGroup.Distribution).randomLocalisation(randX)
         })
     }
 
@@ -201,18 +197,53 @@ private enum class BoLocalisationDistributionGroup(val percent: Int) {
         }
     },
     BetweenNipples(5) {
-        override fun randomLocalisation(randX: RandX)= "Zwischen den Brustwarzen"
+        override fun randomLocalisation(randX: RandX) = "Zwischen den Brustwarzen"
     }
     ;
+
+    companion object {
+        val Distribution = Distribution(BoLocalisationDistributionGroup.values().map { DistributionItem(it.percent, it) })
+    }
 
     abstract fun randomLocalisation(randX: RandX): String
 }
 
+// right: 3, 4, 5, 12, 14, 17
+private val allRightKGBoPoints = BoRelevantMeridian.values().filter { it.boPunct.meridian == Meridian.KG }.map { it.boPunct.point }
 private enum class BoPunctDistributionItem(val percent: Int, val meridian: Meridian) {
-    KG(60, Meridian.KG),
-    Lu(10, Meridian.Lu),
-    Ma(10, Meridian.Ma),
-    Le(10, Meridian.Le),
-    Gb(10, Meridian.Gb)
+    KGRight(40, Meridian.KG) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(allRightKGBoPoints))
+    },
+    KGWrong(10, Meridian.KG) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(1.rangeTo(19).toList().minus(allRightKGBoPoints)))
+    },
+    Lu(3, Meridian.Lu) {
+        override fun randomLocalisation(randX: RandX) = Lu1
+    },
+    MaRight(5, Meridian.Ma) {
+        override fun randomLocalisation(randX: RandX) = Ma25
+    },
+    MaWrong(2, Meridian.Ma) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(listOf(2, 5, 15, 20, 22)))
+    },
+    LeRight(14, Meridian.Le) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(listOf(13, 14)))
+    },
+    LeWrong(6, Meridian.Le) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(listOf(10, 11, 12, 15, 16, 17, 18, 19)))
+    },
+    GbRight(14, Meridian.Gb) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(listOf(24, 25)))
+    },
+    GbWrong(6, Meridian.Gb) {
+        override fun randomLocalisation(randX: RandX) = PunctCoordinate(meridian, randX.randomOf(listOf(20, 21, 22, 23, 26, 27, 28, 29)))
+    }
+    ;
+
+    companion object {
+        val Distribution = Distribution(BoPunctDistributionItem.values().map { DistributionItem(it.percent, it) })
+    }
+
+    abstract fun randomLocalisation(randX: RandX): PunctCoordinate
 }
 

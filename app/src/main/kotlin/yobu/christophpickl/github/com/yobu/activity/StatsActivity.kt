@@ -35,7 +35,7 @@ class StatsActivity : KodeinAppCompatActivity() {
 
     private fun generateStatsText(): List<QuestionStatistic> {
         val answeredStats = repo.readAll()
-        val allQuestions = loader.load()
+        val allQuestions = loader.questions
         val unanswerdStats = allQuestions
                 .map { it.id }
                 .minus(answeredStats.map { it.id })

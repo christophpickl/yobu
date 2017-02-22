@@ -12,7 +12,7 @@ interface StatisticService {
     fun rightAnswered(question: Question)
     fun wrongAnswered(question: Question)
 
-    fun nextQuestion(questionsById: Map<String, Question>): Question
+    fun nextQuestion(): Question
 
     fun deleteAll()
 
@@ -20,6 +20,7 @@ interface StatisticService {
 
 class StatisticServiceImpl(
         private val repository: QuestionStatisticsRepository,
+        private val loader: QuestionLoader,
         private val clock: Clock
 ) : StatisticService {
 
@@ -31,20 +32,21 @@ class StatisticServiceImpl(
         answered(question, isRight = false)
     }
 
-    override fun nextQuestion(questionsById: Map<String, Question>): Question {
+    override fun nextQuestion(): Question {
+        val questionsById = loader.questionsById
         if (questionsById.isEmpty()) throw IllegalArgumentException("empty questions map is not allowed!")
         val answeredStats: List<QuestionStatistic> = repository.readAll()
 
         val unansweredQuestionIds = questionsById.keys.minus(answeredStats.map { it.id })
         if (unansweredQuestionIds.isNotEmpty()) {
             val nextQuestionId = unansweredQuestionIds.randomElement()
-            return questionsById.getOrThrow(nextQuestionId)
+            return loader.questionById(nextQuestionId)
         }
 
         // all questions have been answered at least once
         val statsByPoints = answeredStats.groupBy { calcPoints(it) }
         val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
-        return questionsById.getOrThrow(highestPointsStats.randomElement().id)
+        return loader.questionById(highestPointsStats.randomElement().id)
     }
 
     override fun deleteAll() {
@@ -100,9 +102,6 @@ class StatisticServiceImpl(
                 }
         ))
     }
-
-    private fun Map<String, Question>.getOrThrow(id: String) =
-            this[id] ?: throw RuntimeException("Could not question by ID: $id in questions map: $values")
 
 }
 

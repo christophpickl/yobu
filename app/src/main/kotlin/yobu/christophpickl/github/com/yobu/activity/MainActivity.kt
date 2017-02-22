@@ -35,9 +35,10 @@ class MainActivity : KodeinAppCompatActivity() {
         private val ANSWER_DELAY_WRONG = 500L
     }
 
+
     private val prefs: Preferences by instance()
     private val stats: StatisticService by instance()
-    private val selector: QuestionSelector by instance()
+    private val loader: QuestionLoader by instance()
 
     private val txtOutput by lazy { find<TextView>(R.id.txtOutput) }
     private val txtScoreAndHighscore by lazy { find<TextView>(R.id.txtScoreAndHighscore) }
@@ -91,7 +92,7 @@ class MainActivity : KodeinAppCompatActivity() {
             log.i("No instance state saved.")
 
             if (intentQuestionId != null) {
-                changeQuestion(selector.questionById(intentQuestionId))
+                changeQuestion(loader.questionById(intentQuestionId))
                 currentScore = prefs.currentScore
                 log.i { "Question ID from intent: $intentQuestionId; currentScore: $currentScore " }
             } else {
@@ -126,7 +127,8 @@ class MainActivity : KodeinAppCompatActivity() {
     private fun onNextQuestion() {
         log.d("onNextQuestion()")
 
-        changeQuestion(selector.nextQuestion())
+        val question = stats.nextQuestion()
+        changeQuestion(question.copy(answers = question.answers.sortedBy { it.text })) // NO: randomizeElements()
     }
 
     private fun updateTxtCountRight() {

@@ -1,17 +1,22 @@
 package yobu.christophpickl.github.com.yobu.logic
 
 import yobu.christophpickl.github.com.yobu.Question
+import yobu.christophpickl.github.com.yobu.common.YobuException
 
 interface QuestionLoader {
-    fun load(): List<Question>
+    val questions: List<Question>
+    val questionsById: Map<String, Question>
+
+    fun questionById(id: String): Question
 }
 
 class QuestionLoaderImpl(
         private val questionsGenerator: QuestionsGenerator
 ) : QuestionLoader {
 
-    private val questions by lazy { StaticQuestions.questions.plus(questionsGenerator.generateDefaultQuestions()) }
+    override val questions by lazy { StaticQuestions.questions.plus(questionsGenerator.generateDefaultQuestions()) }
+    override val questionsById by lazy { questions.associateBy { it.id } }
 
-    override fun load() = questions
+    override fun questionById(id: String) = questionsById[id] ?: throw YobuException("Question not found by ID: '$id'!")
 
 }

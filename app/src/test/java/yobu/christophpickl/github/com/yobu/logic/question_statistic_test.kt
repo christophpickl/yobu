@@ -11,6 +11,7 @@ import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.logic.persistence.testee
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.RealClock
+import yobu.christophpickl.github.com.yobu.common.YobuException
 import yobu.christophpickl.github.com.yobu.common.parseDateTime
 import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 import yobu.christophpickl.github.com.yobu.testee
@@ -56,24 +57,26 @@ class CachedQuestionStatisticsRepositoryTest : RobolectricTest() {
         verify(mockSqlite, times(1)).readAll()
     }
 }
-
-class StubbedQuestionLoader(val questions: List<Question>) : QuestionLoader {
-    override fun load() = questions
+class StubbedQuestionLoader(
+        override val questions: List<Question>
+) : QuestionLoader {
+    override val questionsById by lazy { questions.associateBy { it.id } }
+    override fun questionById(id: String) = questionsById[id] ?: throw YobuException("Question not found by ID: '$id'!")
 }
+
 
 class QuestionRepoIT : RobolectricTest() {
     @Test fun answerFirstQuestion_nextQuestionShouldBeSecondQuestion() {
         withTestActivity { activity ->
             val questions = listOf(question1, question2)
             val repo = QuestionStatisticsSqliteRepository(activity)
-            val stats = StatisticServiceImpl(repo, RealClock)
-            val selector = QuestionSelectorImpl(StubbedQuestionLoader(questions), stats)
+            val stats = StatisticServiceImpl(repo, StubbedQuestionLoader(questions), RealClock)
 
-            val firstQuestion = selector.nextQuestion()
+            val firstQuestion = stats.nextQuestion()
 
             stats.rightAnswered(firstQuestion)
 
-            val secondQuestion = selector.nextQuestion()
+            val secondQuestion = stats.nextQuestion()
             assertThat(secondQuestion, not(equalTo(firstQuestion)))
         }
     }
@@ -89,8 +92,9 @@ class StatisticServiceTest : RobolectricTest() {
 
     private val question = Question.testee()
     private val mockRepo = mock<QuestionStatisticsRepository>()
+    private val mockLoader = mock<QuestionLoader>()
     private val mockClock = mock<Clock>()
-    private val service = StatisticServiceImpl(mockRepo, mockClock)
+    private val service = StatisticServiceImpl(mockRepo, mockLoader, mockClock)
 
     @Test fun rightAnswered_insertsNewQuestionStatistic() {
         setDefaultClock()
@@ -148,7 +152,8 @@ class StatisticServiceTest : RobolectricTest() {
 
     @Test(expected = IllegalArgumentException::class)
     fun nextQuestion_emptyThrows() {
-        service.nextQuestion(emptyMap())
+        whenever(mockLoader.questionsById).thenReturn(emptyMap())
+        service.nextQuestion()
     }
 
     @Test fun nextQuestion_givenOneRightAnsweredAndOneUnanswered_returnsUnanswered() {
@@ -192,13 +197,15 @@ class StatisticServiceTest : RobolectricTest() {
     }
 
     private fun assertBiggerPoints(message: String, bigger: QuestionStatistic, lower: QuestionStatistic) {
-        val service = StatisticServiceImpl(mockRepo, mockClock)
+        val service = StatisticServiceImpl(mockRepo, mockLoader, mockClock)
         assertThat("$message => Expected $bigger > $lower", service.calcPoints(bigger),
                 greaterThan(service.calcPoints(lower)))
     }
 
-    private fun nextQuestion(vararg questions: Question) =
-            service.nextQuestion(listOf(*questions).associateBy { it.id })
+    private fun nextQuestion(vararg questions: Question): Question {
+        whenever(mockLoader.questionsById).thenReturn(listOf(*questions).associateBy { it.id })
+        return service.nextQuestion()
+    }
 
     private fun whenMockRepoReadAllReturn(vararg questionStatistic: QuestionStatistic) {
         whenever(mockRepo.readAll())
