@@ -143,4 +143,4 @@ private enum class BoPunctDistributionItem(val percent: Int, val meridian: Merid
     Le(10, Meridian.Le),
     Gb(10, Meridian.Gb)
 }
-// TODO more and more precise distributions
+

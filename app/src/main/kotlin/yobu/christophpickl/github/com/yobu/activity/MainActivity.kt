@@ -294,7 +294,6 @@ class MainActivity : AppCompatActivity() {
 
         LOG.i { "shownDialog is null: ${shownDialog == null}" }
         shownDialog?.apply {
-            // TODO MainActivity has leaked window
             if (isShowing) {
                 dismiss()
             }

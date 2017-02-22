@@ -6,11 +6,10 @@ import android.support.annotation.ColorInt
 import android.view.View
 import org.jetbrains.anko.backgroundColor
 
-val YOBU_APP_VERSION = "0.1-SNAPSHOT"
+val YOBU_APP_VERSION = "0.2-alpha"
 
-// FIXME change this variable during release build!
+// FIXME add build time constants for development (disable during release); remove sequential questions; add "fast mode" in settings
 private val ENABLE_DEVELOPMENT = true
-
 val DISABLE_RANDOM_QUESTIONS = ENABLE_DEVELOPMENT && true
 val ENABLE_FAST_MODE = ENABLE_DEVELOPMENT && true
 val ENABLE_DEBUG_COLORS = ENABLE_DEVELOPMENT && true

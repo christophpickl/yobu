@@ -5,11 +5,12 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
+        versionCode 2
+        versionName "0.2-alpha"
+
         applicationId "yobu.christophpickl.github.com.yobu"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -1,12 +1,9 @@
 package yobu.christophpickl.github.com.yobu.logic
 
-import android.content.Context
 import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.Question
-import yobu.christophpickl.github.com.yobu.logic.persistence.QuestionStatisticsSqliteRepository
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.RealClock
-import yobu.christophpickl.github.com.yobu.common.associateMultiBy
 import java.util.*
 
 
@@ -34,7 +31,7 @@ class QuestionStatisticService(
         }
 
         // all questions have been answered at least once
-        val statsByPoints = answeredStats.associateMultiBy { calcPoints(it) }
+        val statsByPoints = answeredStats.groupBy { calcPoints(it) }
         val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
         return questionsById.getOrThrow(highestPointsStats.randomElement().id)
     }
