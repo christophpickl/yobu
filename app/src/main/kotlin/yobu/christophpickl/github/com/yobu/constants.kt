@@ -7,10 +7,10 @@ import android.support.annotation.ColorInt
 import android.view.View
 import org.jetbrains.anko.backgroundColor
 
-val GADSU_APP_VERSION = "0.1-alpha"
+val GADSU_APP_VERSION = "0.2-alpha"
 
-
-private val ENABLE_DEVELOPMENT = true
+// FIXME add build time constants for development (disable during release); remove sequential questions; add "fast mode" in settings
+private val ENABLE_DEVELOPMENT = false
 val DISABLE_RANDOM_QUESTIONS = ENABLE_DEVELOPMENT && true
 val ENABLE_FAST_MODE = ENABLE_DEVELOPMENT && true
 val ENABLE_DEBUG_COLORS = ENABLE_DEVELOPMENT && true
