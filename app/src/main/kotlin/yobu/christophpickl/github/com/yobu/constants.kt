@@ -9,9 +9,8 @@ import org.jetbrains.anko.backgroundColor
 val YOBU_APP_VERSION = "0.2-alpha"
 
 // FIXME add build time constants for development (disable during release); remove sequential questions; add "fast mode" in settings
-private val ENABLE_DEVELOPMENT = true
-val DISABLE_RANDOM_QUESTIONS = ENABLE_DEVELOPMENT && true
-val ENABLE_FAST_MODE = ENABLE_DEVELOPMENT && true
+private val ENABLE_DEVELOPMENT = false
+
 val ENABLE_DEBUG_COLORS = ENABLE_DEVELOPMENT && true
 fun View.debugColor(color: MyColor) {
     if (ENABLE_DEBUG_COLORS) {

@@ -10,10 +10,10 @@ class QuestionsGeneratorTest {
 
     private val anyPunct = Lu1
 
-    private lateinit var generator: QuestionsGenerator
+    private lateinit var generator: QuestionsGeneratorImpl
 
     @Before fun setup() {
-        generator = QuestionsGenerator()
+        generator = QuestionsGeneratorImpl(RandXImpl)
     }
 
     @Test fun randomBoPunct_shouldNotReturnTheExceptPunct() {

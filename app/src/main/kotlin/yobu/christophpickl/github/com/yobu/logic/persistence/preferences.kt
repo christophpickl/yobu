@@ -6,12 +6,19 @@ import android.content.SharedPreferences
 import yobu.christophpickl.github.com.yobu.common.edit
 
 
-fun Activity.createPreferences(): Preferences {
+fun Context.createPreferences(): Preferences {
     val settings = getSharedPreferences("gadsu_prefs", Context.MODE_PRIVATE)
-    return Preferences(settings)
+    return PreferencesImpl(settings)
 }
 
-class Preferences(private val settings: SharedPreferences) {
+interface Preferences {
+    var highscore: Int
+    var currentScore: Int
+}
+
+class PreferencesImpl(
+        private val settings: SharedPreferences
+) : Preferences {
 
     companion object {
         private val KEY_HIGHSCORE = "highscore"
@@ -19,7 +26,7 @@ class Preferences(private val settings: SharedPreferences) {
         private val LOG = yobu.christophpickl.github.com.yobu.common.LOG(Preferences::class.java)
     }
 
-    var highscore: Int
+    override var highscore: Int
         get() = settings.getInt(KEY_HIGHSCORE, 0)
         set(value) {
             LOG.d { "Set highscore to: $value" }
@@ -27,7 +34,7 @@ class Preferences(private val settings: SharedPreferences) {
                 putInt(KEY_HIGHSCORE, value)
             }
         }
-    var currentScore: Int
+    override var currentScore: Int
         get() = settings.getInt(KEY_CURRENT_SCORE, 0)
         set(value) {
             LOG.d { "Set currentScore to: $value" }

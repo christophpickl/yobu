@@ -7,36 +7,49 @@ import yobu.christophpickl.github.com.yobu.common.RealClock
 import java.util.*
 
 
-class QuestionStatisticService(
-        private val repository: QuestionStatisticsRepository,
-        private val clock: Clock = RealClock
-) {
+interface StatisticService {
 
-    fun rightAnswered(question: Question) {
+    fun rightAnswered(question: Question)
+    fun wrongAnswered(question: Question)
+
+    fun nextQuestion(): Question
+
+    fun deleteAll()
+
+}
+
+class StatisticServiceImpl(
+        private val repository: QuestionStatisticsRepository,
+        private val loader: QuestionLoader,
+        private val clock: Clock
+) : StatisticService {
+
+    override fun rightAnswered(question: Question) {
         answered(question, isRight = true)
     }
 
-    fun wrongAnswered(question: Question) {
+    override fun wrongAnswered(question: Question) {
         answered(question, isRight = false)
     }
 
-    fun nextQuestion(questionsById: Map<String, Question>): Question {
+    override fun nextQuestion(): Question {
+        val questionsById = loader.questionsById
         if (questionsById.isEmpty()) throw IllegalArgumentException("empty questions map is not allowed!")
         val answeredStats: List<QuestionStatistic> = repository.readAll()
 
         val unansweredQuestionIds = questionsById.keys.minus(answeredStats.map { it.id })
         if (unansweredQuestionIds.isNotEmpty()) {
             val nextQuestionId = unansweredQuestionIds.randomElement()
-            return questionsById.getOrThrow(nextQuestionId)
+            return loader.questionById(nextQuestionId)
         }
 
         // all questions have been answered at least once
         val statsByPoints = answeredStats.groupBy { calcPoints(it) }
         val highestPointsStats = statsByPoints[statsByPoints.keys.max()]!!
-        return questionsById.getOrThrow(highestPointsStats.randomElement().id)
+        return loader.questionById(highestPointsStats.randomElement().id)
     }
 
-    fun deleteAll() {
+    override fun deleteAll() {
         repository.deleteAll()
     }
 
@@ -90,9 +103,6 @@ class QuestionStatisticService(
         ))
     }
 
-    private fun Map<String, Question>.getOrThrow(id: String) =
-            this[id] ?: throw RuntimeException("Could not question by ID: $id in questions map: $values")
-
 }
 
 /**
@@ -140,7 +150,7 @@ interface QuestionStatisticsRepository {
  * Avoid readAll communication to sqlite by caching.
  */
 class CachedQuestionStatisticsRepository(
-//        context: Context,
+        //        context: Context,
         private val sqliteDelegate: QuestionStatisticsRepository //= QuestionStatisticsSqliteRepository(context)
 ) : QuestionStatisticsRepository {
     private val cache = mutableMapOf<String, QuestionStatistic>()

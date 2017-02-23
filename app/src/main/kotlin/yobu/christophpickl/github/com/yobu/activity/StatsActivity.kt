@@ -6,29 +6,33 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.LinearLayout.HORIZONTAL
+import android.widget.RelativeLayout
 import org.jetbrains.anko.*
 import yobu.christophpickl.github.com.yobu.MyColor
 import yobu.christophpickl.github.com.yobu.common.LOG
-import yobu.christophpickl.github.com.yobu.common.htmlText
+import yobu.christophpickl.github.com.yobu.common.textViewX
 import yobu.christophpickl.github.com.yobu.logic.GlobalDb
 import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
-import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
-
-class StatsActivity : AppCompatActivity() {
 
 
-    private val repo: QuestionStatisticsRepository by lazy { GlobalDb.getStatisticsRepo(this) }
+class StatsActivity : KodeinAppCompatActivity() {
+
+    private val repo: QuestionStatisticsRepository by instance()
+    private val loader: QuestionLoader by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        displayYobuLogo()
 
         StatsActivityUi(generateStatsText()).setContentView(this)
     }
 
     private fun generateStatsText(): List<QuestionStatistic> {
         val answeredStats = repo.readAll()
-        val allQuestions = GlobalQuestions.allQuestions
+        val allQuestions = loader.questions
         val unanswerdStats = allQuestions
                 .map { it.id }
                 .minus(answeredStats.map { it.id })
@@ -93,6 +97,8 @@ class QuestionStatisticAdapter(private val stats: List<QuestionStatistic>) : Bas
             }
         }
     }
+
+
 
     override fun getItem(position: Int) = stats[position]
     override fun getCount() = stats.size
