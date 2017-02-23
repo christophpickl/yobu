@@ -18,6 +18,7 @@ object StateManager {
     private val KEY_COUNT_RIGHT = "countRight"
     private val KEY_QUESTION_ID = "question.id"
     private val KEY_QUESTION_TEXT = "question.text"
+    private val KEY_QUESTION_TITLE = "question.title"
     private val KEY_ANSWERS = "answers"
 
     fun read(bundle: Bundle): YobuState {
@@ -40,7 +41,9 @@ object StateManager {
         return Question(
                 id = getString(KEY_QUESTION_ID),
                 text = getString(KEY_QUESTION_TEXT),
-                answers = readAnswers())
+                title = getString(KEY_QUESTION_TITLE),
+                answers = readAnswers()
+        )
     }
 
     private fun Bundle.readAnswers(): List<Answer> {
@@ -54,6 +57,7 @@ object StateManager {
     private fun Bundle.putQuestion(question: Question) {
         putString(KEY_QUESTION_ID, question.id)
         putString(KEY_QUESTION_TEXT, question.text)
+        putString(KEY_QUESTION_TITLE, question.title)
 
         putStringArray(KEY_ANSWERS, question.answers.map {
             listOf(it.text, it.isRight.toString()).joinToString(ANSWER_FIELD_SEPARATOR)

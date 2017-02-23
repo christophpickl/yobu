@@ -1,5 +1,6 @@
 package yobu.christophpickl.github.com.yobu.logic
 
+import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.*
 
 fun main(args: Array<String>) {

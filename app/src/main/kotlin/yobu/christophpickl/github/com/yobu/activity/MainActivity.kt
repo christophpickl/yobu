@@ -9,13 +9,17 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import yobu.christophpickl.github.com.yobu.Answer
-import yobu.christophpickl.github.com.yobu.Question
-import yobu.christophpickl.github.com.yobu.R
-import yobu.christophpickl.github.com.yobu.YOBU_APP_VERSION
-import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
+import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
+import com.github.salomonbrys.kodein.instance
+import com.pawegio.kandroid.runDelayed
+import com.pawegio.kandroid.startActivity
+import org.jetbrains.anko.find
+import org.jetbrains.anko.toast
+import yobu.christophpickl.github.com.yobu.*
 import yobu.christophpickl.github.com.yobu.common.LOG
+import yobu.christophpickl.github.com.yobu.common.onClickMakeGone
 import yobu.christophpickl.github.com.yobu.common.setHtmlView
+import yobu.christophpickl.github.com.yobu.common.toggleVisibility
 import yobu.christophpickl.github.com.yobu.logic.QuestionLoader
 import yobu.christophpickl.github.com.yobu.logic.StatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.Preferences
@@ -201,6 +205,11 @@ class MainActivity : KodeinAppCompatActivity() {
         menuActions[item.itemId]?.invoke() ?: return super.onOptionsItemSelected(item)
         return true
     }
+
+    /** Quit application when back pressed while in MainActivity */
+//    TODO override fun onBackPressed() {
+//        finish()
+//    }
 
     private fun onShowBo() {
         log.i("onShowBo()")

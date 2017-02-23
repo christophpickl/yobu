@@ -1,5 +1,13 @@
 package yobu.christophpickl.github.com.yobu.logic
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
+import com.natpryce.hamkrest.hasElement
+import com.natpryce.hamkrest.isEmpty
+import com.natpryce.hamkrest.should.shouldNotMatch
+import com.nhaarman.mockito_kotlin.*
+import org.junit.Test
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.RealClock
@@ -39,10 +47,10 @@ class CachedQuestionStatisticsRepositoryTest : RobolectricTest() {
         withTestActivity { activity ->
             val repo = CachedQuestionStatisticsRepository(mockSqlite)
 
-            assertThat(repo.readAll(), emptyCollectionOf(QuestionStatistic::class.java))
+            assertThat(repo.readAll(), isEmpty)
 
             repo.insertOrUpdate(statistic)
-            assertThat(repo.readAll(), contains(statistic))
+            assertThat(repo.readAll(), hasElement(statistic))
             repo.readAll()
             repo.readAll()
         }
@@ -50,6 +58,7 @@ class CachedQuestionStatisticsRepositoryTest : RobolectricTest() {
         verify(mockSqlite, times(1)).readAll()
     }
 }
+
 class StubbedQuestionLoader(
         override val questions: List<Question>
 ) : QuestionLoader {
@@ -69,8 +78,7 @@ class QuestionRepoIT : RobolectricTest() {
 
             stats.rightAnswered(firstQuestion)
 
-            val secondQuestion = stats.nextQuestion()
-            assertThat(secondQuestion, not(equalTo(firstQuestion)))
+            stats.nextQuestion() shouldNotMatch equalTo(firstQuestion)
         }
     }
 }

@@ -2,19 +2,18 @@ package yobu.christophpickl.github.com.yobu.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.LinearLayout.HORIZONTAL
-import android.widget.RelativeLayout
+import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
+import com.github.salomonbrys.kodein.instance
 import org.jetbrains.anko.*
 import yobu.christophpickl.github.com.yobu.MyColor
 import yobu.christophpickl.github.com.yobu.common.LOG
-import yobu.christophpickl.github.com.yobu.common.textViewX
-import yobu.christophpickl.github.com.yobu.logic.GlobalDb
-import yobu.christophpickl.github.com.yobu.logic.GlobalQuestions
+import yobu.christophpickl.github.com.yobu.common.htmlText
+import yobu.christophpickl.github.com.yobu.logic.QuestionLoader
 import yobu.christophpickl.github.com.yobu.logic.QuestionStatistic
+import yobu.christophpickl.github.com.yobu.logic.QuestionStatisticsRepository
 
 
 class StatsActivity : KodeinAppCompatActivity() {
@@ -25,10 +24,17 @@ class StatsActivity : KodeinAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         displayYobuLogo()
 
         StatsActivityUi(generateStatsText()).setContentView(this)
     }
+// http://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar
+    // actionBar.setDisplayHomeAsUpEnabled(true) // enable back button
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        startActivity<MainActivity>()
+//        return true
+//    }
 
     private fun generateStatsText(): List<QuestionStatistic> {
         val answeredStats = repo.readAll()

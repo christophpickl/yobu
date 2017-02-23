@@ -1,5 +1,8 @@
 package yobu.christophpickl.github.com.yobu.logic
 
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
+import org.junit.Test
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.parseDateTime
 import yobu.christophpickl.github.com.yobu.logic.persistence.testee
@@ -54,4 +57,5 @@ class StatApp {
     }
 
     private fun formatDate(date: Date?) = if (date == null) "--" else DATE_FORMAT.format(date)
+
 }

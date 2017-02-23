@@ -1,6 +1,7 @@
 package yobu.christophpickl.github.com.yobu
 
 import android.app.Application
+import com.github.salomonbrys.kodein.*
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.LOG
 import yobu.christophpickl.github.com.yobu.common.RealClock

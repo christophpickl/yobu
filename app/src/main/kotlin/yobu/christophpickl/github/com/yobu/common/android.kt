@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.View
 import android.widget.TextView
+import org.jetbrains.anko.PropertyWithoutGetterException
 
 fun View.onClickMakeGone(additionalAction: () -> Unit = { }) {
     setOnClickListener {

@@ -1,5 +1,10 @@
 package yobu.christophpickl.github.com.yobu.logic
 
+import com.natpryce.hamkrest.*
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.should.shouldNotMatch
+import org.junit.Before
+import org.junit.Test
 import yobu.christophpickl.github.com.yobu.Lu1
 
 class QuestionsGeneratorTest {
@@ -15,8 +20,7 @@ class QuestionsGeneratorTest {
     @Test fun randomBoPunct_shouldNotReturnTheExceptPunct() {
         doCoupleOfTimes {
             // MINOR TEST inject mock
-            assertThat(generator.randomBoPunct(except = anyPunct),
-                    not(equalTo(anyPunct)))
+            generator.randomBoPunct(except = anyPunct) shouldNotMatch equalTo(anyPunct)
         }
     }
 
@@ -27,9 +31,8 @@ class QuestionsGeneratorTest {
         }
     }
 
-
     private fun <E> List<E>.assertDistinctItems() {
-        assertThat("list: $this", distinct(), hasSize(size))
+        assertThat("list: $this", distinct().size, equalTo(size)) // MINOR TEST how to get hamkrest's hasSize working?!
     }
     /*
 
@@ -88,28 +91,30 @@ class RandXImplTest {
     fun randomBetweenWithoutExcept() {
         doCoupleOfTimes {
             assertThat(RandXImpl.randomBetween(0, 10),
-                    allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(10)))
+                    greaterThanOrEqualTo(0) and lessThanOrEqualTo(10))
         }
         doCoupleOfTimes {
             assertThat(RandXImpl.randomBetween(50, 99),
-                    allOf(greaterThanOrEqualTo(50), lessThanOrEqualTo(99)))
+                    greaterThanOrEqualTo(50) and lessThanOrEqualTo(99))
         }
     }
 
     @Test
     fun randomBetweenWithExcept() {
         doCoupleOfTimes {
-            assertThat(RandXImpl.randomBetween(0, 10, 5),
-                    not(equalTo(5)))
+            RandXImpl.randomBetween(0, 10, except = 5) shouldNotMatch equalTo(5)
         }
     }
 
     @Test fun randomElementsExcept() {
         val abc = listOf("a", "b", "c")
         assertThat(RandXImpl.randomElementsExcept(abc, 2, "a"),
-                containsInAnyOrder("b", "c"))
+                hasElement("b") and hasElement("c")
+        )
+
         assertThat(RandXImpl.randomElementsExcept(abc, 1, "a"),
-                anyOf(contains("b"), contains("c")))
+                hasElement("b") or hasElement("c")
+        )
     }
 
 }
