@@ -3,30 +3,23 @@ package yobu.christophpickl.github.com.yobu.activity
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.text.SpannableString
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.github.salomonbrys.kodein.KodeinInjected
-import com.github.salomonbrys.kodein.KodeinInjector
-import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
-import com.github.salomonbrys.kodein.instance
-import com.pawegio.kandroid.find
-import com.pawegio.kandroid.runDelayed
-import com.pawegio.kandroid.startActivity
-import com.pawegio.kandroid.toast
-import yobu.christophpickl.github.com.yobu.*
+import yobu.christophpickl.github.com.yobu.Answer
+import yobu.christophpickl.github.com.yobu.Question
+import yobu.christophpickl.github.com.yobu.R
+import yobu.christophpickl.github.com.yobu.YOBU_APP_VERSION
 import yobu.christophpickl.github.com.yobu.activity.view.AnswersListAdapter
-import yobu.christophpickl.github.com.yobu.common.*
-import yobu.christophpickl.github.com.yobu.logic.*
+import yobu.christophpickl.github.com.yobu.common.LOG
+import yobu.christophpickl.github.com.yobu.common.setHtmlView
+import yobu.christophpickl.github.com.yobu.logic.QuestionLoader
+import yobu.christophpickl.github.com.yobu.logic.StatisticService
 import yobu.christophpickl.github.com.yobu.logic.persistence.Preferences
-import yobu.christophpickl.github.com.yobu.logic.persistence.createPreferences
+import yobu.christophpickl.github.com.yobu.logic.randomizeElements
 
 class MainActivity : KodeinAppCompatActivity() {
 

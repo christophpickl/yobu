@@ -1,9 +1,5 @@
 package yobu.christophpickl.github.com.yobu.logic
 
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
-import org.junit.Before
-import org.junit.Test
 import yobu.christophpickl.github.com.yobu.Lu1
 
 class QuestionsGeneratorTest {

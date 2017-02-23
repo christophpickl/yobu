@@ -1,8 +1,5 @@
 package yobu.christophpickl.github.com.yobu.logic
 
-import org.junit.Test
-import yobu.christophpickl.github.com.yobu.Question
-import yobu.christophpickl.github.com.yobu.prettyFormatQuestions
 import yobu.christophpickl.github.com.yobu.prettyPrintQuestions
 
 class QuestionsAllAppNonTest {

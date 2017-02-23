@@ -1,9 +1,7 @@
 package yobu.christophpickl.github.com.yobu.logic
 
-import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.common.Clock
-import yobu.christophpickl.github.com.yobu.common.RealClock
 import java.util.*
 
 

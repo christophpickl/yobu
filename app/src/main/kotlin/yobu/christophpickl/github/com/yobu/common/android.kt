@@ -2,14 +2,12 @@ package yobu.christophpickl.github.com.yobu.common
 
 import android.app.AlertDialog
 import android.content.Context
+import android.text.Html
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.text.Html
 import android.view.View
 import android.widget.TextView
-import android.widget.TextView
-import org.jetbrains.anko.PropertyWithoutGetterException
 
 fun View.onClickMakeGone(additionalAction: () -> Unit = { }) {
     setOnClickListener {

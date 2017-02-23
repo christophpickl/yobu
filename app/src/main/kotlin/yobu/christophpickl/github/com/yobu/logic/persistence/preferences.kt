@@ -1,6 +1,5 @@
 package yobu.christophpickl.github.com.yobu.logic.persistence
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import yobu.christophpickl.github.com.yobu.common.edit

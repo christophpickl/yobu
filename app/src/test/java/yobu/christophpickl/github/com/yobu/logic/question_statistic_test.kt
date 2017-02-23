@@ -1,9 +1,5 @@
 package yobu.christophpickl.github.com.yobu.logic
 
-import com.nhaarman.mockito_kotlin.*
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
-import org.junit.Test
 import yobu.christophpickl.github.com.yobu.Question
 import yobu.christophpickl.github.com.yobu.common.Clock
 import yobu.christophpickl.github.com.yobu.common.RealClock

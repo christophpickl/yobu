@@ -1,8 +1,6 @@
 package yobu.christophpickl.github.com.yobu.logic
 
-import android.support.annotation.VisibleForTesting
 import yobu.christophpickl.github.com.yobu.*
-import yobu.christophpickl.github.com.yobu.common.prettyPrint
 
 fun main(args: Array<String>) {
     QuestionsGeneratorImpl(RandXImpl)
