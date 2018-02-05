@@ -3,7 +3,7 @@ package yobu.christophpickl.github.com.yobu.logic
 import android.support.annotation.VisibleForTesting
 import java.util.*
 
-
+@Deprecated(message = "kpotpourri outsourced")
 fun <T> List<T>.randomizeElements(): List<T> {
     return toMutableList().apply {
         Collections.shuffle(this)
