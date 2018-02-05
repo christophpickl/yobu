@@ -1,6 +1,14 @@
 
 # TODOs
 
+## marina
+* frage umformulieren bzgl "bo lage"
+	* a la: "der bo punkt fuer welchen meridian liegt ..."
+* random antworten mehr naeher richtigen antwort (geo-lokal)
+* menu-entry: letzte falsche frage nochmal
+* umformulieren "am 2.BW" => "zw 2. und 3. BW"
+* evtl multiple choice frage supporten, zb: welche nicht am KG
+
 ## NOW
 * WIP Question.shortLabel einfuehren, was in der StatActivity rendered wird
 * cheatsheet v2: eigene grafiken machen fuer bo/yu punkte
